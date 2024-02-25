@@ -1,6 +1,6 @@
 # Files
 WEIGHTS_FILENAME = './model/model.pth'
-SCORE_DATA_FILENAME = './data.csv'
+SCORE_DATA_FILENAME = './model/data.csv'
 
 # Game
 BLOCK_SIZE = 20
