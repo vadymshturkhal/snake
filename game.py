@@ -1,8 +1,9 @@
 import pygame
 import random
-from enum import Enum
-from collections import namedtuple
+from game_utils import Point, Direction
 import numpy as np
+from snake import Snake
+from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
 
 
 # rgb colors
@@ -12,20 +13,8 @@ BLUE1 = (0, 0, 255)
 BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
 
-BLOCK_SIZE = 20
-DIRECTIONS_QUANTITY = 4
-FRAME_RESTRICTION = 1000
 
-
-class Direction(Enum):
-    RIGHT = 1
-    LEFT = 2
-    UP = 3
-    DOWN = 4
-
-Point = namedtuple('Point', 'x, y')
 pygame.init()
-# font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
 
 class SnakeGameAI:
@@ -34,6 +23,7 @@ class SnakeGameAI:
         self.h = h
         self.is_rendering = is_rendering
         self.game_speed = game_speed
+
         
         # init display
         if self.is_rendering:
@@ -51,6 +41,8 @@ class SnakeGameAI:
         self.head = Point(self.w/2, self.h/2)
         self.snake = [self.head]
 
+        self.snake_class = Snake(head=Point(self.w/2, self.h/2), init_direction=Direction.RIGHT)
+        print('snake_class')
         self.score = 0
         self.food = None
         self._place_food()
@@ -59,16 +51,19 @@ class SnakeGameAI:
         self.food_direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
         # self._move_food()
 
-    def _place_food(self):
-        x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-        y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-        self.food = Point(x, y)
-        if self.food in self.snake:
-            self._place_food()
+    def _place_food(self, random_place=True):
+        if random_place:
+            x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+            y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+            self.food = Point(x, y)
+            if self.food in self.snake:
+                self._place_food()
     
     def _move_food(self):
+        print('before', self.food)
         directions = [Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN]
         self.food_direction = random.choice(directions)  # Randomly change direction
+        # self.food_direction = Direction.RIGHT  # Randomly change direction
         
         x, y = self.food
         if self.food_direction == Direction.RIGHT:
@@ -81,6 +76,7 @@ class SnakeGameAI:
             y = min(y + BLOCK_SIZE, self.h - BLOCK_SIZE)
         
         self.food = Point(x, y)
+        print('after', self.food)
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
@@ -124,7 +120,7 @@ class SnakeGameAI:
             # Consistent speed
             # self._move_food()
         # else:
-            # self._move_food()
+        self._move_food()
 
         # 6. return game over and score
         return reward, game_over, self.score

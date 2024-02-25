@@ -2,21 +2,13 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from game import SnakeGameAI, Direction, Point
+from game_utils import Direction, Point
 from model import Linear_QNet, QTrainer
-from helper import plot
-from sys import exit
+from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_DIRECTIONS_QUANTITY
+from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE
 
 
-MAX_MEMORY = 100_000
-BATCH_SIZE = 1000
-LR = 0.001
-AVAILABLE_DIRECTIONS_QUANTITY = 3
-INPUT_LAYER_SIZE = 11
-HIDDEN_LAYER_SIZE = 256
-OUTPUT_LAYER_SIZE = 3
-
-class Agent:
+class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None):
         self.epsilon = 1.0  # Starting value of epsilon
         self.epsilon_min = 0.01  # Minimum value of epsilon
@@ -106,9 +98,6 @@ class Agent:
            
         # states, actions, rewards, next_states, dones = zip(*mini_sample)
         # self.trainer.train_batch(states, actions, rewards, next_states, dones)
-
-
-
 
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
