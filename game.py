@@ -1,9 +1,11 @@
 import pygame
 import random
-from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
 import numpy as np
+
 from snake import Snake
+from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
+from game_settings import REWARD_BASE, REWARD_FOR_WIN, REWARD_FOR_LOOSE
 
 
 pygame.init()
@@ -44,23 +46,6 @@ class SnakeGameAI:
             
             if self.food == self.snake.head:
                 self._place_food()
-    
-    def _move_food(self):
-        directions = [Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN]
-        self.food_direction = random.choice(directions)  # Randomly change direction
-        # self.food_direction = Direction.RIGHT  # Randomly change direction
-        
-        x, y = self.food
-        if self.food_direction == Direction.RIGHT:
-            x = min(x + BLOCK_SIZE, self.w - BLOCK_SIZE)
-        elif self.food_direction == Direction.LEFT:
-            x = max(x - BLOCK_SIZE, 0)
-        elif self.food_direction == Direction.UP:
-            y = max(y - BLOCK_SIZE, 0)
-        elif self.food_direction == Direction.DOWN:
-            y = min(y + BLOCK_SIZE, self.h - BLOCK_SIZE)
-        
-        self.food = Point(x, y)
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
@@ -76,23 +61,21 @@ class SnakeGameAI:
                 print('Quit')
                 quit()
         
-        # self._move_food()
-
         # 2. move
         self.snake.move(action)
         
         # 3. check if game over
-        reward = 0
+        reward = REWARD_BASE
         game_over = False
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
             game_over = True
-            reward = -10
+            reward = REWARD_FOR_LOOSE
             return reward, game_over, self.score
 
         # 4. place new food or just move
         if self.snake.head == self.food:
             self.score += 1
-            reward = 10
+            reward = REWARD_FOR_WIN
             self._place_food()
         # self.snake.pop()
 
