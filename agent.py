@@ -4,7 +4,7 @@ import numpy as np
 from collections import deque
 from game_utils import Direction, Point
 from model import Linear_QNet, QTrainer
-from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_DIRECTIONS_QUANTITY
+from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
 from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE
 
 
@@ -121,9 +121,9 @@ class SnakeAgent:
 
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
-        final_move = [0] * AVAILABLE_DIRECTIONS_QUANTITY
+        final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if random.randint(0, 200) < self.epsilon:
-            move = random.randint(0, AVAILABLE_DIRECTIONS_QUANTITY - 1)
+            move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
             final_move[move] = 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
