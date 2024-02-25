@@ -1,14 +1,11 @@
 from agent import Agent
 from game import SnakeGameAI
 from collections import namedtuple
+from game_settings import WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 
 
 # Extend the Transition namedtuple with a 'done' field
 Transition = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
-
-GAME_SPEED = 20
-WEIGHTS_FILENAME = './model/model.pth'
-SCORE_DATA_FILENAME = './data.csv'
 
 def assure_data_csv(filename, is_load_weights):
     if is_load_weights:

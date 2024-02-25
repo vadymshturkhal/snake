@@ -1,10 +1,7 @@
 import random
 import numpy as np
 from game_utils import Point, Direction
-
-
-DIRECTIONS_QUANTITY = 4
-BLOCK_SIZE = 20
+from game_settings import DIRECTIONS_QUANTITY, BLOCK_SIZE
 
 
 class Snake:
