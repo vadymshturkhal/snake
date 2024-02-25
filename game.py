@@ -3,6 +3,7 @@ import random
 import numpy as np
 
 from snake import Snake
+from food import Food
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
 from game_settings import REWARD_BASE, REWARD_FOR_WIN, REWARD_FOR_LOOSE
@@ -42,9 +43,9 @@ class SnakeGameAI:
         if random_place:
             x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
             y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-            self.food = Point(x, y)
+            self.food = Food(x, y)
             
-            if self.food == self.snake.head:
+            if self.food.coordinates == self.snake.head:
                 self._place_food()
 
     def scores_to_csv(self, filename, scores):
@@ -73,7 +74,7 @@ class SnakeGameAI:
             return reward, game_over, self.score
 
         # 4. place new food or just move
-        if self.snake.head == self.food:
+        if self.food.coordinates == self.snake.head:
             self.score += 1
             reward = REWARD_FOR_WIN
             self._place_food()
@@ -84,7 +85,6 @@ class SnakeGameAI:
         if self.is_rendering:
             self._update_ui()
             self.clock.tick(self.game_speed)
-
 
         # 6. return game over and score
         return reward, game_over, self.score
