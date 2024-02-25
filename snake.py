@@ -9,10 +9,11 @@ class Snake:
             self.head = head
             self.direction = init_direction
 
+
             if self.direction is None:
                 self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
-        def _move(self, action):
+        def move(self, action):
             # [straight, right, left]
 
             clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]

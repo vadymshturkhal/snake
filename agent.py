@@ -34,16 +34,16 @@ class SnakeAgent:
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def get_state(self, game):
-        head = game.snake[0]
+        head = game.snake.head
         point_l = Point(head.x - 20, head.y)
         point_r = Point(head.x + 20, head.y)
         point_u = Point(head.x, head.y - 20)
         point_d = Point(head.x, head.y + 20)
         
-        dir_l = game.direction == Direction.LEFT
-        dir_r = game.direction == Direction.RIGHT
-        dir_u = game.direction == Direction.UP
-        dir_d = game.direction == Direction.DOWN
+        dir_l = game.snake.direction == Direction.LEFT
+        dir_r = game.snake.direction == Direction.RIGHT
+        dir_u = game.snake.direction == Direction.UP
+        dir_d = game.snake.direction == Direction.DOWN
 
         state = [
             # Danger straight
@@ -71,10 +71,10 @@ class SnakeAgent:
             dir_d,
             
             # Food location 
-            game.food.x < game.head.x,  # food left
-            game.food.x > game.head.x,  # food right
-            game.food.y < game.head.y,  # food up
-            game.food.y > game.head.y  # food down
+            game.food.x < game.snake.head.x,  # food left
+            game.food.x > game.snake.head.x,  # food right
+            game.food.y < game.snake.head.y,  # food up
+            game.food.y > game.snake.head.y  # food down
             ]
         
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)

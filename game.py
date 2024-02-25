@@ -16,7 +16,6 @@ class SnakeGameAI:
         self.is_rendering = is_rendering
         self.game_speed = game_speed
 
-        
         # init display
         if self.is_rendering:
             self.display = pygame.display.set_mode((self.w, self.h))
@@ -25,16 +24,10 @@ class SnakeGameAI:
 
         self.reset()
 
-
+    # init game state
     def reset(self):
-        # init game state
-        self.direction = Direction.RIGHT
-
-        self.head = Point(self.w/2, self.h/2)
-        self.snake = [self.head]
-
-        self.snake_class = Snake(head=Point(self.w/2, self.h/2), init_direction=Direction.RIGHT)
-        print('snake_class')
+        self.snake = Snake(head=Point(self.w/2, self.h/2), init_direction=Direction.RIGHT)
+        
         self.score = 0
         self.food = None
         self._place_food()
@@ -48,11 +41,11 @@ class SnakeGameAI:
             x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
             y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
             self.food = Point(x, y)
-            if self.food in self.snake:
+            
+            if self.food == self.snake.head:
                 self._place_food()
     
     def _move_food(self):
-        print('before', self.food)
         directions = [Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN]
         self.food_direction = random.choice(directions)  # Randomly change direction
         # self.food_direction = Direction.RIGHT  # Randomly change direction
@@ -68,7 +61,6 @@ class SnakeGameAI:
             y = min(y + BLOCK_SIZE, self.h - BLOCK_SIZE)
         
         self.food = Point(x, y)
-        print('after', self.food)
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
@@ -84,9 +76,10 @@ class SnakeGameAI:
                 print('Quit')
                 quit()
         
+        # self._move_food()
+
         # 2. move
-        self._move(action) # update the head
-        self.snake.insert(0, self.head)
+        self.snake.move(action)
         
         # 3. check if game over
         reward = 0
@@ -97,11 +90,11 @@ class SnakeGameAI:
             return reward, game_over, self.score
 
         # 4. place new food or just move
-        if self.head == self.food:
+        if self.snake.head == self.food:
             self.score += 1
             reward = 10
             self._place_food()
-        self.snake.pop()
+        # self.snake.pop()
 
 
         # 5. update ui and clock
@@ -109,10 +102,6 @@ class SnakeGameAI:
             self._update_ui()
             self.clock.tick(self.game_speed)
 
-            # Consistent speed
-            # self._move_food()
-        # else:
-        self._move_food()
 
         # 6. return game over and score
         return reward, game_over, self.score
@@ -120,7 +109,7 @@ class SnakeGameAI:
 
     def is_collision(self, pt=None):
         if pt is None:
-            pt = self.head
+            pt = self.snake.head
 
         # hits boundary
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
@@ -132,10 +121,13 @@ class SnakeGameAI:
     def _update_ui(self):
         self.display.fill(BLACK)
 
-        for pt in self.snake:
-            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-            pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
+        # Draw snake
+        pygame.draw.rect(self.display, BLUE1, pygame.Rect(self.snake.head.x, self.snake.head.y, BLOCK_SIZE, BLOCK_SIZE))
 
+        # ?
+        pygame.draw.rect(self.display, BLUE2, pygame.Rect(self.snake.head.x+4, self.snake.head.y+4, 12, 12))
+
+        # Draw food
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
         text = font.render("Score: " + str(self.score), True, WHITE)
