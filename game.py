@@ -1,31 +1,14 @@
 import pygame
 import random
-from enum import Enum
-from collections import namedtuple
 import numpy as np
 
-
-# rgb colors
-WHITE = (255, 255, 255)
-RED = (200,0,0)
-BLUE1 = (0, 0, 255)
-BLUE2 = (0, 100, 255)
-BLACK = (0,0,0)
-
-BLOCK_SIZE = 20
-DIRECTIONS_QUANTITY = 4
-FRAME_RESTRICTION = 1000
+from snake import Snake
+from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
+from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
+from game_settings import REWARD_BASE, REWARD_FOR_WIN, REWARD_FOR_LOOSE
 
 
-class Direction(Enum):
-    RIGHT = 1
-    LEFT = 2
-    UP = 3
-    DOWN = 4
-
-Point = namedtuple('Point', 'x, y')
 pygame.init()
-# font = pygame.font.Font('arial.ttf', 25)
 font = pygame.font.SysFont('arial', 25)
 
 class SnakeGameAI:
@@ -34,7 +17,7 @@ class SnakeGameAI:
         self.h = h
         self.is_rendering = is_rendering
         self.game_speed = game_speed
-        
+
         # init display
         if self.is_rendering:
             self.display = pygame.display.set_mode((self.w, self.h))
@@ -43,14 +26,10 @@ class SnakeGameAI:
 
         self.reset()
 
-
+    # init game state
     def reset(self):
-        # init game state
-        self.direction = Direction.RIGHT
-
-        self.head = Point(self.w/2, self.h/2)
-        self.snake = [self.head]
-
+        self.snake = Snake(head=Point(self.w/2, self.h/2), init_direction=Direction.RIGHT)
+        
         self.score = 0
         self.food = None
         self._place_food()
@@ -59,28 +38,14 @@ class SnakeGameAI:
         self.food_direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
         # self._move_food()
 
-    def _place_food(self):
-        x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-        y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-        self.food = Point(x, y)
-        if self.food in self.snake:
-            self._place_food()
-    
-    def _move_food(self):
-        directions = [Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN]
-        self.food_direction = random.choice(directions)  # Randomly change direction
-        
-        x, y = self.food
-        if self.food_direction == Direction.RIGHT:
-            x = min(x + BLOCK_SIZE, self.w - BLOCK_SIZE)
-        elif self.food_direction == Direction.LEFT:
-            x = max(x - BLOCK_SIZE, 0)
-        elif self.food_direction == Direction.UP:
-            y = max(y - BLOCK_SIZE, 0)
-        elif self.food_direction == Direction.DOWN:
-            y = min(y + BLOCK_SIZE, self.h - BLOCK_SIZE)
-        
-        self.food = Point(x, y)
+    def _place_food(self, random_place=True):
+        if random_place:
+            x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+            y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+            self.food = Point(x, y)
+            
+            if self.food == self.snake.head:
+                self._place_food()
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
@@ -97,23 +62,22 @@ class SnakeGameAI:
                 quit()
         
         # 2. move
-        self._move(action) # update the head
-        self.snake.insert(0, self.head)
+        self.snake.move(action)
         
         # 3. check if game over
-        reward = 0
+        reward = REWARD_BASE
         game_over = False
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
             game_over = True
-            reward = -10
+            reward = REWARD_FOR_LOOSE
             return reward, game_over, self.score
 
         # 4. place new food or just move
-        if self.head == self.food:
+        if self.snake.head == self.food:
             self.score += 1
-            reward = 10
+            reward = REWARD_FOR_WIN
             self._place_food()
-        self.snake.pop()
+        # self.snake.pop()
 
 
         # 5. update ui and clock
@@ -121,10 +85,6 @@ class SnakeGameAI:
             self._update_ui()
             self.clock.tick(self.game_speed)
 
-            # Consistent speed
-            # self._move_food()
-        # else:
-            # self._move_food()
 
         # 6. return game over and score
         return reward, game_over, self.score
@@ -132,7 +92,7 @@ class SnakeGameAI:
 
     def is_collision(self, pt=None):
         if pt is None:
-            pt = self.head
+            pt = self.snake.head
 
         # hits boundary
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
@@ -144,10 +104,13 @@ class SnakeGameAI:
     def _update_ui(self):
         self.display.fill(BLACK)
 
-        for pt in self.snake:
-            pygame.draw.rect(self.display, BLUE1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-            pygame.draw.rect(self.display, BLUE2, pygame.Rect(pt.x+4, pt.y+4, 12, 12))
+        # Draw snake
+        pygame.draw.rect(self.display, BLUE1, pygame.Rect(self.snake.head.x, self.snake.head.y, BLOCK_SIZE, BLOCK_SIZE))
 
+        # ?
+        pygame.draw.rect(self.display, BLUE2, pygame.Rect(self.snake.head.x+4, self.snake.head.y+4, 12, 12))
+
+        # Draw food
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
 
         text = font.render("Score: " + str(self.score), True, WHITE)

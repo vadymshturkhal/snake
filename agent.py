@@ -2,21 +2,13 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from game import SnakeGameAI, Direction, Point
+from game_utils import Direction, Point
 from model import Linear_QNet, QTrainer
-from helper import plot
-from sys import exit
+from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
+from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE
 
 
-MAX_MEMORY = 100_000
-BATCH_SIZE = 1000
-LR = 0.001
-AVAILABLE_DIRECTIONS_QUANTITY = 3
-INPUT_LAYER_SIZE = 11
-HIDDEN_LAYER_SIZE = 256
-OUTPUT_LAYER_SIZE = 3
-
-class Agent:
+class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None):
         self.epsilon = 1.0  # Starting value of epsilon
         self.epsilon_min = 0.01  # Minimum value of epsilon
@@ -42,16 +34,16 @@ class Agent:
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def get_state(self, game):
-        head = game.snake[0]
+        head = game.snake.head
         point_l = Point(head.x - 20, head.y)
         point_r = Point(head.x + 20, head.y)
         point_u = Point(head.x, head.y - 20)
         point_d = Point(head.x, head.y + 20)
         
-        dir_l = game.direction == Direction.LEFT
-        dir_r = game.direction == Direction.RIGHT
-        dir_u = game.direction == Direction.UP
-        dir_d = game.direction == Direction.DOWN
+        dir_l = game.snake.direction == Direction.LEFT
+        dir_r = game.snake.direction == Direction.RIGHT
+        dir_u = game.snake.direction == Direction.UP
+        dir_d = game.snake.direction == Direction.DOWN
 
         state = [
             # Danger straight
@@ -79,10 +71,10 @@ class Agent:
             dir_d,
             
             # Food location 
-            game.food.x < game.head.x,  # food left
-            game.food.x > game.head.x,  # food right
-            game.food.y < game.head.y,  # food up
-            game.food.y > game.head.y  # food down
+            game.food.x < game.snake.head.x,  # food left
+            game.food.x > game.snake.head.x,  # food right
+            game.food.y < game.snake.head.y,  # food up
+            game.food.y > game.snake.head.y  # food down
             ]
         
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)
@@ -107,9 +99,6 @@ class Agent:
         # states, actions, rewards, next_states, dones = zip(*mini_sample)
         # self.trainer.train_batch(states, actions, rewards, next_states, dones)
 
-
-
-
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
 
@@ -132,9 +121,9 @@ class Agent:
 
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
-        final_move = [0] * AVAILABLE_DIRECTIONS_QUANTITY
+        final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if random.randint(0, 200) < self.epsilon:
-            move = random.randint(0, AVAILABLE_DIRECTIONS_QUANTITY - 1)
+            move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
             final_move[move] = 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
