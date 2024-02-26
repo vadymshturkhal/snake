@@ -2,7 +2,7 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from game_utils import Direction, Point
+from game_utils import Direction, Point, DEVICE
 from model import Linear_QNet, QTrainer
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
 from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE
@@ -17,13 +17,13 @@ class SnakeAgent:
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
         self.model = Linear_QNet(INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE)
-        self.model.to_device()
+        self.model.to(DEVICE)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
         # Load the weights onto the CPU
         if is_load_weights:
-            checkpoint = torch.load(weights_filename, map_location=self.device)
-            checkpoint = torch.load(weights_filename, self.device)
+            checkpoint = torch.load(weights_filename, map_location=DEVICE)
+            checkpoint = torch.load(weights_filename, DEVICE)
             
             self.n_games = checkpoint['epoch']
             self.model.load_state_dict(checkpoint['model_state_dict'])
@@ -77,7 +77,7 @@ class SnakeAgent:
             game.food.y > game.snake.head.y  # food down
             ]
         
-        state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)
+        state = torch.from_numpy(np.array(state, dtype=int)).to(DEVICE)
         return state
 
     def remember(self, state, action, reward, next_state, done):

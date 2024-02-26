@@ -1,8 +1,10 @@
 from collections import namedtuple
 from enum import Enum
+import torch
 
 
 Point = namedtuple('Point', 'x, y')
+DEVICE =  torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class Direction(Enum):
     RIGHT = 1

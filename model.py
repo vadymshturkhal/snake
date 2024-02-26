@@ -4,6 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import os
 
+
 class Linear_QNet(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
@@ -27,10 +28,6 @@ class Linear_QNet(nn.Module):
             'model_state_dict': self.state_dict(),
             'epoch': epoch,
             }, file_name)
-    
-    def to_device(self):
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.to(self.device)
 
 class QTrainer:
     def __init__(self, model, lr, gamma):
