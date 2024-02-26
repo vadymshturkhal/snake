@@ -2,6 +2,10 @@
 WEIGHTS_FILENAME = './model/model.pth'
 SCORE_DATA_FILENAME = './model/data.csv'
 
+# Screen
+SCREEN_W = 640
+SCREEN_H = 480
+
 # Game
 BLOCK_SIZE = 20
 DIRECTIONS_QUANTITY = 4

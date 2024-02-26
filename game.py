@@ -6,16 +6,16 @@ from snake import Snake
 from food import Food
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
-from game_settings import REWARD_BASE, REWARD_FOR_WIN, REWARD_FOR_LOOSE
+from game_settings import REWARD_BASE, REWARD_FOR_WIN, REWARD_FOR_LOOSE, SCREEN_W, SCREEN_H
 
 
 pygame.init()
 font = pygame.font.SysFont('arial', 25)
 
 class SnakeGameAI:
-    def __init__(self, w=640, h=480, is_rendering=False, game_speed=20):
-        self.w = w
-        self.h = h
+    def __init__(self, is_rendering=False, game_speed=20):
+        self.w = SCREEN_W
+        self.h = SCREEN_H
         self.is_rendering = is_rendering
         self.game_speed = game_speed
 
@@ -79,6 +79,8 @@ class SnakeGameAI:
             reward = REWARD_FOR_WIN
             self._place_food()
         # self.snake.pop()
+        else:
+            self.food.move()
 
 
         # 5. update ui and clock
