@@ -17,6 +17,7 @@ class SnakeAgent:
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
         self.model = Linear_QNet(INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE)
+        self.model.to_device()
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
         # Load the weights onto the CPU
@@ -26,7 +27,6 @@ class SnakeAgent:
             
             self.n_games = checkpoint['epoch']
             self.model.load_state_dict(checkpoint['model_state_dict'])
-            self.model.to(self.device)
             self.model.eval()
         else:
             self.n_games = 0

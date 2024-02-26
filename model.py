@@ -10,10 +10,6 @@ class Linear_QNet(nn.Module):
         self.linear1 = nn.Linear(input_size, hidden_size)
         self.linear2 = nn.Linear(hidden_size, output_size)
 
-        self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-        self.linear1 = nn.Linear(input_size, hidden_size, device=self.device)
-        self.linear2 = nn.Linear(hidden_size, output_size, device=self.device)
-
     def forward(self, x):
         x = F.relu(self.linear1(x))
         x = self.linear2(x)
@@ -32,11 +28,9 @@ class Linear_QNet(nn.Module):
             'epoch': epoch,
             }, file_name)
     
-    # def load(self, file_name='model.pth'):
-    #     model_folder_path = './model'
-    #     file_name = os.path.join(model_folder_path, file_name)
-    #     model = torch.load(torch.load(file_name))
-    #     model.eval()
+    def to_device(self):
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.to(self.device)
 
 class QTrainer:
     def __init__(self, model, lr, gamma):

@@ -65,7 +65,7 @@ class SnakeGameAI:
         # 2. move
         self.snake.move(action)
         
-        # 3. check if game over
+        # 3. check if game is over
         reward = REWARD_BASE
         game_over = False
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
@@ -73,15 +73,13 @@ class SnakeGameAI:
             reward = REWARD_FOR_LOOSE
             return reward, game_over, self.score
 
-        # 4. place new food or just move
+        # 4. place new food
         if self.food.coordinates == self.snake.head:
             self.score += 1
             reward = REWARD_FOR_WIN
             self._place_food()
-        # self.snake.pop()
         else:
             self.food.move()
-
 
         # 5. update ui and clock
         if self.is_rendering:
