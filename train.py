@@ -36,7 +36,6 @@ def train(agent, game, score_data_filename, games_to_play=0):
 
         # remember
         agent.remember(state_old, final_move, reward, state_new, done)
-
         if done:
             # train long memory, plot result
             game.reset()

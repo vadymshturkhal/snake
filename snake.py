@@ -9,7 +9,6 @@ class Snake:
             self.head = head
             self.direction = init_direction
 
-
             if self.direction is None:
                 self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
@@ -46,18 +45,3 @@ class Snake:
                 y -= BLOCK_SIZE
 
             self.head = Point(x, y)
-
-        def reset(self):
-            # init game state
-            self.direction = Direction.RIGHT
-
-            self.head = Point(self.w/2, self.h/2)
-            self.snake = [self.head]
-
-            self.score = 0
-            self.food = None
-            self._place_food()
-            self.frame_iteration = 0
-
-            self.food_direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
-            # self._move_food()

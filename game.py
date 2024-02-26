@@ -1,10 +1,12 @@
 import pygame
 import random
 import numpy as np
-
+import math
 from snake import Snake
 from food import Food
+
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
+from game_utils import calculate_distance_and_angle, normalize_distance
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
 from game_settings import REWARD_BASE, REWARD_FOR_WIN, REWARD_FOR_LOOSE, SCREEN_W, SCREEN_H
 
@@ -18,6 +20,8 @@ class SnakeGameAI:
         self.h = SCREEN_H
         self.is_rendering = is_rendering
         self.game_speed = game_speed
+        self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
+        self.prev_distance = self.max_possible_distance
 
         # init display
         if self.is_rendering:
@@ -36,7 +40,7 @@ class SnakeGameAI:
         self._place_food()
         self.frame_iteration = 0
 
-        self.food_direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
+        # self.food_direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
         # self._move_food()
 
     def _place_food(self, random_place=True):
@@ -55,6 +59,13 @@ class SnakeGameAI:
 
     def play_step(self, action):
         self.frame_iteration += 1
+
+        # Assuming snake_head and food_position are Point objects with x and y attributes
+        distance, angle = calculate_distance_and_angle(self.snake.head, self.food)
+
+        # Example usage
+        normalized_distance = normalize_distance(distance, self.max_possible_distance)
+
         # 1. collect user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -64,9 +75,15 @@ class SnakeGameAI:
         
         # 2. move
         self.snake.move(action)
-        
-        # 3. check if game is over
+
         reward = REWARD_BASE
+
+        if self.prev_distance > distance:
+            reward += 0.2
+
+        self.prev_distance = distance
+
+        # 3. check if game is over
         game_over = False
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
             game_over = True
@@ -78,8 +95,8 @@ class SnakeGameAI:
             self.score += 1
             reward = REWARD_FOR_WIN
             self._place_food()
-        else:
-            self.food.move()
+        # else:
+            # self.food.move()
 
         # 5. update ui and clock
         if self.is_rendering:
