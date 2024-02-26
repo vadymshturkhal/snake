@@ -5,7 +5,6 @@ from collections import deque
 from game_utils import Direction, Point, DEVICE
 from model import Linear_QNet, QTrainer
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE
 
 
 class SnakeAgent:
@@ -16,7 +15,7 @@ class SnakeAgent:
 
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
-        self.model = Linear_QNet(INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE)
+        self.model = Linear_QNet()
         self.model.to(DEVICE)
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 

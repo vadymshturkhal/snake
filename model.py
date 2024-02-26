@@ -3,13 +3,14 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
+from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE
 
 
 class Linear_QNet(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self):
         super().__init__()
-        self.linear1 = nn.Linear(input_size, hidden_size)
-        self.linear2 = nn.Linear(hidden_size, output_size)
+        self.linear1 = nn.Linear(INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE)
+        self.linear2 = nn.Linear(HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE)
 
     def forward(self, x):
         x = F.relu(self.linear1(x))
