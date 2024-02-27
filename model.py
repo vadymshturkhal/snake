@@ -2,19 +2,28 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-import os
-from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE, WEIGHTS_FILENAME
+from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE1, HIDDEN_LAYER_SIZE2, OUTPUT_LAYER_SIZE
+from game_settings import WEIGHTS_FILENAME
 
 
 class Linear_QNet(nn.Module):
     def __init__(self):
         super().__init__()
-        self.linear1 = nn.Linear(INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE)
-        self.linear2 = nn.Linear(HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE)
+        # First hidden layer
+        self.linear1 = nn.Linear(INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE1)
+        # New second hidden layer, size 64
+        self.linear2 = nn.Linear(HIDDEN_LAYER_SIZE1, HIDDEN_LAYER_SIZE2)
+        # Adjusted output layer, now taking input from the new hidden layer
+        self.linear3 = nn.Linear(HIDDEN_LAYER_SIZE2, OUTPUT_LAYER_SIZE)
 
     def forward(self, x):
+        # Activation for first hidden layer
         x = F.relu(self.linear1(x))
-        x = self.linear2(x)
+        # Activation for new second hidden layer
+        x = F.relu(self.linear2(x))
+        # Output layer does not usually have activation in regression tasks,
+        # or might have a softmax for classification which is not shown here
+        x = self.linear3(x)
         return x
 
     def save(self, epoch=0):
