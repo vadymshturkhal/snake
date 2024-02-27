@@ -62,7 +62,7 @@ def train(agent, game, score_data_filename, games_to_play=0):
 is_load_weights = False
 is_rendering = False
 game_speed = 40
-games_to_play = 200
+games_to_play = 120
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 

@@ -23,6 +23,7 @@ class SnakeGameAI:
         self.game_speed = game_speed
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
         self.prev_distance = self.max_possible_distance
+        self.food_move_counter = 0
 
         # init display
         if self.is_rendering:
@@ -99,6 +100,11 @@ class SnakeGameAI:
             self._update_ui()
             self.clock.tick(self.game_speed)
 
+        # Food twice as slowly as the snake
+        if self.food_move_counter % 2 == 0:
+            self.food.move()
+        self.food_move_counter += 1
+
         # 6. return game over and score
         return reward, game_over, self.score
 
@@ -112,7 +118,6 @@ class SnakeGameAI:
             return True
 
         return False
-
 
     def _update_ui(self):
         self.display.fill(BLACK)

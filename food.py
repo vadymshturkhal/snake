@@ -15,6 +15,7 @@ class Food:
 
         # Randomly change direction
         self.direction = random.choice(directions)
+        # self.direction = Direction.RIGHT
         
         x, y = self.x, self.y
         if self.direction == Direction.RIGHT:
