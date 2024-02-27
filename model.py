@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
-from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE
+from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE, OUTPUT_LAYER_SIZE, WEIGHTS_FILENAME
 
 
 class Linear_QNet(nn.Module):
@@ -17,18 +17,11 @@ class Linear_QNet(nn.Module):
         x = self.linear2(x)
         return x
 
-    def save(self, file_name='model.pth', epoch=0):
-        model_folder_path = './model'
-        if not os.path.exists(model_folder_path):
-            os.makedirs(model_folder_path)
-
-        file_name = os.path.join(model_folder_path, file_name)
-        torch.save(self.state_dict(), file_name)
-
+    def save(self, epoch=0):
         torch.save({
             'model_state_dict': self.state_dict(),
             'epoch': epoch,
-            }, file_name)
+            }, WEIGHTS_FILENAME)
 
 class QTrainer:
     def __init__(self, model, lr, gamma):

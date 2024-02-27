@@ -8,7 +8,8 @@ from food import Food
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
 from game_utils import calculate_distance_and_angle, normalize_distance
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
-from game_settings import REWARD_BASE, REWARD_FOR_WIN, REWARD_FOR_LOOSE, SCREEN_W, SCREEN_H
+from game_settings import SCREEN_W, SCREEN_H
+from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
 
 
 pygame.init()
@@ -76,10 +77,10 @@ class SnakeGameAI:
         # 2. move
         self.snake.move(action)
 
-        reward = REWARD_BASE
-
         if self.prev_distance > distance:
-            reward += 0.2
+            reward = REWARD_CORECT_DIRECTION
+        else:
+            reward = REWARD_WRONG_DIRECTION
 
         self.prev_distance = distance
 
@@ -87,16 +88,14 @@ class SnakeGameAI:
         game_over = False
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
             game_over = True
-            reward = REWARD_FOR_LOOSE
+            reward = REWARD_LOOSE
             return reward, game_over, self.score
 
         # 4. place new food
         if self.food.coordinates == self.snake.head:
             self.score += 1
-            reward = REWARD_FOR_WIN
+            reward = REWARD_WIN
             self._place_food()
-        # else:
-            # self.food.move()
 
         # 5. update ui and clock
         if self.is_rendering:
