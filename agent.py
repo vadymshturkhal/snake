@@ -14,7 +14,7 @@ class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None):
         self.epsilon = 1.0  # Starting value of epsilon
         self.epsilon_min = 0.01  # Minimum value of epsilon
-        self.epsilon_decay = 0.095  # Decay multiplier to apply to epsilon each time
+        self.epsilon_decay = 0.97  # Decay multiplier to apply to epsilon each time
 
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
@@ -126,8 +126,9 @@ class SnakeAgent:
             self.epsilon = max(self.epsilon, self.epsilon_min)
 
     def get_action(self, state):
+        # Linear decay rate
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 80 - self.n_games
+        self.epsilon = 100 - self.n_games
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
@@ -138,5 +139,15 @@ class SnakeAgent:
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
-        self.update_epsilon()
+        # # Exponential decay rate
+        # final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
+        # if random.randint(0, 100) < self.epsilon * 100:  # Convert epsilon to a percentage
+        #     move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
+        #     final_move[move] = 1
+        # else:
+        #     state0 = torch.tensor(state, dtype=torch.float).unsqueeze(0)
+        #     prediction = self.model(state0)
+        #     move = torch.argmax(prediction).item()
+        #     final_move[move] = 1
+
         return final_move

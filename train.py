@@ -54,6 +54,7 @@ def train(agent, game, score_data_filename, games_to_play=0):
             # game.record_score(score_data_filename, score)
             # plot(plot_scores, plot_mean_scores)
             counter += 1
+            agent.update_epsilon()
 
     game.scores_to_csv(score_data_filename, scores)
 
@@ -61,7 +62,7 @@ def train(agent, game, score_data_filename, games_to_play=0):
 is_load_weights = False
 is_rendering = False
 game_speed = 40
-games_to_play = 100
+games_to_play = 200
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 

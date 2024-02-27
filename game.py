@@ -64,9 +64,6 @@ class SnakeGameAI:
         # Assuming snake_head and food_position are Point objects with x and y attributes
         distance, angle = calculate_distance_and_angle(self.snake.head, self.food)
 
-        # Example usage
-        normalized_distance = normalize_distance(distance, self.max_possible_distance)
-
         # 1. collect user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
