@@ -1,6 +1,6 @@
-from agent import SnakeAgent
+from agent import SnakeAgent, FoodAgent
 from game import SnakeGameAI
-from game_settings import WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 
 
 def assure_data_csv(filename, is_load_weights):
@@ -10,7 +10,7 @@ def assure_data_csv(filename, is_load_weights):
     with open(filename, 'w') as file:
         file.write('Score, \n')
 
-def train(snake_agent, game, score_data_filename, games_to_play=0):
+def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None):
     scores = []
     mean_scores = []
     total_score = 0
@@ -47,6 +47,7 @@ games_to_play = 10
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 
-snake_agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=WEIGHTS_FILENAME)
+snake_agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME)
+food_agent = FoodAgent(is_load_weights=False, weights_filename=FOOD_WEIGHTS_FILENAME)
 game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed)
-train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play)
+train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent)

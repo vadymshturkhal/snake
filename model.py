@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE1, HIDDEN_LAYER_SIZE2, OUTPUT_LAYER_SIZE
-from game_settings import WEIGHTS_FILENAME
+from game_settings import SNAKE_WEIGHTS_FILENAME
 
 
 class Linear_QNet(nn.Module):
@@ -30,7 +30,7 @@ class Linear_QNet(nn.Module):
         torch.save({
             'model_state_dict': self.state_dict(),
             'epoch': epoch,
-            }, WEIGHTS_FILENAME)
+            }, SNAKE_WEIGHTS_FILENAME)
 
 class QTrainer:
     def __init__(self, model, lr, gamma):

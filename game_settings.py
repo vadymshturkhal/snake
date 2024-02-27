@@ -1,5 +1,6 @@
 # Files
-WEIGHTS_FILENAME = './model/model.pth'
+SNAKE_WEIGHTS_FILENAME = './model/model_snake.pth'
+FOOD_WEIGHTS_FILENAME = './model/model_food.pth'
 SCORE_DATA_FILENAME = './data/latest.csv'
 
 # Screen
