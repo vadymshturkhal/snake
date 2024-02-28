@@ -73,10 +73,15 @@ class SnakeGameAI:
 
         self.prev_distance = distance
 
-        return snake_reward
+        # 4. place new food
+        if self.food.coordinates == self.snake.head:
+            self.score += 1
+            snake_reward = REWARD_WIN
+            self._place_food()
+
+        return snake_reward, self.score
 
     def play_step(self, snake_reward):
-        # 1. collect user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -90,13 +95,7 @@ class SnakeGameAI:
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
             game_over = True
             snake_reward = REWARD_LOOSE
-            return snake_reward, game_over, self.score
-
-        # 4. place new food
-        if self.food.coordinates == self.snake.head:
-            self.score += 1
-            snake_reward = REWARD_WIN
-            self._place_food()
+            return snake_reward, game_over
 
         # 5. update ui and clock
         if self.is_rendering:
@@ -109,7 +108,7 @@ class SnakeGameAI:
         self.food_move_counter += 1
 
         # 6. return game over and score
-        return snake_reward, game_over, self.score
+        return snake_reward, game_over
 
 
     def is_collision(self, pt=None):
