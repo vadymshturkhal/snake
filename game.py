@@ -60,21 +60,11 @@ class SnakeGameAI:
             for score in scores:
                 file.write(f'{str(score)} \n')
 
-    def play_step(self, action):
-        self.frame_iteration += 1
+    def snake_move(self, action):
+        self.snake.move(action)
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
         distance, angle = calculate_distance_and_angle(self.snake.head, self.food)
-
-        # 1. collect user input
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                print('Quit')
-                quit()
-        
-        # 2. move
-        self.snake.move(action)
 
         if self.prev_distance > distance:
             snake_reward = REWARD_CORECT_DIRECTION
@@ -82,6 +72,44 @@ class SnakeGameAI:
             snake_reward = REWARD_WRONG_DIRECTION
 
         self.prev_distance = distance
+
+        # Eaten food
+        if self.snake.head == self.food.coordinates:
+            self.score += 1
+            snake_reward = REWARD_WIN
+
+        # Check if game is over
+        # game_over = False
+        # if self.is_collision() or self._frame_iteration > FRAME_RESTRICTION:
+        #     game_over = True
+        #     snake_reward = REWARD_LOOSE
+
+        return snake_reward
+
+    def play_step(self, action):
+        # 1. collect user input
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                print('Quit')
+                quit()
+
+        self.frame_iteration += 1
+
+        # Assuming snake_head and food_position are Point objects with x and y attributes
+        distance, angle = calculate_distance_and_angle(self.snake.head, self.food)
+
+        # 2. move
+        # self.snake.move(action)
+
+        # if self.prev_distance > distance:
+        #     snake_reward = REWARD_CORECT_DIRECTION
+        # else:
+        #     snake_reward = REWARD_WRONG_DIRECTION
+
+        # self.prev_distance = distance
+
+        snake_reward = self.snake_move(action)
 
         # 3. check if game is over
         game_over = False
