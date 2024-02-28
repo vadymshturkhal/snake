@@ -29,7 +29,8 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
         final_move = agent.get_action(state_old)
 
         # perform move and get new state
-        reward_snake, done, score = game.play_step(final_move)
+        reward_snake = game.snake_move(final_move)
+        reward_snake, done, score = game.play_step(reward_snake)
         state_new = agent.get_state(game)
 
         # train short memory

@@ -75,7 +75,7 @@ class SnakeGameAI:
 
         return snake_reward
 
-    def play_step(self, action):
+    def play_step(self, snake_reward):
         # 1. collect user input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -84,8 +84,6 @@ class SnakeGameAI:
                 quit()
 
         self.frame_iteration += 1
-
-        snake_reward = self.snake_move(action)
 
         # 3. check if game is over
         game_over = False
