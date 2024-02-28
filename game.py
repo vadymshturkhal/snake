@@ -24,6 +24,7 @@ class SnakeGameAI:
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
         self.prev_distance = self.max_possible_distance
         self.food_move_counter = 0
+        self.food = Food(0, 0)
 
         # init display
         if self.is_rendering:
@@ -38,21 +39,21 @@ class SnakeGameAI:
         self.snake = Snake(head=Point(self.w/2, self.h/2), init_direction=Direction.RIGHT)
         
         self.score = 0
-        self.food = None
         self._place_food()
         self.frame_iteration = 0
 
-        # self.food_direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
-        # self._move_food()
-
     def _place_food(self, random_place=True):
         if random_place:
-            x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-            y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-            self.food = Food(x, y)
-            
-            if self.food.coordinates == self.snake.head:
-                self._place_food()
+            while True:
+                x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+
+                if x == self.snake.head.x and y == self.snake.head.y:
+                    continue
+
+                self.food.x = x
+                self.food.y = y
+                break
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
@@ -76,9 +77,9 @@ class SnakeGameAI:
         self.snake.move(action)
 
         if self.prev_distance > distance:
-            reward = REWARD_CORECT_DIRECTION
+            snake_reward = REWARD_CORECT_DIRECTION
         else:
-            reward = REWARD_WRONG_DIRECTION
+            snake_reward = REWARD_WRONG_DIRECTION
 
         self.prev_distance = distance
 
@@ -86,13 +87,13 @@ class SnakeGameAI:
         game_over = False
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
             game_over = True
-            reward = REWARD_LOOSE
-            return reward, game_over, self.score
+            snake_reward = REWARD_LOOSE
+            return snake_reward, game_over, self.score
 
         # 4. place new food
         if self.food.coordinates == self.snake.head:
             self.score += 1
-            reward = REWARD_WIN
+            snake_reward = REWARD_WIN
             self._place_food()
 
         # 5. update ui and clock
@@ -106,7 +107,7 @@ class SnakeGameAI:
         self.food_move_counter += 1
 
         # 6. return game over and score
-        return reward, game_over, self.score
+        return snake_reward, game_over, self.score
 
 
     def is_collision(self, pt=None):

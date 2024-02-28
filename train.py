@@ -29,14 +29,19 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
         final_move = agent.get_action(state_old)
 
         # perform move and get new state
-        reward, done, score = game.play_step(final_move)
+        reward_snake, done, score = game.play_step(final_move)
         state_new = agent.get_state(game)
 
         # train short memory
-        agent.train_short_memory(state_old, final_move, reward, state_new, done)
+        agent.train_short_memory(state_old, final_move, reward_snake, state_new, done)
 
         # remember
-        agent.remember(state_old, final_move, reward, state_new, done)
+        agent.remember(state_old, final_move, reward_snake, state_new, done)
+
+        # Food Agent
+        food_state_old = food_agent.get_state(game)
+        food_next_move = food_agent.get_action(food_state_old)
+
         if done:
             # train long memory, plot result
             game.reset()
