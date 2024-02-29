@@ -20,15 +20,10 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
     total_score = 0
     record = 0
 
-    counter = 0
-    while counter < games_to_play:
-        # get old state
+    game_counter = 0
+    while game_counter < games_to_play:
         state_old = agent.get_state(game)
-
-        # get move
         snake_move = agent.get_action(state_old)
-
-        # perform move and get new state
         snake_reward, score = game.snake_move(snake_move)
 
         if game.is_eaten():
@@ -38,20 +33,15 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
 
         # Pubish snake if game lost
         snake_reward += punishment
-
         state_new = agent.get_state(game)
-
-        # train short memory
         agent.train_short_memory(state_old, snake_move, snake_reward, state_new, done)
-        # remember
         agent.remember(state_old, snake_move, snake_reward, state_new, done)
 
         # Food Agent
-        food_state_old = food_agent.get_state(game)
-        food_next_move = food_agent.get_action(food_state_old)
+        # food_state_old = food_agent.get_state(game)
+        # food_next_move = food_agent.get_action(food_state_old)
 
         if done:
-            # train long memory, plot result
             game.reset()
             agent.n_games += 1
             agent.train_long_memory()
@@ -60,14 +50,10 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
                 record = score
                 agent.model.save(epoch=agent.n_games)
 
-            # print('Game', agent.n_games, 'Score', score, 'Record:', record)
-
             scores.append(score)
             total_score += score
 
-            # game.record_score(score_data_filename, score)
-            # plot(plot_scores, plot_mean_scores)
-            counter += 1
+            game_counter += 1
             agent.update_epsilon()
 
     game.scores_to_csv(score_data_filename, scores)
