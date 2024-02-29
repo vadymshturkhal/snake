@@ -26,10 +26,10 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
         state_old = agent.get_state(game)
 
         # get move
-        final_move = agent.get_action(state_old)
+        snake_move = agent.get_action(state_old)
 
         # perform move and get new state
-        snake_reward, score = game.snake_move(final_move)
+        snake_reward, score = game.snake_move(snake_move)
         punishment, done = game.play_step()
 
         # Pubish snake if game lost
@@ -38,10 +38,10 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
         state_new = agent.get_state(game)
 
         # train short memory
-        agent.train_short_memory(state_old, final_move, snake_reward, state_new, done)
+        agent.train_short_memory(state_old, snake_move, snake_reward, state_new, done)
 
         # remember
-        agent.remember(state_old, final_move, snake_reward, state_new, done)
+        agent.remember(state_old, snake_move, snake_reward, state_new, done)
 
         # Food Agent
         food_state_old = food_agent.get_state(game)
