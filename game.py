@@ -81,7 +81,7 @@ class SnakeGameAI:
 
         return snake_reward, self.score
 
-    def play_step(self, snake_reward):
+    def play_step(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -90,25 +90,24 @@ class SnakeGameAI:
 
         self.frame_iteration += 1
 
-        # 3. check if game is over
+        # Punish snake if game is over
         game_over = False
         if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
             game_over = True
-            snake_reward = REWARD_LOOSE
-            return snake_reward, game_over
+            return REWARD_LOOSE, game_over
 
-        # 5. update ui and clock
+        # Update UI and clock
         if self.is_rendering:
             self._update_ui()
             self.clock.tick(self.game_speed)
 
-        # Food twice as slowly as the snake
+        # Food speed twice as slowly as the snake
         if self.food_move_counter % 2 == 0:
             self.food.move()
         self.food_move_counter += 1
 
-        # 6. return game over and score
-        return snake_reward, game_over
+        # Return 0 reward if game is not over.
+        return 0, game_over
 
 
     def is_collision(self, pt=None):
