@@ -5,7 +5,6 @@ from collections import deque
 from game_utils import Direction, Point, DEVICE, calculate_distance_and_angle, normalize_distance
 from model import Linear_QNet, QTrainer
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-import logging
 from game_settings import BLOCK_SIZE
 
 
@@ -102,9 +101,6 @@ class SnakeAgent:
         for state, action, reward, next_state, done in transitions:
            self.trainer.train_step(state, action, reward, next_state, done)
 
-        # states, actions, rewards, next_states, dones = zip(*mini_sample)
-        # self.trainer.train_batch(states, actions, rewards, next_states, dones)
-
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
 
@@ -137,17 +133,6 @@ class SnakeAgent:
             prediction = self.model(state0)
             move = torch.argmax(prediction).item()
             final_move[move] = 1
-
-        # # Exponential decay rate
-        # final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-        # if random.randint(0, 100) < self.epsilon * 100:  # Convert epsilon to a percentage
-        #     move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
-        #     final_move[move] = 1
-        # else:
-        #     state0 = torch.tensor(state, dtype=torch.float).unsqueeze(0)
-        #     prediction = self.model(state0)
-        #     move = torch.argmax(prediction).item()
-        #     final_move[move] = 1
 
         return final_move
 
@@ -244,9 +229,6 @@ class FoodAgent:
         for state, action, reward, next_state, done in transitions:
            self.trainer.train_step(state, action, reward, next_state, done)
 
-        # states, actions, rewards, next_states, dones = zip(*mini_sample)
-        # self.trainer.train_batch(states, actions, rewards, next_states, dones)
-
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
 
@@ -279,16 +261,5 @@ class FoodAgent:
             prediction = self.model(state0)
             move = torch.argmax(prediction).item()
             final_move[move] = 1
-
-        # # Exponential decay rate
-        # final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-        # if random.randint(0, 100) < self.epsilon * 100:  # Convert epsilon to a percentage
-        #     move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
-        #     final_move[move] = 1
-        # else:
-        #     state0 = torch.tensor(state, dtype=torch.float).unsqueeze(0)
-        #     prediction = self.model(state0)
-        #     move = torch.argmax(prediction).item()
-        #     final_move[move] = 1
 
         return final_move
