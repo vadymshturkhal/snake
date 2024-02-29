@@ -219,9 +219,9 @@ class FoodAgent:
     def get_action(self, state):
         # Linear decay rate
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 100 - self.n_games
+        self.epsilon = 150 - self.n_games
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-        if random.randint(0, 200) < self.epsilon:
+        if random.randint(0, 150) < self.epsilon:
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
             final_move[move] = 1
         else:
