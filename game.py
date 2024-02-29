@@ -73,13 +73,16 @@ class SnakeGameAI:
 
         self.prev_distance = distance
 
+        return snake_reward, self.score
+
+    def is_eaten(self):
         # 4. place new food
         if self.food.coordinates == self.snake.head:
             self.score += 1
-            snake_reward = REWARD_WIN
             self._place_food()
+            return True
 
-        return snake_reward, self.score
+        return False
 
     def play_step(self):
         for event in pygame.event.get():

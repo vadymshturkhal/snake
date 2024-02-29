@@ -25,6 +25,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
         # perform move and get new state
         snake_reward, score = game.snake_move(snake_move)
+        game.is_eaten()
         punishment, done = game.play_step()
 
         if done:

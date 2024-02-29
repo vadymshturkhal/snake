@@ -1,7 +1,7 @@
 from agent import SnakeAgent, FoodAgent
 from game import SnakeGameAI
 from collections import namedtuple
-from game_settings import SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import REWARD_WIN, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 
 
 
@@ -30,6 +30,10 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
 
         # perform move and get new state
         snake_reward, score = game.snake_move(snake_move)
+
+        if game.is_eaten():
+            snake_reward += REWARD_WIN
+
         punishment, done = game.play_step()
 
         # Pubish snake if game lost
@@ -39,7 +43,6 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
 
         # train short memory
         agent.train_short_memory(state_old, snake_move, snake_reward, state_new, done)
-
         # remember
         agent.remember(state_old, snake_move, snake_reward, state_new, done)
 
