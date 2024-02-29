@@ -104,22 +104,6 @@ class SnakeAgent:
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
 
-    def update_epsilon(self):
-        """
-        Applies exponential decay to epsilon.
-
-        Args:
-            epsilon (float): The current epsilon value.
-            epsilon_min (float): The minimum epsilon value to ensure some level of exploration.
-            epsilon_decay (float): The decay rate applied to epsilon after each episode or step.
-
-        Returns:
-            float: The updated epsilon value.
-        """
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
-            self.epsilon = max(self.epsilon, self.epsilon_min)
-
     def get_action(self, state):
         # Linear decay rate
         # random moves: tradeoff exploration / exploitation
@@ -231,22 +215,6 @@ class FoodAgent:
 
     def train_short_memory(self, state, action, reward, next_state, done):
         self.trainer.train_step(state, action, reward, next_state, done)
-
-    def update_epsilon(self):
-        """
-        Applies exponential decay to epsilon.
-
-        Args:
-            epsilon (float): The current epsilon value.
-            epsilon_min (float): The minimum epsilon value to ensure some level of exploration.
-            epsilon_decay (float): The decay rate applied to epsilon after each episode or step.
-
-        Returns:
-            float: The updated epsilon value.
-        """
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
-            self.epsilon = max(self.epsilon, self.epsilon_min)
 
     def get_action(self, state):
         # Linear decay rate

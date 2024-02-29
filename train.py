@@ -4,7 +4,6 @@ from collections import namedtuple
 from game_settings import REWARD_WIN, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 
 
-
 # Extend the Transition namedtuple with a 'done' field
 Transition = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
 
@@ -54,7 +53,6 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
             total_score += score
 
             game_counter += 1
-            agent.update_epsilon()
 
     game.scores_to_csv(score_data_filename, scores)
 
