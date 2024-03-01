@@ -68,7 +68,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             # Train food
             food_state_new = food_agent.get_state(game)
             food_agent.train_short_memory(food_state_old, food_next_move, food_reward, food_state_new)
-            food_agent.remember(food_state_old, snake_next_move, food_reward, food_state_new)
+            food_agent.remember(food_state_old, food_next_move, food_reward, food_state_new)
 
     game.scores_to_csv(score_data_filename, scores)
 
@@ -81,7 +81,7 @@ games_to_play = 100
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 
 agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME, epochs=games_to_play)
-food_agent = FoodAgent(is_load_weights=False, weights_filename=FOOD_WEIGHTS_FILENAME)
+food_agent = FoodAgent(is_load_weights=False, weights_filename=FOOD_WEIGHTS_FILENAME, epochs=games_to_play)
 
 game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed)
 train(agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent)
