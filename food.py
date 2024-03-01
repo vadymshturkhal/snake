@@ -1,35 +1,50 @@
 import random
-from game_utils import Direction, Point, Direction
-from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H
+import numpy as np
+from game_utils import Point, Direction
+from game_settings import DIRECTIONS_QUANTITY, BLOCK_SIZE, SCREEN_W, SCREEN_H
 
 
 class Food:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.coordinates = Point(x, y)
-        self.direction = None
+    def __init__(self, head):
+        self.head = head
+        self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
-    def move(self):
-        directions = [Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN]
+    def move(self, action=None):
+        # [straight, right, left, no action]
+        clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
 
-        # Randomly change direction
-        self.direction = random.choice(directions)
-        # self.direction = Direction.RIGHT
-        
-        x, y = self.x, self.y
+        # If action is None, choose a random action
+        if action is None:
+            action = [0, 0, 0, 0]
+            action[random.randint(0, 3)] = 1  # Set one of the actions to 1 at random
+
+        # Current direction index
+        idx = clock_wise.index(self.direction)
+
+        if np.array_equal(action, [1, 0, 0, 0]):
+            new_dir = clock_wise[idx]  # no change
+        elif np.array_equal(action, [0, 1, 0, 0]):
+            next_idx = (idx + 1) % DIRECTIONS_QUANTITY
+            new_dir = clock_wise[next_idx]  # right turn r -> d -> l -> u
+        elif np.array_equal(action, [0, 0, 1, 0]):
+            next_idx = (idx - 1) % DIRECTIONS_QUANTITY
+            new_dir = clock_wise[next_idx]  # left turn r -> u -> l -> d
+        elif np.array_equal(action, [0, 0, 0, 1]):
+            new_dir = self.direction  # No action
+        else:
+            raise Exception('Unknown direction')
+
+        self.direction = new_dir
+
+        x = self.head.x
+        y = self.head.y
         if self.direction == Direction.RIGHT:
             x = min(x + BLOCK_SIZE, SCREEN_W - BLOCK_SIZE)
         elif self.direction == Direction.LEFT:
             x = max(x - BLOCK_SIZE, 0)
-        elif self.direction == Direction.UP:
-            y = max(y - BLOCK_SIZE, 0)
         elif self.direction == Direction.DOWN:
             y = min(y + BLOCK_SIZE, SCREEN_H - BLOCK_SIZE)
-        
-        self._update_coordinates(x, y)
+        elif self.direction == Direction.UP:
+            y = max(y - BLOCK_SIZE, 0)
 
-    def _update_coordinates(self, x, y):
-        self.x = x
-        self.y = y
-        self.coordinates = Point(x, y)
+        self.head = Point(x, y)

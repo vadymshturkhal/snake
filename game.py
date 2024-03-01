@@ -24,7 +24,7 @@ class SnakeGameAI:
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
         self.prev_distance = self.max_possible_distance
         self.food_move_counter = 0
-        self.food = Food(0, 0)
+        self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
 
         # init display
         if self.is_rendering:
@@ -51,8 +51,7 @@ class SnakeGameAI:
                 if x == self.snake.head.x and y == self.snake.head.y:
                     continue
 
-                self.food.x = x
-                self.food.y = y
+                self.food.head = Point(x, y)
                 break
 
     def scores_to_csv(self, filename, scores):
@@ -64,7 +63,7 @@ class SnakeGameAI:
         self.snake.move(action)
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance, angle = calculate_distance_and_angle(self.snake.head, self.food)
+        distance, angle = calculate_distance_and_angle(self.snake.head, self.food.head)
 
         if self.prev_distance > distance:
             snake_reward = REWARD_CORECT_DIRECTION
@@ -75,8 +74,14 @@ class SnakeGameAI:
 
         return snake_reward, self.score
 
+    def food_move(self, action=None):
+        # Food speed twice as slowly as the snake
+        if self.food_move_counter % 2 == 0:
+            self.food.move(action)
+        self.food_move_counter += 1
+
     def is_eaten(self):
-        if self.food.coordinates == self.snake.head:
+        if self.food.head == self.snake.head:
             self.score += 1
             self._place_food()
             return True
@@ -103,11 +108,6 @@ class SnakeGameAI:
             self._update_ui()
             self.clock.tick(self.game_speed)
 
-        # Food speed twice as slowly as the snake
-        if self.food_move_counter % 2 == 0:
-            self.food.move()
-        self.food_move_counter += 1
-
         # Return 0 reward if game is not over.
         return 0, game_over
 
@@ -132,7 +132,7 @@ class SnakeGameAI:
         pygame.draw.rect(self.display, BLUE2, pygame.Rect(self.snake.head.x+4, self.snake.head.y+4, 12, 12))
 
         # Draw food
-        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
+        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.head.x, self.food.head.y, BLOCK_SIZE, BLOCK_SIZE))
 
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])

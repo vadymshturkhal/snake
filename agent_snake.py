@@ -48,7 +48,7 @@ class SnakeAgent:
         dir_d = game.snake.direction == Direction.DOWN
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance, angle = calculate_distance_and_angle(head, game.food)
+        distance, angle = calculate_distance_and_angle(head, game.food.head)
 
         # Example usage
         normalized_distance = normalize_distance(distance, game.max_possible_distance)
@@ -79,10 +79,10 @@ class SnakeAgent:
             dir_d,
 
             # Food location
-            game.food.x < head.x,  # food left
-            game.food.x > head.x,  # food right
-            game.food.y < head.y,  # food up
-            game.food.y > head.y,  # food down
+            # game.food.head.x < head.x,  # food left
+            # game.food.head.x > head.x,  # food right
+            # game.food.head.y < head.y,  # food up
+            # game.food.head.y > head.y,  # food down
 
             normalized_distance,
             angle,
@@ -111,7 +111,7 @@ class SnakeAgent:
         self.epsilon = self.epochs - self.n_games
 
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-        if random.randint(0, 100) < self.epsilon:
+        if random.randint(0, self.epochs) < self.epsilon:
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
             final_move[move] = 1
         else:

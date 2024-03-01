@@ -18,14 +18,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
     counter = 0
     while counter < games_to_play:
-        # get old state
         state_old = snake_agent.get_state(game)
-
-        # get move
         snake_move = snake_agent.get_action(state_old)
-
-        # perform move and get new state
         snake_reward, score = game.snake_move(snake_move)
+
         game.is_eaten()
         punishment, done = game.play_step()
 
@@ -39,6 +35,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             mean_scores.append(mean_score)
 
             counter += 1
+        else:
+            game.food_move()
 
     game.scores_to_csv(score_data_filename, scores)
 

@@ -27,11 +27,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
         snake_next_move = snake_agent.get_action(state_old)
         snake_reward, score = game.snake_move(snake_next_move)
 
-        # Food Agent
-        food_state_old = food_agent.get_state(game)
-        food_next_move = food_agent.get_action(food_state_old)
-        # food_reward = game.food_move(food_next_move)
-
         if game.is_eaten():
             snake_reward += REWARD_WIN
 
@@ -44,8 +39,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
         state_new = snake_agent.get_state(game)
         snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, done)
         snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, done)
-
-
 
         if done:
             game.reset()
@@ -60,6 +53,12 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             total_score += score
 
             game_counter += 1
+        else:
+            # Food Agent
+            # food_state_old = food_agent.get_state(game)
+            # food_next_move = food_agent.get_action(food_state_old)
+            # food_reward = game.food_move(food_next_move)
+            game.food_move()
 
     game.scores_to_csv(score_data_filename, scores)
 
@@ -67,7 +66,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 is_load_weights = False
 is_rendering = False
 game_speed = 40
-games_to_play = 100
+games_to_play = 150
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 
