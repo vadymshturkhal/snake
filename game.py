@@ -76,7 +76,6 @@ class SnakeGameAI:
         return snake_reward, self.score
 
     def is_eaten(self):
-        # 4. place new food
         if self.food.coordinates == self.snake.head:
             self.score += 1
             self._place_food()

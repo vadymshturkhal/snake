@@ -15,15 +15,15 @@ def assure_data_csv(filename, is_load_weights):
     with open(filename, 'w') as file:
         file.write('Score, \n')
 
-def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
+def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None):
     scores = []
     total_score = 0
     record = 0
 
     game_counter = 0
     while game_counter < games_to_play:
-        state_old = agent.get_state(game)
-        snake_move = agent.get_action(state_old)
+        state_old = snake_agent.get_state(game)
+        snake_move = snake_agent.get_action(state_old)
         snake_reward, score = game.snake_move(snake_move)
 
         if game.is_eaten():
@@ -31,11 +31,13 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
 
         punishment, done = game.play_step()
 
-        # Pubish snake if game lost
+        # Pubish snake if game is lost
         snake_reward += punishment
-        state_new = agent.get_state(game)
-        agent.train_short_memory(state_old, snake_move, snake_reward, state_new, done)
-        agent.remember(state_old, snake_move, snake_reward, state_new, done)
+
+        # Train snake
+        state_new = snake_agent.get_state(game)
+        snake_agent.train_short_memory(state_old, snake_move, snake_reward, state_new, done)
+        snake_agent.remember(state_old, snake_move, snake_reward, state_new, done)
 
         # Food Agent
         # food_state_old = food_agent.get_state(game)
@@ -43,12 +45,12 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
 
         if done:
             game.reset()
-            agent.n_games += 1
-            agent.train_long_memory()
+            snake_agent.n_games += 1
+            snake_agent.train_long_memory()
 
             if score > record:
                 record = score
-                agent.model.save(epoch=agent.n_games)
+                snake_agent.model.save(epoch=agent.n_games)
 
             scores.append(score)
             total_score += score
