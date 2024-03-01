@@ -6,6 +6,7 @@ from game_utils import Direction, Point, DEVICE, calculate_distance_and_angle, n
 from model import Linear_QNet, QTrainer
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
 from game_settings import BLOCK_SIZE
+from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 
 
 class SnakeAgent:
@@ -17,7 +18,7 @@ class SnakeAgent:
         self.memory = deque(maxlen=MAX_MEMORY)
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-        self.model = Linear_QNet()
+        self.model = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
         self.model.to(self.device)
 
         # Load the weights onto the CPU or GPU

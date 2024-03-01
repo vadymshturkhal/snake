@@ -2,19 +2,18 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from game_settings import INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE1, HIDDEN_LAYER_SIZE2, OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_WEIGHTS_FILENAME
 
 
 class Linear_QNet(nn.Module):
-    def __init__(self):
+    def __init__(self, input_layer, hidden1, hidden2, output_layer):
         super().__init__()
         # First hidden layer
-        self.linear1 = nn.Linear(INPUT_LAYER_SIZE, HIDDEN_LAYER_SIZE1)
+        self.linear1 = nn.Linear(input_layer, hidden1)
         # New second hidden layer, size 64
-        self.linear2 = nn.Linear(HIDDEN_LAYER_SIZE1, HIDDEN_LAYER_SIZE2)
+        self.linear2 = nn.Linear(hidden1, hidden2)
         # Adjusted output layer, now taking input from the new hidden layer
-        self.linear3 = nn.Linear(HIDDEN_LAYER_SIZE2, OUTPUT_LAYER_SIZE)
+        self.linear3 = nn.Linear(hidden2, output_layer)
 
     def forward(self, x):
         # Activation for first hidden layer

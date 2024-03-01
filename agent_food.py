@@ -6,6 +6,7 @@ from game_utils import Direction, Point, DEVICE, calculate_distance_and_angle, n
 from model import Linear_QNet, QTrainer
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
 from game_settings import BLOCK_SIZE
+from game_settings import FOOD_INPUT_LAYER_SIZE, FOOD_HIDDEN_LAYER_SIZE1, FOOD_HIDDEN_LAYER_SIZE2, FOOD_OUTPUT_LAYER_SIZE
 
 
 # Add a reward for any safe step
@@ -19,7 +20,7 @@ class FoodAgent:
         self.memory = deque(maxlen=MAX_MEMORY)
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-        self.model = Linear_QNet()
+        self.model = Linear_QNet(FOOD_INPUT_LAYER_SIZE, FOOD_HIDDEN_LAYER_SIZE1, FOOD_HIDDEN_LAYER_SIZE2, FOOD_OUTPUT_LAYER_SIZE)
         self.model.to(self.device)
 
         # Load the weights onto the CPU or GPU
@@ -73,6 +74,12 @@ class FoodAgent:
             (dir_r and game.is_collision(point_u)) or
             (dir_l and game.is_collision(point_d)),
 
+            # Danger behind
+            (dir_r and game.is_collision(point_l)) or
+            (dir_l and game.is_collision(point_r)) or
+            (dir_u and game.is_collision(point_d)) or
+            (dir_d and game.is_collision(point_u)),
+
             # Move direction
             dir_l,
             dir_r,
@@ -83,7 +90,8 @@ class FoodAgent:
             food.x < game.snake.head.x, 
             food.x > game.snake.head.x, 
             food.y < game.snake.head.y,  
-            food.y > game.snake.head.y,  
+            food.y > game.snake.head.y,
+
             normalized_distance,
             angle,
             ]
