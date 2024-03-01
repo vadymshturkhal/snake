@@ -79,7 +79,7 @@ class SnakeGameAI:
         distance, angle = calculate_distance_and_angle(self.snake.head, self.food.head)
 
         if distance >= self.prev_distance:
-            reward = 1
+            reward = 2
         else:
             reward = -0.1
 

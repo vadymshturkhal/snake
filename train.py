@@ -35,10 +35,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
         # Pubish snake if game is lost
         snake_reward += punishment
 
-        # Train snake
-        state_new = snake_agent.get_state(game)
-        snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, done)
-        snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, done)
+        # # Train snake
+        # state_new = snake_agent.get_state(game)
+        # snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, done)
+        # snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, done)
 
         if done:
             game.reset()
@@ -73,15 +73,16 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     game.scores_to_csv(score_data_filename, scores)
 
 
-is_load_weights = False
+is_load_weights_snake = False
+is_load_weights_food = False
 is_rendering = False
 game_speed = 40
 games_to_play = 100
 
-assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
+assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 
-agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME, epochs=games_to_play)
-food_agent = FoodAgent(is_load_weights=False, weights_filename=FOOD_WEIGHTS_FILENAME, epochs=games_to_play)
+agent = SnakeAgent(is_load_weights=is_load_weights_snake, weights_filename=SNAKE_WEIGHTS_FILENAME, epochs=games_to_play)
+food_agent = FoodAgent(is_load_weights=is_load_weights_food, weights_filename=FOOD_WEIGHTS_FILENAME, epochs=games_to_play)
 
 game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed)
 train(agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent)
