@@ -37,7 +37,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             counter += 1
         else:
             # Random
-            # game.food_move()
+            game.food_move()
 
             # Doesn't work
             # food_state_old = food_agent.get_state(game)
