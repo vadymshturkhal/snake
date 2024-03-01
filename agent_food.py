@@ -11,10 +11,9 @@ from game_settings import FOOD_INPUT_LAYER_SIZE, FOOD_HIDDEN_LAYER_SIZE1, FOOD_H
 
 # Add a reward for any safe step
 class FoodAgent:
-    def __init__(self, is_load_weights=False, weights_filename=None):
-        self.epsilon = 1.0  # Starting value of epsilon
-        self.epsilon_min = 0.01  # Minimum value of epsilon
-        self.epsilon_decay = 0.97  # Decay multiplier to apply to epsilon each time
+    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
+        self.epsilon = 100 # Starting value of epsilon
+        self.epochs = epochs
 
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
@@ -116,7 +115,8 @@ class FoodAgent:
     def get_action(self, state):
         # Linear decay rate
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 150 - self.n_games
+        self.epsilon = self.epochs - self.n_games
+
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if random.randint(0, 150) < self.epsilon:
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)

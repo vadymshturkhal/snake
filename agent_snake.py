@@ -83,6 +83,7 @@ class SnakeAgent:
             game.food.x > head.x,  # food right
             game.food.y < head.y,  # food up
             game.food.y > head.y,  # food down
+
             normalized_distance,
             angle,
             ]
@@ -109,7 +110,6 @@ class SnakeAgent:
         # random moves: tradeoff exploration / exploitation
         self.epsilon = self.epochs - self.n_games
 
-        # self.epsilon -= self.n_games
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if random.randint(0, 100) < self.epsilon:
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
