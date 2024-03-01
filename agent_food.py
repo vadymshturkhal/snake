@@ -38,10 +38,10 @@ class FoodAgent:
 
     def get_state(self, game):
         food = game.food
-        point_l = Point(food.x - BLOCK_SIZE, food.y)
-        point_r = Point(food.x + BLOCK_SIZE, food.y)
-        point_u = Point(food.x, food.y - BLOCK_SIZE)
-        point_d = Point(food.x, food.y + BLOCK_SIZE)
+        point_l = Point(food.head.x - BLOCK_SIZE, food.head.y)
+        point_r = Point(food.head.x + BLOCK_SIZE, food.head.y)
+        point_u = Point(food.head.x, food.head.y - BLOCK_SIZE)
+        point_d = Point(food.head.x, food.head.y + BLOCK_SIZE)
 
         dir_l = game.snake.direction == Direction.LEFT
         dir_r = game.snake.direction == Direction.RIGHT
@@ -86,10 +86,10 @@ class FoodAgent:
             dir_d,
 
             # Snake location
-            food.x < game.snake.head.x, 
-            food.x > game.snake.head.x, 
-            food.y < game.snake.head.y,  
-            food.y > game.snake.head.y,
+            food.head.x < game.snake.head.x, 
+            food.head.x > game.snake.head.x, 
+            food.head.y < game.snake.head.y,  
+            food.head.y > game.snake.head.y,
 
             normalized_distance,
             angle,
@@ -98,19 +98,19 @@ class FoodAgent:
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)
         return state
 
-    def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
+    def remember(self, state, action, reward, next_state):
+        self.memory.append((state, action, reward, next_state)) # popleft if MAX_MEMORY is reached
 
     def train_long_memory(self):
         if len(self.memory) < BATCH_SIZE:
             return  # Not enough samples in the memory yet
 
         transitions = random.sample(self.memory, BATCH_SIZE)
-        for state, action, reward, next_state, done in transitions:
-           self.trainer.train_step(state, action, reward, next_state, done)
+        for state, action, reward, next_state in transitions:
+           self.trainer.train_step(state, action, reward, next_state)
 
-    def train_short_memory(self, state, action, reward, next_state, done):
-        self.trainer.train_step(state, action, reward, next_state, done)
+    def train_short_memory(self, state, action, reward, next_state):
+        self.trainer.train_step(state, action, reward, next_state)
 
     def get_action(self, state):
         # Linear decay rate

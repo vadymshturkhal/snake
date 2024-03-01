@@ -25,11 +25,11 @@ class Linear_QNet(nn.Module):
         x = self.linear3(x)
         return x
 
-    def save(self, epoch=0):
+    def save(self, epoch=0, filename=None):
         torch.save({
             'model_state_dict': self.state_dict(),
             'epoch': epoch,
-            }, SNAKE_WEIGHTS_FILENAME)
+            }, filename)
 
 class QTrainer:
     def __init__(self, model, lr, gamma):
@@ -39,7 +39,7 @@ class QTrainer:
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
-    def train_step(self, state, action, reward, next_state, done):
+    def train_step(self, state, action, reward, next_state, done=False):
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)

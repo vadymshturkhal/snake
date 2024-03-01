@@ -45,9 +45,12 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             snake_agent.n_games += 1
             snake_agent.train_long_memory()
 
+            food_agent.train_long_memory()
+
             if score > record:
                 record = score
-                snake_agent.model.save(epoch=agent.n_games)
+                snake_agent.model.save(epoch=agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
+                food_agent.model.save(epoch=agent.n_games, filename=FOOD_WEIGHTS_FILENAME)
 
             scores.append(score)
             total_score += score
@@ -55,10 +58,17 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             game_counter += 1
         else:
             # Food Agent
-            # food_state_old = food_agent.get_state(game)
-            # food_next_move = food_agent.get_action(food_state_old)
-            # food_reward = game.food_move(food_next_move)
-            game.food_move()
+            # Random
+            # game.food_move()
+
+            food_state_old = food_agent.get_state(game)
+            food_next_move = food_agent.get_action(food_state_old)
+            food_reward = game.food_move(food_next_move)
+
+            # Train food
+            food_state_new = food_agent.get_state(game)
+            food_agent.train_short_memory(food_state_old, food_next_move, food_reward, food_state_new)
+            food_agent.remember(food_state_old, snake_next_move, food_reward, food_state_new)
 
     game.scores_to_csv(score_data_filename, scores)
 
@@ -66,7 +76,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 is_load_weights = False
 is_rendering = False
 game_speed = 40
-games_to_play = 150
+games_to_play = 100
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 

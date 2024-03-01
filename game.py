@@ -70,15 +70,27 @@ class SnakeGameAI:
         else:
             snake_reward = REWARD_WRONG_DIRECTION
 
-        self.prev_distance = distance
+        # self.prev_distance = distance
 
         return snake_reward, self.score
 
     def food_move(self, action=None):
+        # Assuming snake_head and food_position are Point objects with x and y attributes
+        distance, angle = calculate_distance_and_angle(self.snake.head, self.food.head)
+
+        if distance >= self.prev_distance:
+            reward = 1
+        else:
+            reward = -0.1
+
         # Food speed twice as slowly as the snake
         if self.food_move_counter % 2 == 0:
             self.food.move(action)
         self.food_move_counter += 1
+
+        self.prev_distance = distance
+
+        return reward
 
     def is_eaten(self):
         if self.food.head == self.snake.head:
