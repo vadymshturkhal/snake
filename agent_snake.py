@@ -9,8 +9,9 @@ from game_settings import BLOCK_SIZE
 
 
 class SnakeAgent:
-    def __init__(self, is_load_weights=False, weights_filename=None):
+    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
         self.epsilon = 100 # Starting value of epsilon
+        self.epochs = epochs
 
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
@@ -105,7 +106,8 @@ class SnakeAgent:
     def get_action(self, state):
         # Linear decay rate
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 100 - self.n_games
+        self.epsilon = self.epochs - self.n_games
+
         # self.epsilon -= self.n_games
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if random.randint(0, 100) < self.epsilon:

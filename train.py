@@ -65,7 +65,7 @@ games_to_play = 100
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 
-agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME)
+agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME, epochs=games_to_play)
 food_agent = FoodAgent(is_load_weights=False, weights_filename=FOOD_WEIGHTS_FILENAME)
 
 game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed)
