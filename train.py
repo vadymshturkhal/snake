@@ -1,4 +1,5 @@
-from agent import SnakeAgent, FoodAgent
+from agent_snake import SnakeAgent
+from agent_food import FoodAgent
 from game import SnakeGameAI
 from collections import namedtuple
 from game_settings import REWARD_WIN, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
@@ -60,7 +61,7 @@ def train(agent, game, score_data_filename, games_to_play=0, food_agent=None):
 is_load_weights = False
 is_rendering = False
 game_speed = 40
-games_to_play = 150
+games_to_play = 100
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 

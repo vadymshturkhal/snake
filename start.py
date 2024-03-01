@@ -1,4 +1,5 @@
-from agent import SnakeAgent, FoodAgent
+from agent_snake import SnakeAgent
+from agent_food import FoodAgent
 from game import SnakeGameAI
 from game_settings import SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 
