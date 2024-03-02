@@ -3,6 +3,8 @@ from agent_food import FoodAgent
 from game import SnakeGameAI
 from collections import namedtuple
 from game_settings import REWARD_WIN, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
+import time
 
 
 # Extend the Transition namedtuple with a 'done' field
@@ -21,42 +23,51 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     record = 0
 
     game_counter = 0
+    last_snake_update = time.time()
+    last_food_update = last_snake_update
     while game_counter < games_to_play:
-        # Snake Agent
-        state_old = snake_agent.get_state(game)
-        snake_next_move = snake_agent.get_action(state_old)
-        snake_reward, score = game.snake_move(snake_next_move)
+        current_time = time.time()
 
-        if game.is_eaten():
-            snake_reward += REWARD_WIN
+        if current_time - last_snake_update >= SNAKE_SPEED:
+            last_snake_update = current_time
 
-        punishment, done = game.play_step()
+            # Snake Agent
+            state_old = snake_agent.get_state(game)
+            snake_next_move = snake_agent.get_action(state_old)
+            snake_reward, score = game.snake_move(snake_next_move)
 
-        # Pubish snake if game is lost
-        snake_reward += punishment
+            if game.is_eaten():
+                snake_reward += REWARD_WIN
 
-        # Train snake
-        state_new = snake_agent.get_state(game)
-        snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, done)
-        snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, done)
+            punishment, done = game.play_step()
 
-        if done:
-            game.reset()
-            snake_agent.n_games += 1
-            snake_agent.train_long_memory()
+            # Pubish snake if game is lost
+            snake_reward += punishment
 
-            # food_agent.train_long_memory()
+            # Train snake
+            state_new = snake_agent.get_state(game)
+            snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, done)
+            snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, done)
 
-            if score > record:
-                record = score
-                snake_agent.model.save(epoch=agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
-                food_agent.model.save(epoch=agent.n_games, filename=FOOD_WEIGHTS_FILENAME)
+            if done:
+                game.reset()
+                snake_agent.n_games += 1
+                snake_agent.train_long_memory()
 
-            scores.append(score)
-            total_score += score
+                # food_agent.train_long_memory()
 
-            game_counter += 1
-        else:
+                if score > record:
+                    record = score
+                    snake_agent.model.save(epoch=agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
+                    food_agent.model.save(epoch=agent.n_games, filename=FOOD_WEIGHTS_FILENAME)
+
+                scores.append(score)
+                total_score += score
+
+                game_counter += 1
+        
+        if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
+            last_food_update = current_time
             # Random
             game.food_move()
 
