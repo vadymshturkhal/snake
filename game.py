@@ -4,12 +4,14 @@ import numpy as np
 import math
 from snake import Snake
 from food import Food
+import time
 
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
 from game_utils import calculate_distance_and_angle, normalize_distance
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
 from game_settings import SCREEN_W, SCREEN_H
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
+from game_settings import SNAKE_SPEED
 
 
 pygame.init()
@@ -21,6 +23,7 @@ class SnakeGameAI:
         self.h = SCREEN_H
         self.is_rendering = is_rendering
         self.game_speed = game_speed
+
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
         self.prev_distance = self.max_possible_distance
         self.food_move_counter = 0
@@ -70,7 +73,7 @@ class SnakeGameAI:
         else:
             snake_reward = REWARD_WRONG_DIRECTION
 
-        # self.prev_distance = distance
+        self.prev_distance = distance
 
         return snake_reward, self.score
 
@@ -88,7 +91,7 @@ class SnakeGameAI:
             self.food.move(action)
         self.food_move_counter += 1
 
-        self.prev_distance = distance
+        # self.prev_distance = distance
 
         return reward
 
