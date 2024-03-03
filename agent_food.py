@@ -2,7 +2,7 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from game_utils import Direction, Point, DEVICE, calculate_distance_and_angle, normalize_distance
+from game_utils import Direction, Point, DEVICE, calculate_distance, normalize_distance, calculate_angle
 from model import Linear_QNet, QTrainer
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
 from game_settings import BLOCK_SIZE
@@ -49,7 +49,8 @@ class FoodAgent:
         dir_d = game.snake.direction == Direction.DOWN
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance, angle = calculate_distance_and_angle(food.head, game.snake.head)
+        distance = calculate_distance(food.head, game.snake.head)
+        angle = calculate_angle(food.head, game.snake.head)
 
         # Example usage
         normalized_distance = normalize_distance(distance, game.max_possible_distance)

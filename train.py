@@ -64,10 +64,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
                 game_counter += 1
         
-        if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
-            last_food_update = current_time
+        # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
+            # last_food_update = current_time
             # Random
-            game.food_move()
+            # game.food_move()
 
     game.scores_to_csv(score_data_filename, scores)
 

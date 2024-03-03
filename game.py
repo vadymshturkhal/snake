@@ -7,7 +7,7 @@ from food import Food
 import time
 
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
-from game_utils import calculate_distance_and_angle, normalize_distance
+from game_utils import calculate_distance, normalize_distance
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
 from game_settings import SCREEN_W, SCREEN_H
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
@@ -66,7 +66,7 @@ class SnakeGameAI:
         self.snake.move(action)
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance, angle = calculate_distance_and_angle(self.snake.head, self.food.head)
+        distance = calculate_distance(self.snake.head, self.food.head)
 
         if self.prev_distance > distance:
             snake_reward = REWARD_CORECT_DIRECTION
@@ -79,19 +79,14 @@ class SnakeGameAI:
 
     def food_move(self, action=None):
         # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance, angle = calculate_distance_and_angle(self.snake.head, self.food.head)
+        distance = calculate_distance(self.snake.head, self.food.head)
 
         if distance >= self.prev_distance:
             reward = 2
         else:
             reward = -0.1
 
-        # Food speed twice as slowly as the snake
-        if self.food_move_counter % 2 == 0:
-            self.food.move(action)
-        self.food_move_counter += 1
-
-        # self.prev_distance = distance
+        self.food.move(action)
 
         return reward
 
