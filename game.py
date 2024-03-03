@@ -76,7 +76,7 @@ class SnakeGameAI:
         current_angle = calculate_angle(self.snake, self.food.head)
 
         snake_reward = 0
-        if current_angle < self.previous_angle:
+        if current_angle <= self.previous_angle:
             # Snake is turning towards the food
             snake_reward += SNAKE_ANGLE_REWARD
         else:
