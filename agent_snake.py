@@ -79,10 +79,10 @@ class SnakeAgent:
             dir_d,
 
             # Food location
-            # game.food.head.x < head.x,  # food left
-            # game.food.head.x > head.x,  # food right
-            # game.food.head.y < head.y,  # food up
-            # game.food.head.y > head.y,  # food down
+            game.food.head.x < head.x,  # food left
+            game.food.head.x > head.x,  # food right
+            game.food.head.y < head.y,  # food up
+            game.food.head.y > head.y,  # food down
 
             normalized_distance,
             angle,
