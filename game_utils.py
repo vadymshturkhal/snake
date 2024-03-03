@@ -2,16 +2,17 @@ from collections import namedtuple
 from enum import Enum
 import torch
 import math
+import numpy as np
 
 
 Point = namedtuple('Point', 'x, y')
 DEVICE =  torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class Direction(Enum):
-    RIGHT = 1
-    LEFT = 2
-    UP = 3
-    DOWN = 4
+    UP = (0, -1)
+    DOWN = (0, 1)
+    LEFT = (-1, 0)
+    RIGHT = (1, 0)
 
 # rgb colors
 WHITE = (255, 255, 255)
@@ -27,28 +28,22 @@ def calculate_distance(snake_head, food_head):
 
 def calculate_angle(snake, food_position):
     snake_head = snake.head
-    vector_to_food = (food_position.x - snake_head.x, food_position.y - snake_head.y)
-    direction_vector = {Direction.UP: (0, -1), Direction.DOWN: (0, 1),
-                        Direction.LEFT: (-1, 0), Direction.RIGHT: (1, 0)}[snake.direction]
-
-    dot_product = vector_to_food[0] * direction_vector[0] + vector_to_food[1] * direction_vector[1]
-    magnitude_vector_to_food = math.sqrt(vector_to_food[0]**2 + vector_to_food[1]**2)
-    magnitude_direction_vector = 1  # Direction vectors are unit vectors
-
-    # Avoid division by zero by ensuring neither magnitude is zero
-    if magnitude_vector_to_food == 0 or magnitude_direction_vector == 0:
-        return 0  # Can decide on a default value or handling mechanism
-
-    # Proceed with angle calculation
-    cos_angle = dot_product / (magnitude_vector_to_food * magnitude_direction_vector)
+    # Convert enum to direction vector
+    snake_direction_vector = np.array(snake.direction.value)
     
-    # Clamp the cos_angle to the range [-1, 1] to avoid math domain errors
-    cos_angle = max(min(cos_angle, 1), -1)
+    # Vector from snake to food
+    vector_to_food = np.array([food_position[0] - snake_head[0], food_position[1] - snake_head[1]])
     
-    angle = math.acos(cos_angle)
+    # Normalize the vector to food to have a magnitude of 1 for accurate angle calculation
+    vector_to_food_normalized = vector_to_food / np.linalg.norm(vector_to_food)
     
-    # Convert angle to degrees for easier interpretation
-    angle_degrees = math.degrees(angle)
+    # Calculate the dot product and angle
+    dot_product = np.dot(vector_to_food_normalized, snake_direction_vector)
+    dot_product = np.clip(dot_product, -1.0, 1.0)  # Ensure it's within the valid range for arccos
+    angle = np.arccos(dot_product)
+    
+    # Convert angle from radians to degrees
+    angle_degrees = np.degrees(angle)
     
     return angle_degrees
 
