@@ -27,7 +27,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     last_snake_update = time.time()
     last_food_update = last_snake_update
 
-    rwd = Rewards(game)
+    rwd = Rewards()
     while game_counter < games_to_play:
         current_time = time.time()
 
@@ -37,8 +37,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             # Snake Agent
             state_old = snake_agent.get_state(game)
             snake_next_move = snake_agent.get_action(state_old)
-
-            # snake_reward, score = game.snake_move(snake_next_move)
 
             game.snake_move(snake_next_move)
 

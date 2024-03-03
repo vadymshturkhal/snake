@@ -7,25 +7,19 @@ PENALTY_FOR_TIME_WASTING = -0.01
 
 
 class Rewards:
-    def __init__(self, game):
-        self.snake = game.snake
-        self.food = game.food
-
+    def __init__(self):
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
         self.prev_distance = self.max_possible_distance
 
         self.previous_angle = None
 
-    def get_snake_reward(self, snake=None, food=None):
+    def get_snake_reward(self, snake, food):
         if self.previous_angle is None:
-            self.previous_angle = calculate_angle(self.snake, self.food.head)
-
-        self.snake = snake
-        self.food = food
+            self.previous_angle = calculate_angle(snake, food.head)
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance = calculate_distance(self.snake.head, self.food.head)
-        current_angle = calculate_angle(self.snake, self.food.head)
+        distance = calculate_distance(snake.head, food.head)
+        current_angle = calculate_angle(snake, food.head)
 
         snake_reward = 0
         if current_angle <= self.previous_angle:
