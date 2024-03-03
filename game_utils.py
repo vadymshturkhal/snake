@@ -35,7 +35,12 @@ def calculate_angle(snake, food_position):
     vector_to_food = np.array([food_position[0] - snake_head[0], food_position[1] - snake_head[1]])
     
     # Normalize the vector to food to have a magnitude of 1 for accurate angle calculation
-    vector_to_food_normalized = vector_to_food / np.linalg.norm(vector_to_food)
+    norm = np.linalg.norm(vector_to_food)
+    if norm == 0:
+        #  Depending on your game logic, you might want to set vector_to_food_normalized to a specific value when the snake is at the food position
+        vector_to_food_normalized = vector_to_food  # Or handle as appropriate for your application
+    else:
+        vector_to_food_normalized = vector_to_food / norm
     
     # Calculate the dot product and angle
     dot_product = np.dot(vector_to_food_normalized, snake_direction_vector)

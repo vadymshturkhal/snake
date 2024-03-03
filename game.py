@@ -66,33 +66,7 @@ class SnakeGameAI:
             file.write(f'{str(scores[-1])} \n')
 
     def snake_move(self, action):
-        if self.previous_angle is None:
-            self.previous_angle = calculate_angle(self.snake, self.food.head)
-
         self.snake.move(action)
-
-        # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance = calculate_distance(self.snake.head, self.food.head)
-        current_angle = calculate_angle(self.snake, self.food.head)
-
-        snake_reward = 0
-        if current_angle <= self.previous_angle:
-            # Snake is turning towards the food
-            snake_reward += SNAKE_ANGLE_REWARD
-        else:
-            # Snake is turning away from the food
-            snake_reward += SNAKE_ANGLE_PUNISH
-
-        self.previous_angle = current_angle
-
-        if self.prev_distance > distance:
-            snake_reward += REWARD_CORECT_DIRECTION
-        else:
-            snake_reward += REWARD_WRONG_DIRECTION
-
-        self.prev_distance = distance
-
-        return snake_reward, self.score
 
     def food_move(self, action=None):
         # Assuming snake_head and food_position are Point objects with x and y attributes
