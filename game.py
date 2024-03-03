@@ -7,11 +7,11 @@ from food import Food
 import time
 
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
-from game_utils import calculate_distance, normalize_distance, calculate_angle
+from game_utils import calculate_distance, calculate_angle
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
 from game_settings import SCREEN_W, SCREEN_H
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
-from game_settings import SNAKE_SPEED
+from game_settings import SNAKE_ANGLE_REWARD, SNAKE_ANGLE_PUNISH
 
 
 pygame.init()
@@ -63,8 +63,6 @@ class SnakeGameAI:
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
-            # for score in scores:
-                # file.write(f'{str(score)} \n')
             file.write(f'{str(scores[-1])} \n')
 
     def snake_move(self, action):
@@ -80,10 +78,10 @@ class SnakeGameAI:
         snake_reward = 0
         if current_angle < self.previous_angle:
             # Snake is turning towards the food
-            snake_reward += 0.2
+            snake_reward += SNAKE_ANGLE_REWARD
         else:
             # Snake is turning away from the food
-            snake_reward += -0.3
+            snake_reward += SNAKE_ANGLE_PUNISH
 
         self.previous_angle = current_angle
 
