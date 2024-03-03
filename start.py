@@ -47,7 +47,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
         if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
             last_food_update = current_time
             # Random
-            game.food_move()
+            # game.food_move()
 
             # Doesn't work
             # food_state_old = food_agent.get_state(game)
