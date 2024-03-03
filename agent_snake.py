@@ -49,7 +49,11 @@ class SnakeAgent:
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
         distance = calculate_distance(head, game.food.head)
-        angle = calculate_angle(head, game.food.head)
+        angle = calculate_angle(game.snake, game.food.head)
+
+        # Assuming `state` is your current state vector and `current_angle` has been calculated
+        normalized_angle = angle / 360  # Example normalization if angle is in degrees
+
 
         # Example usage
         normalized_distance = normalize_distance(distance, game.max_possible_distance)
@@ -86,7 +90,7 @@ class SnakeAgent:
             game.food.head.y > head.y,  # food down
 
             normalized_distance,
-            angle,
+            normalized_angle,
             ]
 
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)

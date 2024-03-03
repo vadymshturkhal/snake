@@ -7,7 +7,7 @@ from food import Food
 import time
 
 from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
-from game_utils import calculate_distance, normalize_distance
+from game_utils import calculate_distance, normalize_distance, calculate_angle
 from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
 from game_settings import SCREEN_W, SCREEN_H
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
@@ -29,6 +29,8 @@ class SnakeGameAI:
         self.food_move_counter = 0
         self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
 
+        self.previous_angle = None
+
         # init display
         if self.is_rendering:
             self.display = pygame.display.set_mode((self.w, self.h))
@@ -45,6 +47,8 @@ class SnakeGameAI:
         self._place_food()
         self.frame_iteration = 0
 
+        self.previous_angle = None
+
     def _place_food(self, random_place=True):
         if random_place:
             while True:
@@ -59,19 +63,34 @@ class SnakeGameAI:
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
-            for score in scores:
-                file.write(f'{str(score)} \n')
+            # for score in scores:
+                # file.write(f'{str(score)} \n')
+            file.write(f'{str(scores[-1])} \n')
 
     def snake_move(self, action):
+        if self.previous_angle is None:
+            self.previous_angle = calculate_angle(self.snake, self.food.head)
+
         self.snake.move(action)
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
         distance = calculate_distance(self.snake.head, self.food.head)
+        current_angle = calculate_angle(self.snake, self.food.head)
+
+        snake_reward = 0
+        if current_angle < self.previous_angle:
+            # Snake is turning towards the food
+            snake_reward += 0.2
+        else:
+            # Snake is turning away from the food
+            snake_reward += -0.3
+
+        self.previous_angle = current_angle
 
         if self.prev_distance > distance:
-            snake_reward = REWARD_CORECT_DIRECTION
+            snake_reward += REWARD_CORECT_DIRECTION
         else:
-            snake_reward = REWARD_WRONG_DIRECTION
+            snake_reward += REWARD_WRONG_DIRECTION
 
         self.prev_distance = distance
 

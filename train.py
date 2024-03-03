@@ -57,19 +57,20 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 if score > record:
                     record = score
                     snake_agent.model.save(epoch=agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
-                    food_agent.model.save(epoch=agent.n_games, filename=FOOD_WEIGHTS_FILENAME)
 
                 scores.append(score)
                 total_score += score
 
                 game_counter += 1
+
+                game.scores_to_csv(score_data_filename, scores)
         
         if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
             last_food_update = current_time
             # Random
             # game.food_move()
 
-    game.scores_to_csv(score_data_filename, scores)
+        # game.scores_to_csv(score_data_filename, scores)
 
 
 is_load_weights_snake = False
