@@ -25,7 +25,7 @@ class SnakeGameAI:
         self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
 
         self.previous_angle = None
-        self.obstacles_quantity = 10
+        self.obstacles_quantity = 5
 
         # init display
         if self.is_rendering:
@@ -62,11 +62,11 @@ class SnakeGameAI:
                 if food_point == self.snake.head:
                     is_valid_point = False
 
-
                 for obstacle in self.obstacles:
                     if food_point == obstacle:
                         is_valid_point = False
                         break
+
             self.food.head = food_point
 
     def scores_to_csv(self, filename, scores):
