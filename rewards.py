@@ -3,7 +3,6 @@ import math
 from game_utils import calculate_distance, calculate_angle
 from game_settings import SCREEN_W, SCREEN_H, SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
-PENALTY_FOR_TIME_WASTING = -0.01
 
 
 class Rewards:

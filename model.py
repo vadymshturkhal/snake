@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from game_settings import SNAKE_WEIGHTS_FILENAME
 
 
 class Linear_QNet(nn.Module):
