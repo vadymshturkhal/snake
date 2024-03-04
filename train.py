@@ -48,10 +48,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             score = game.score
 
-            punishment, done = game.play_step()
+            punishment = game.play_step()
 
             # Pubish snake if game is lost
-            snake_reward += punishment * game_counter * 0.4
+            snake_reward += punishment * game_counter
 
             # Train snake
             state_new = snake_agent.get_state(game)
@@ -85,7 +85,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 is_load_weights_snake = False
 is_load_weights_food = False
 is_rendering = False
-game_speed = 80
+game_speed = 40
 games_to_play = 100
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)

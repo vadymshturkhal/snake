@@ -1,47 +1,47 @@
 import random
 import numpy as np
 from game_utils import Point, Direction
-from game_settings import DIRECTIONS_QUANTITY, BLOCK_SIZE
+from game_settings import DIRECTIONS_QUANTITY, BLOCK_SIZE, SCREEN_W, SCREEN_H
 
 
 class Snake:
-        def __init__(self, head, init_direction=None):
-            self.head = head
-            self.direction = init_direction
+    def __init__(self, head, init_direction=None):
+        self.head = head
+        self.direction = init_direction
 
-            if self.direction is None:
-                self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
+        if self.direction is None:
+            self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
-        def move(self, action):
-            # [straight, right, left]
+    def move(self, action):
+        # [straight, right, left]
 
-            clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
+        clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
 
-            # Current direction index
-            idx = clock_wise.index(self.direction)
+        # Current direction index
+        idx = clock_wise.index(self.direction)
 
-            if np.array_equal(action, [1, 0, 0]):
-                new_dir = clock_wise[idx] # no change
-            elif np.array_equal(action, [0, 1, 0]):
-                next_idx = (idx + 1) % DIRECTIONS_QUANTITY
-                new_dir = clock_wise[next_idx] # right turn r -> d -> l -> u
-            elif np.array_equal(action, [0, 0, 1]): # [0, 0, 1]
-                next_idx = (idx - 1) % DIRECTIONS_QUANTITY
-                new_dir = clock_wise[next_idx] # left turn r -> u -> l -> d
-            else:
-                raise Exception('Unknown direction', )
+        if np.array_equal(action, [1, 0, 0]):
+            new_dir = clock_wise[idx] # no change
+        elif np.array_equal(action, [0, 1, 0]):
+            next_idx = (idx + 1) % DIRECTIONS_QUANTITY
+            new_dir = clock_wise[next_idx] # right turn r -> d -> l -> u
+        elif np.array_equal(action, [0, 0, 1]): # [0, 0, 1]
+            next_idx = (idx - 1) % DIRECTIONS_QUANTITY
+            new_dir = clock_wise[next_idx] # left turn r -> u -> l -> d
+        else:
+            raise Exception('Unknown direction', )
 
-            self.direction = new_dir
+        self.direction = new_dir
 
-            x = self.head.x
-            y = self.head.y
-            if self.direction == Direction.RIGHT:
-                x += BLOCK_SIZE
-            elif self.direction == Direction.LEFT:
-                x -= BLOCK_SIZE
-            elif self.direction == Direction.DOWN:
-                y += BLOCK_SIZE
-            elif self.direction == Direction.UP:
-                y -= BLOCK_SIZE
+        x = self.head.x
+        y = self.head.y
+        if self.direction == Direction.RIGHT:
+            x += BLOCK_SIZE
+        elif self.direction == Direction.LEFT:
+            x -= BLOCK_SIZE
+        elif self.direction == Direction.DOWN:
+            y += BLOCK_SIZE
+        elif self.direction == Direction.UP:
+            y -= BLOCK_SIZE
 
-            self.head = Point(x, y)
+        self.head = Point(x, y)

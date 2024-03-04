@@ -1,5 +1,6 @@
 from collections import namedtuple
 from enum import Enum
+import heapq
 import torch
 import math
 import numpy as np
@@ -54,3 +55,32 @@ def calculate_angle(snake, food_position):
 
 def normalize_distance(distance, max_distance):
     return distance / max_distance
+
+def sort_obstacles(snake_head, obstacles):
+    # Calculate distance from snake head to each obstacle and store in a list of tuples
+    distances = [(obstacle, calculate_distance(snake_head, obstacle)) for obstacle in obstacles]
+    
+    # Sort the list of tuples based on distance
+    sorted_obstacles = sorted(distances, key=lambda x: x[1])
+    
+    # Extract sorted obstacles without distances
+    sorted_obstacles_without_distances = [obstacle[0] for obstacle in sorted_obstacles]
+    
+    return sorted_obstacles
+
+def sort_obstacles_with_heapq(snake_head, obstacles):
+    # Create a list of (distance, obstacle) tuples
+    obstacles_with_distances = [(calculate_distance(snake_head, obstacle), obstacle) for obstacle in obstacles]
+    
+    # Convert the list into a heap
+    heapq.heapify(obstacles_with_distances)
+    
+    # Initialize an empty list to store sorted obstacles
+    sorted_obstacles = []
+    
+    # Pop elements from the heap until it's empty
+    while obstacles_with_distances:
+        _, obstacle = heapq.heappop(obstacles_with_distances)
+        sorted_obstacles.append(obstacle)
+    
+    return sorted_obstacles

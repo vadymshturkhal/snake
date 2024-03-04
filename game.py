@@ -1,3 +1,4 @@
+from re import I
 import pygame
 import random
 import numpy as np
@@ -51,7 +52,7 @@ class SnakeGameAI:
         self.previous_angle = None
 
         self.obstacles.clear()
-        # self._place_random_obstacles()
+        self._place_random_obstacles()
 
     def _place_food(self, random_place=True):
         if random_place:
@@ -103,10 +104,8 @@ class SnakeGameAI:
         self.frame_iteration += 1
 
         # Punish snake if game is over
-        game_over = False
-        if self.is_collision() or self.frame_iteration > FRAME_RESTRICTION:
-            game_over = True
-            return REWARD_LOOSE, game_over
+        if self.is_collision():
+            return REWARD_LOOSE
 
         # Update UI and clock
         if self.is_rendering:
@@ -114,7 +113,7 @@ class SnakeGameAI:
             self.clock.tick(self.game_speed)
 
         # Return 0 reward if game is not over.
-        return 0, game_over
+        return 0
 
 
     def is_collision(self, pt=None):
@@ -127,8 +126,9 @@ class SnakeGameAI:
 
         # Hits obstacles
         # Check if head hits any obstacle
-        if self.snake.head in self.obstacles:
-            return True
+        for obstacle in self.obstacles:
+            if obstacle == pt:
+                return True
 
         return False
 

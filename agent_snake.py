@@ -2,7 +2,7 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from game_utils import Direction, Point, DEVICE, calculate_distance, normalize_distance, calculate_angle
+from game_utils import Direction, Point, DEVICE, calculate_distance, normalize_distance, calculate_angle, sort_obstacles
 from model import Linear_QNet, QTrainer
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
 from game_settings import BLOCK_SIZE
@@ -54,9 +54,11 @@ class SnakeAgent:
         # Assuming `state` is your current state vector and `current_angle` has been calculated
         normalized_angle = angle / 360  # Example normalization if angle is in degrees
 
-
         # Example usage
         normalized_distance = normalize_distance(distance, game.max_possible_distance)
+
+        # Obstacles
+        closest_point, closest_distance = sort_obstacles(head, game.obstacles)[0]
 
         state = [
             # Danger straight
@@ -91,6 +93,7 @@ class SnakeAgent:
 
             normalized_distance,
             normalized_angle,
+            # closest_distance,
             ]
 
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)

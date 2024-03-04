@@ -33,9 +33,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             score = game.score
 
             game.is_eaten()
-            punishment, done = game.play_step()
+            punishment = game.play_step()
 
-            if done:
+            if punishment:
                 game.reset()
                 snake_agent.n_games += 1
 
@@ -47,7 +47,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 counter += 1
                 game.scores_to_csv(score_data_filename, scores)
 
-        
         if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
             last_food_update = current_time
             # Random
