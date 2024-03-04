@@ -1,7 +1,7 @@
 from agent_snake import SnakeAgent
 from agent_food import FoodAgent
 from game import SnakeGameAI
-from game_settings import SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import FRAME_RESTRICTION, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
 import time
 
@@ -35,7 +35,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             game.is_eaten()
             punishment = game.play_step()
 
-            if punishment:
+            if punishment or game.frame_iteration > FRAME_RESTRICTION:
                 game.reset()
                 snake_agent.n_games += 1
 

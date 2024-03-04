@@ -1,18 +1,12 @@
-from re import I
 import pygame
 import random
 import numpy as np
 import math
 from snake import Snake
 from food import Food
-import time
 
-from game_utils import Point, Direction, WHITE, RED, BLUE1, BLUE2, BLACK
-from game_utils import calculate_distance, calculate_angle
-from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, FRAME_RESTRICTION
-from game_settings import SCREEN_W, SCREEN_H
-from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
-from game_settings import SNAKE_ANGLE_REWARD, SNAKE_ANGLE_PUNISH
+from game_utils import calculate_distance, Direction, Point, WHITE, RED, BLUE1, BLUE2, BLACK
+from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, SCREEN_W, SCREEN_H, REWARD_LOOSE
 
 
 pygame.init()
@@ -31,6 +25,7 @@ class SnakeGameAI:
         self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
 
         self.previous_angle = None
+        self.obstacles_quantity = 10
 
         # init display
         if self.is_rendering:
@@ -56,15 +51,23 @@ class SnakeGameAI:
 
     def _place_food(self, random_place=True):
         if random_place:
-            while True:
+            is_valid_point = False
+            while not is_valid_point:
                 x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
                 y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
 
-                if x == self.snake.head.x and y == self.snake.head.y:
-                    continue
+                food_point = Point(x, y)
+                is_valid_point = True
 
-                self.food.head = Point(x, y)
-                break
+                if food_point == self.snake.head:
+                    is_valid_point = False
+
+
+                for obstacle in self.obstacles:
+                    if food_point == obstacle:
+                        is_valid_point = False
+                        break
+            self.food.head = food_point
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
@@ -134,7 +137,7 @@ class SnakeGameAI:
 
     def _place_random_obstacles(self):
         self.obstacles = []
-        for _ in range(5):  # Let's say we want 5 obstacles
+        for _ in range(self.obstacles_quantity):  # Let's say we want 5 obstacles
             x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
             y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
             obstacle = Point(x, y)
