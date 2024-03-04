@@ -3,9 +3,10 @@ from agent_food import FoodAgent
 from game import SnakeGameAI
 from collections import namedtuple
 from game_settings import REWARD_WIN, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
-from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
+from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
 import time
 from rewards import Rewards
+
 
 
 # Extend the Transition namedtuple with a 'done' field
@@ -54,10 +55,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             # Train snake
             state_new = snake_agent.get_state(game)
-            snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, done)
-            snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, done)
+            snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, False)
+            snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, False)
 
-            if done:
+            if game.frame_iteration > FRAME_RESTRICTION:
                 game.reset()
                 snake_agent.n_games += 1
                 snake_agent.train_long_memory()
@@ -84,7 +85,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 is_load_weights_snake = False
 is_load_weights_food = False
 is_rendering = False
-game_speed = 40
+game_speed = 80
 games_to_play = 100
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)

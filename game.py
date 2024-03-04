@@ -37,6 +37,7 @@ class SnakeGameAI:
             pygame.display.set_caption('Snake')
             self.clock = pygame.time.Clock()
 
+        self.obstacles = []
         self.reset()
 
     # init game state
@@ -48,6 +49,9 @@ class SnakeGameAI:
         self.frame_iteration = 0
 
         self.previous_angle = None
+
+        self.obstacles.clear()
+        # self._place_random_obstacles()
 
     def _place_food(self, random_place=True):
         if random_place:
@@ -117,11 +121,28 @@ class SnakeGameAI:
         if pt is None:
             pt = self.snake.head
 
-        # hits boundary
+        # Hits boundary
         if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
             return True
 
+        # Hits obstacles
+        # Check if head hits any obstacle
+        if self.snake.head in self.obstacles:
+            return True
+
         return False
+
+    def _place_random_obstacles(self):
+        self.obstacles = []
+        for _ in range(5):  # Let's say we want 5 obstacles
+            x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+            y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
+            obstacle = Point(x, y)
+            # Ensure obstacles don't overlap with the snake's initial position or food
+            if obstacle != self.snake and obstacle != self.food:
+                self.obstacles.append(obstacle)
+            else:
+                self._place_random_obstacles()  # Try again if there's an overlap
 
     def _update_ui(self):
         self.display.fill(BLACK)
@@ -134,6 +155,10 @@ class SnakeGameAI:
 
         # Draw food
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.head.x, self.food.head.y, BLOCK_SIZE, BLOCK_SIZE))
+
+        # Draw obstacles
+        for ob in self.obstacles:
+                pygame.draw.rect(self.display, (128, 128, 128), pygame.Rect(ob.x, ob.y, BLOCK_SIZE, BLOCK_SIZE))  # Draw obstacles in gray
 
         text = font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
