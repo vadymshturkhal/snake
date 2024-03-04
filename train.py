@@ -55,8 +55,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             # Train snake
             state_new = snake_agent.get_state(game)
-            snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new, False)
-            snake_agent.remember(state_old, snake_next_move, snake_reward, state_new, False)
+            snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new)
+            snake_agent.remember(state_old, snake_next_move, snake_reward, state_new)
 
             if game.frame_iteration > FRAME_RESTRICTION:
                 game.reset()

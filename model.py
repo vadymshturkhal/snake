@@ -39,7 +39,7 @@ class QTrainer:
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()
 
-    def train_step(self, state, action, reward, next_state, done=False):
+    def train_step(self, state, action, reward, next_state):
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)
@@ -52,18 +52,15 @@ class QTrainer:
             next_state = torch.unsqueeze(next_state, 0)
             action = torch.unsqueeze(action, 0)
             reward = torch.unsqueeze(reward, 0)
-            done = (done, )
 
         # 1: predicted Q values with current state
         pred = self.model(state)
 
         target = pred.clone()
-        for idx in range(len(done)):
-            Q_new = reward[idx]
-            if not done[idx]:
-                Q_new = reward[idx] + self.gamma * torch.max(self.model(next_state[idx]))
+        Q_new = reward[0]
+        Q_new = reward[0] + self.gamma * torch.max(self.model(next_state[0]))
 
-            target[idx][torch.argmax(action[idx]).item()] = Q_new
+        target[0][torch.argmax(action[0]).item()] = Q_new
     
         # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
         # pred.clone()

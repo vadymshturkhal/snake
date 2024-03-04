@@ -96,19 +96,19 @@ class SnakeAgent:
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)
         return state
 
-    def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
+    def remember(self, state, action, reward, next_state):
+        self.memory.append((state, action, reward, next_state)) # popleft if MAX_MEMORY is reached
 
     def train_long_memory(self):
         if len(self.memory) < BATCH_SIZE:
             return  # Not enough samples in the memory yet
 
         transitions = random.sample(self.memory, BATCH_SIZE)
-        for state, action, reward, next_state, done in transitions:
-           self.trainer.train_step(state, action, reward, next_state, done)
+        for state, action, reward, next_state in transitions:
+           self.trainer.train_step(state, action, reward, next_state)
 
-    def train_short_memory(self, state, action, reward, next_state, done):
-        self.trainer.train_step(state, action, reward, next_state, done)
+    def train_short_memory(self, state, action, reward, next_state):
+        self.trainer.train_step(state, action, reward, next_state)
 
     def get_action(self, state):
         # Linear decay rate
