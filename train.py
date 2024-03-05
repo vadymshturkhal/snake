@@ -51,14 +51,14 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             punishment = game.play_step()
 
             # Pubish snake if game is lost
-            snake_reward += punishment * game_counter
+            snake_reward += punishment
 
             # Train snake
             state_new = snake_agent.get_state(game)
             snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new)
             snake_agent.remember(state_old, snake_next_move, snake_reward, state_new)
 
-            if game.frame_iteration > FRAME_RESTRICTION:
+            if game.frame_iteration > FRAME_RESTRICTION or punishment:
                 game.reset()
                 snake_agent.n_games += 1
                 snake_agent.train_long_memory()
@@ -74,8 +74,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
                 game.scores_to_csv(score_data_filename, scores)
         
-        if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
-            last_food_update = current_time
+        # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
+            # last_food_update = current_time
             # Random
             # game.food_move()
 
