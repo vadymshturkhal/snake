@@ -6,7 +6,8 @@ from snake import Snake
 from food import Food
 
 from game_utils import calculate_distance, Direction, Point, WHITE, RED, BLUE1, BLUE2, BLACK
-from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, SCREEN_W, SCREEN_H, REWARD_LOOSE
+from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H, REWARD_LOOSE
+from game_settings import DIRECTIONS_QUANTITY, OBSTACLES_QUANTITY
 
 
 pygame.init()
@@ -25,7 +26,7 @@ class SnakeGameAI:
         self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
 
         self.previous_angle = None
-        self.obstacles_quantity = 5
+        self.obstacles_quantity = OBSTACLES_QUANTITY
 
         # init display
         if self.is_rendering:
