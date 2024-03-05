@@ -37,10 +37,16 @@ class SnakeAgent:
 
     def get_state(self, game):
         head = game.snake.head
+
         point_l = Point(head.x - BLOCK_SIZE, head.y)
         point_r = Point(head.x + BLOCK_SIZE, head.y)
         point_u = Point(head.x, head.y - BLOCK_SIZE)
         point_d = Point(head.x, head.y + BLOCK_SIZE)
+
+        point_ul = Point(head.x - BLOCK_SIZE, head.y - BLOCK_SIZE)
+        point_ur = Point(head.x + BLOCK_SIZE, head.y - BLOCK_SIZE)
+        point_dl = Point(head.x - BLOCK_SIZE, head.y + BLOCK_SIZE)
+        point_dr = Point(head.x + BLOCK_SIZE, head.y + BLOCK_SIZE)
 
         dir_l = game.snake.direction == Direction.LEFT
         dir_r = game.snake.direction == Direction.RIGHT
@@ -58,7 +64,13 @@ class SnakeAgent:
         normalized_distance = normalize_distance(distance, game.max_possible_distance)
 
         # Obstacles
-        closest_point, closest_distance = sort_obstacles(head, game.obstacles)[0]
+        # closest_point, distance_to_closest_obstacle = sort_obstacles(head, game.obstacles)[0]
+
+        # Additional danger checks for diagonal movements
+        danger_ur = (dir_u and game.is_collision(point_ur)) or (dir_r and game.is_collision(point_ur))
+        danger_ul = (dir_u and game.is_collision(point_ul)) or (dir_l and game.is_collision(point_ul))
+        danger_dr = (dir_d and game.is_collision(point_dr)) or (dir_r and game.is_collision(point_dr))
+        danger_dl = (dir_d and game.is_collision(point_dl)) or (dir_l and game.is_collision(point_dl))
 
         state = [
             # Danger straight
@@ -79,6 +91,11 @@ class SnakeAgent:
             (dir_r and game.is_collision(point_u)) or
             (dir_l and game.is_collision(point_d)),
 
+            danger_ur,
+            danger_ul,
+            danger_dr,
+            danger_dl,
+
             # Move direction
             dir_l,
             dir_r,
@@ -93,7 +110,7 @@ class SnakeAgent:
 
             normalized_distance,
             normalized_angle,
-            # closest_distance,
+            # distance_to_closest_obstacle,
             ]
 
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)

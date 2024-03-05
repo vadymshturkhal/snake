@@ -21,7 +21,7 @@ class Rewards:
         current_angle = calculate_angle(snake, food.head)
 
         snake_reward = 0
-        if current_angle <= self.previous_angle:
+        if current_angle < self.previous_angle:
             # Snake is turning towards the food
             snake_reward += SNAKE_ANGLE_REWARD
         else:
@@ -30,7 +30,7 @@ class Rewards:
 
         self.previous_angle = current_angle
 
-        if self.prev_distance > distance:
+        if distance < self.prev_distance:
             snake_reward += REWARD_CORECT_DIRECTION
         else:
             snake_reward += REWARD_WRONG_DIRECTION
