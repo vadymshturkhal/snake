@@ -1,9 +1,8 @@
 from collections import namedtuple
 from enum import Enum
-import heapq
 import torch
-import math
 import numpy as np
+from game_settings import SCREEN_W, SCREEN_H
 
 
 Point = namedtuple('Point', 'x, y')
@@ -73,19 +72,42 @@ def sort_obstacles(snake_head, obstacles):
     
     return sorted_obstacles
 
-def sort_obstacles_with_heapq(snake_head, obstacles):
-    # Create a list of (distance, obstacle) tuples
-    obstacles_with_distances = [(calculate_distance(snake_head, obstacle), obstacle) for obstacle in obstacles]
+def ray_trace_to_obstacle(head, direction, obstacles):
+    """
+    Trace a ray from the snake's head in the current direction until it hits an obstacle or boundary.
     
-    # Convert the list into a heap
-    heapq.heapify(obstacles_with_distances)
-    
-    # Initialize an empty list to store sorted obstacles
-    sorted_obstacles = []
-    
-    # Pop elements from the heap until it's empty
-    while obstacles_with_distances:
-        _, obstacle = heapq.heappop(obstacles_with_distances)
-        sorted_obstacles.append(obstacle)
-    
-    return sorted_obstacles
+    :param head: The starting point of the ray (snake's head position).
+    :param direction: The current direction of the snake.
+    :param obstacles: A list of obstacle positions.
+    :return: The distance to the closest obstacle in the current direction.
+    """
+    BLOCK_SIZE = 20  # Assuming a defined block size for movements.
+    dx, dy = 0, 0
+
+    # Determine the direction vector
+    if direction == Direction.RIGHT:
+        dx = BLOCK_SIZE
+    elif direction == Direction.LEFT:
+        dx = -BLOCK_SIZE
+    elif direction == Direction.UP:
+        dy = -BLOCK_SIZE
+    elif direction == Direction.DOWN:
+        dy = BLOCK_SIZE
+
+    distance = 0
+    current_position = Point(head.x, head.y)
+
+    # Move the ray step by step in the specified direction
+    while True:
+        current_position = Point(current_position.x + dx, current_position.y + dy)
+        distance += BLOCK_SIZE
+
+        # Check for boundary collision
+        if current_position.x < 0 or current_position.x >= SCREEN_W or current_position.y < 0 or current_position.y >= SCREEN_H:
+            break
+
+        # Check for obstacle collision
+        if current_position in obstacles:
+            break
+
+    return distance

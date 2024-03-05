@@ -2,16 +2,15 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from game_utils import Direction, Point, DEVICE, calculate_distance, normalize_distance, calculate_angle, sort_obstacles
+from game_utils import Direction, Point, DEVICE, calculate_distance, normalize_distance, calculate_angle, ray_trace_to_obstacle, sort_obstacles
 from model import Linear_QNet, QTrainer
-from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-from game_settings import BLOCK_SIZE
+from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 
 
 class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
-        self.epsilon = 100 # Starting value of epsilon
+        self.epsilon = epochs # Starting value of epsilon
         self.epochs = epochs
 
         self.gamma = 0.9 # discount rate
@@ -72,6 +71,14 @@ class SnakeAgent:
         danger_dr = (dir_d and game.is_collision(point_dr)) or (dir_r and game.is_collision(point_dr))
         danger_dl = (dir_d and game.is_collision(point_dl)) or (dir_l and game.is_collision(point_dl))
 
+         # Add ray tracing distance to the state
+        distance_to_obstacle = ray_trace_to_obstacle(head, game.snake.direction, game.obstacles)
+
+        # Normalize the distance to obstacle for consistency with other state features
+        normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
+        # print(distance_to_obstacle)
+        # print(normalized_distance_to_obstacle)
+
         state = [
             # Danger straight
             (dir_r and game.is_collision(point_r)) or
@@ -110,7 +117,7 @@ class SnakeAgent:
 
             normalized_distance,
             normalized_angle,
-            # distance_to_closest_obstacle,
+            normalized_distance_to_obstacle
             ]
 
         state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)

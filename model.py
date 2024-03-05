@@ -5,22 +5,19 @@ import torch.nn.functional as F
 
 
 class Linear_QNet(nn.Module):
-    def __init__(self, input_layer, hidden1, hidden2, output_layer):
+    def __init__(self, input_layer, hidden1, hidden2, output_layer, dropout_rate=0.5):
         super().__init__()
-        # First hidden layer
         self.linear1 = nn.Linear(input_layer, hidden1)
-        # New second hidden layer, size 64
+        self.dropout1 = nn.Dropout(dropout_rate)
         self.linear2 = nn.Linear(hidden1, hidden2)
-        # Adjusted output layer, now taking input from the new hidden layer
+        self.dropout2 = nn.Dropout(dropout_rate)
         self.linear3 = nn.Linear(hidden2, output_layer)
 
     def forward(self, x):
-        # Activation for first hidden layer
         x = F.relu(self.linear1(x))
-        # Activation for new second hidden layer
+        x = self.dropout1(x)
         x = F.relu(self.linear2(x))
-        # Output layer does not usually have activation in regression tasks,
-        # or might have a softmax for classification which is not shown here
+        x = self.dropout2(x)
         x = self.linear3(x)
         return x
 
