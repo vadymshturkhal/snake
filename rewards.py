@@ -43,6 +43,6 @@ class Rewards:
 
         for danger in check_dangers(self.game):
             if danger:
-                snake_reward += -2
+                snake_reward += -1
         
         return snake_reward

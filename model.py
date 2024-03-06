@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 
 class Linear_QNet(nn.Module):
-    def __init__(self, input_layer, hidden1, hidden2, output_layer, dropout_rate=0.5):
+    def __init__(self, input_layer, hidden1, hidden2, output_layer, dropout_rate=0.4):
         super().__init__()
         self.linear1 = nn.Linear(input_layer, hidden1)
         self.dropout1 = nn.Dropout(dropout_rate)
