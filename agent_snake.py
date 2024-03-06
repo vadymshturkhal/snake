@@ -12,6 +12,7 @@ from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAK
 class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
         self.epsilon = epochs # Starting value of epsilon
+        self.min_epsilon = 0.001
         self.epochs = epochs
 
         self.gamma = 0.9 # discount rate
@@ -150,7 +151,7 @@ class SnakeAgent:
         self.epsilon = (self.epochs - self.n_games) / self.epochs
 
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-        if np.random.rand() < self.epsilon:
+        if np.random.rand() < max(self.epsilon, self.min_epsilon):
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
             final_move[move] = 1
         else:
