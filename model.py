@@ -3,14 +3,16 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
+from game_settings import DROPOUT_RATE, WEIGHT_DECAY
+
 
 class Linear_QNet(nn.Module):
-    def __init__(self, input_layer, hidden1, hidden2, output_layer, dropout_rate=0.4):
+    def __init__(self, input_layer, hidden1, hidden2, output_layer):
         super().__init__()
         self.linear1 = nn.Linear(input_layer, hidden1)
-        self.dropout1 = nn.Dropout(dropout_rate)
+        self.dropout1 = nn.Dropout(DROPOUT_RATE)
         self.linear2 = nn.Linear(hidden1, hidden2)
-        self.dropout2 = nn.Dropout(dropout_rate)
+        self.dropout2 = nn.Dropout(DROPOUT_RATE)
         self.linear3 = nn.Linear(hidden2, output_layer)
 
     def forward(self, x):
@@ -32,7 +34,7 @@ class QTrainer:
         self.lr = lr
         self.gamma = gamma
         self.model = model
-        self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
+        self.optimizer = optim.Adam(model.parameters(), lr=self.lr, weight_decay=WEIGHT_DECAY)
         self.criterion = nn.MSELoss()
 
     def train_step(self, state, action, reward, next_state):

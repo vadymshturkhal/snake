@@ -79,8 +79,6 @@ class SnakeAgent:
 
         # Normalize the distance to obstacle for consistency with other state features
         normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
-        # print(distance_to_obstacle)
-        # print(normalized_distance_to_obstacle)
 
         state = [
             # Danger straight
