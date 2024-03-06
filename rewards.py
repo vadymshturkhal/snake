@@ -1,18 +1,22 @@
 import math
 
 from game_utils import calculate_distance, calculate_angle
-from game_settings import SCREEN_W, SCREEN_H, SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
+from game_settings import SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
 
 
 class Rewards:
-    def __init__(self):
-        self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
+    def __init__(self, game):
+        self.game = game
+        self.max_possible_distance = math.sqrt(game.w**2 + game.h**2)
         self.prev_distance = self.max_possible_distance
 
         self.previous_angle = None
 
-    def get_snake_reward(self, snake, food):
+    def get_snake_reward(self):
+        snake = self.game.snake
+        food = self.game.food
+
         if self.previous_angle is None:
             self.previous_angle = calculate_angle(snake, food.head)
 
