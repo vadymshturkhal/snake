@@ -42,13 +42,15 @@ class SnakeGameAI:
         self.snake = Snake(head=Point(self.w/2, self.h/2), init_direction=Direction.RIGHT)
         
         self.score = 0
+
+        self.obstacles.clear()
+        self._place_random_obstacles()
+
         self._place_food()
         self.frame_iteration = 0
 
         self.previous_angle = None
 
-        self.obstacles.clear()
-        self._place_random_obstacles()
 
     def _place_food(self, random_place=True):
         if random_place:
