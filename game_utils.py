@@ -2,7 +2,7 @@ from collections import namedtuple
 from enum import Enum
 import torch
 import numpy as np
-from game_settings import SCREEN_W, SCREEN_H
+from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H
 
 
 Point = namedtuple('Point', 'x, y')
@@ -115,3 +115,19 @@ def ray_trace_to_obstacle(head, direction, obstacles):
             break
 
     return distance
+
+def check_dangers(game):
+    dangers = []
+    for direction in Direction:
+        dx, dy = direction.value
+        new_x = game.snake.head.x + (dx * BLOCK_SIZE)
+        new_y = game.snake.head.y + (dy * BLOCK_SIZE)
+        nearest_point = Point(new_x, new_y)
+
+        # Check if the new position is within the grid boundaries
+        if game.is_collision(nearest_point):
+            dangers.append(True)
+        else:
+            dangers.append(False)
+    
+    return dangers

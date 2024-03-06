@@ -2,8 +2,9 @@ import torch
 import random
 import numpy as np
 from collections import deque
-from game_utils import Direction, Point, DEVICE, calculate_distance, normalize_distance, calculate_angle, ray_trace_to_obstacle, sort_obstacles
 from model import Linear_QNet, QTrainer
+
+from game_utils import Direction, Point, calculate_distance, check_dangers, normalize_distance, calculate_angle, ray_trace_to_obstacle
 from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 
@@ -36,6 +37,8 @@ class SnakeAgent:
 
     def get_state(self, game):
         head = game.snake.head
+
+        # dangers = check_dangers(game)
 
         point_l = Point(head.x - BLOCK_SIZE, head.y)
         point_r = Point(head.x + BLOCK_SIZE, head.y)
@@ -97,6 +100,12 @@ class SnakeAgent:
             (dir_u and game.is_collision(point_l)) or
             (dir_r and game.is_collision(point_u)) or
             (dir_l and game.is_collision(point_d)),
+
+            # Danger Behind
+            (dir_d and game.is_collision(point_u)) or
+            (dir_u and game.is_collision(point_d)) or
+            (dir_r and game.is_collision(point_l)) or
+            (dir_l and game.is_collision(point_r)),
 
             danger_ur,
             danger_ul,

@@ -1,6 +1,6 @@
 import math
 
-from game_utils import calculate_distance, calculate_angle
+from game_utils import calculate_distance, calculate_angle, check_dangers
 from game_settings import SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
 
@@ -41,4 +41,8 @@ class Rewards:
 
         self.prev_distance = distance
 
+        for danger in check_dangers(self.game):
+            if danger:
+                snake_reward += -2
+        
         return snake_reward
