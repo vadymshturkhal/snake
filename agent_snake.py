@@ -80,7 +80,7 @@ class SnakeAgent:
         # Normalize the distance to obstacle for consistency with other state features
         normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
 
-        state = [
+        state = np.array([
             # Danger straight
             (dir_r and game.is_collision(point_r)) or
             (dir_l and game.is_collision(point_l)) or
@@ -125,9 +125,9 @@ class SnakeAgent:
             normalized_distance,
             normalized_angle,
             normalized_distance_to_obstacle
-            ]
+            ])
 
-        state = torch.from_numpy(np.array(state, dtype=int)).to(self.device)
+        state = torch.from_numpy(np.array(state, dtype=float)).to(self.device)
         return state
 
     def remember(self, state, action, reward, next_state):

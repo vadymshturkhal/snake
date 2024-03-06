@@ -41,8 +41,8 @@ class Rewards:
 
         self.prev_distance = distance
 
-        for danger in check_dangers(self.game):
-            if danger:
-                snake_reward += -1
+        # for danger in check_dangers(self.game):
+        #     if danger:
+        #         snake_reward += -1
         
         return snake_reward

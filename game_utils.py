@@ -124,10 +124,15 @@ def check_dangers(game):
         new_y = game.snake.head.y + (dy * BLOCK_SIZE)
         nearest_point = Point(new_x, new_y)
 
+        if nearest_point == game.food.head:
+            dangers.append(False)
+            continue
+
         # Check if the new position is within the grid boundaries
         if game.is_collision(nearest_point):
             dangers.append(True)
         else:
             dangers.append(False)
+        
     
     return dangers
