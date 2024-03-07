@@ -5,14 +5,13 @@ from collections import deque
 from model import Linear_QNet, QTrainer
 
 from game_utils import Direction, Point, calculate_distance, check_dangers, normalize_distance, calculate_angle, ray_trace_to_obstacle
-from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE
+from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 
 
 class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
-        self.epsilon = epochs # Starting value of epsilon
-        self.min_epsilon = 0.01
+        self.epsilon = epochs
         self.epochs = epochs
 
         self.gamma = 0.92 # discount rate
@@ -151,7 +150,7 @@ class SnakeAgent:
         self.epsilon = (self.epochs - self.n_games) / self.epochs
 
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-        if np.random.rand() < max(self.epsilon, self.min_epsilon):
+        if np.random.rand() < max(self.epsilon, SNAKE_MIN_EPSILON):
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
             final_move[move] = 1
         else:
