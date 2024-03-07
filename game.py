@@ -124,18 +124,10 @@ class SnakeGameAI:
 
         self.frame_iteration += 1
 
-        # Punish snake if game is over
-        if self.is_collision():
-            return REWARD_LOOSE
-
         # Update UI and clock
         if self.is_rendering:
             self._update_ui()
             self.clock.tick(self.game_speed)
-
-        # Return 0 reward if game is not over.
-        return 0
-
 
     def is_collision(self, pt=None):
         if pt is None:

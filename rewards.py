@@ -14,6 +14,14 @@ class Rewards:
         self.previous_angle = None
 
     def get_snake_reward(self):
+        # Goal reached
+        if self.game.is_eaten():
+            return REWARD_WIN
+
+        # Crashed
+        if self.game.is_collision():
+            return REWARD_LOOSE
+
         snake = self.game.snake
         food = self.game.food
 
@@ -41,10 +49,6 @@ class Rewards:
             snake_reward += REWARD_WRONG_DIRECTION
 
         self.prev_distance = distance
-
-        # Goal reached
-        if self.game.is_eaten():
-            snake_reward += REWARD_WIN
 
         # for danger in check_dangers(self.game):
         #     if danger:

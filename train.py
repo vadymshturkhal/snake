@@ -45,10 +45,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             score = game.score
 
-            punishment = game.play_step()
-
-            # Pubish snake if game is lost
-            snake_reward += punishment
+            game.play_step()
 
             # Train snake
             state_new = snake_agent.get_state(game)
