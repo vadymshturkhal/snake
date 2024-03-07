@@ -77,18 +77,15 @@ class SnakeGameAI:
                 x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
                 y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
 
-                food_point = Point(x, y)
+                snake_point = Point(x, y)
                 is_valid_point = True
 
-                if food_point == self.snake.head:
-                    is_valid_point = False
-
                 for obstacle in self.obstacles:
-                    if food_point == obstacle:
+                    if snake_point == obstacle:
                         is_valid_point = False
                         break
 
-            self.snake.head = food_point
+            self.snake.head = snake_point
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
@@ -158,15 +155,22 @@ class SnakeGameAI:
 
     def _place_random_obstacles(self):
         self.obstacles = []
-        for _ in range(self.obstacles_quantity):  # Let's say we want 5 obstacles
-            x = random.randint(0, (self.w - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
-            y = random.randint(0, (self.h - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
-            obstacle = Point(x, y)
-            # Ensure obstacles don't overlap with the snake's initial position or food
-            if obstacle != self.snake and obstacle != self.food:
-                self.obstacles.append(obstacle)
-            else:
-                self._place_random_obstacles()  # Try again if there's an overlap
+        
+        for _ in range(self.obstacles_quantity):
+            is_valid_point = False
+            while not is_valid_point:
+                x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+
+                obstacle_point = Point(x, y)
+                is_valid_point = True
+
+                for obstacle in self.obstacles:
+                    if obstacle_point == obstacle:
+                        is_valid_point = False
+                        break
+
+            self.obstacles.append(obstacle_point)
 
     def _update_ui(self):
         self.display.fill(BLACK)
