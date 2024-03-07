@@ -26,6 +26,7 @@ class Rewards:
 
         snake_reward = 0
 
+        # Angle
         if current_angle < self.previous_angle:
             snake_reward += SNAKE_ANGLE_REWARD
         else:
@@ -33,12 +34,17 @@ class Rewards:
 
         self.previous_angle = current_angle
 
+        # Distance
         if distance < self.prev_distance:
             snake_reward += REWARD_CORECT_DIRECTION
         else:
             snake_reward += REWARD_WRONG_DIRECTION
 
         self.prev_distance = distance
+
+        # Goal reached
+        if self.game.is_eaten():
+            snake_reward += REWARD_WIN
 
         # for danger in check_dangers(self.game):
         #     if danger:

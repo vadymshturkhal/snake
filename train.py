@@ -43,9 +43,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             snake_reward = rewards.get_snake_reward()
 
-            if game.is_eaten():
-                snake_reward += REWARD_WIN
-
             score = game.score
 
             punishment = game.play_step()
