@@ -14,7 +14,7 @@ class SnakeAgent:
         self.epsilon = epochs
         self.epochs = epochs
 
-        self.gamma = 0.92 # discount rate
+        self.gamma = 0.9
         self.memory = deque(maxlen=MAX_MEMORY)
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
