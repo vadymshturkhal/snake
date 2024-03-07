@@ -12,10 +12,10 @@ from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAK
 class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
         self.epsilon = epochs # Starting value of epsilon
-        self.min_epsilon = 0.001
+        self.min_epsilon = 0.01
         self.epochs = epochs
 
-        self.gamma = 0.9 # discount rate
+        self.gamma = 0.92 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
@@ -101,15 +101,15 @@ class SnakeAgent:
             (dir_l and game.is_collision(point_d)),
 
             # Danger Behind
-            (dir_d and game.is_collision(point_u)) or
-            (dir_u and game.is_collision(point_d)) or
-            (dir_r and game.is_collision(point_l)) or
-            (dir_l and game.is_collision(point_r)),
+            # (dir_d and game.is_collision(point_u)) or
+            # (dir_u and game.is_collision(point_d)) or
+            # (dir_r and game.is_collision(point_l)) or
+            # (dir_l and game.is_collision(point_r)),
 
-            danger_ur,
-            danger_ul,
-            danger_dr,
-            danger_dl,
+            # danger_ur,
+            # danger_ul,
+            # danger_dr,
+            # danger_dl,
 
             # Move direction
             dir_l,
