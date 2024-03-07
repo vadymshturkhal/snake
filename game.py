@@ -39,7 +39,7 @@ class SnakeGameAI:
 
     # init game state
     def reset(self):
-        self.snake = Snake(head=Point(self.w/2, self.h/2), init_direction=Direction.RIGHT)
+        self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), init_direction=Direction.RIGHT)
         
         self.score = 0
 
@@ -155,9 +155,6 @@ class SnakeGameAI:
 
         # Draw snake
         pygame.draw.rect(self.display, BLUE1, pygame.Rect(self.snake.head.x, self.snake.head.y, BLOCK_SIZE, BLOCK_SIZE))
-
-        # ?
-        pygame.draw.rect(self.display, BLUE2, pygame.Rect(self.snake.head.x+4, self.snake.head.y+4, 12, 12))
 
         # Draw food
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.head.x, self.food.head.y, BLOCK_SIZE, BLOCK_SIZE))
