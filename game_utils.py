@@ -26,14 +26,10 @@ BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
 
 def calculate_distance(snake_head, food_head):
-    # dx = food_head.x - snake_head.x
-    # dy = food_head.y - snake_head.y
-    # return math.sqrt(dx**2 + dy**2)
-
     # Manhattan
     dx = abs(food_head.x - snake_head.x)
     dy = abs(food_head.y - snake_head.y)
-    return dx + dy
+    return dx + dy * BLOCK_SIZE
 
 def calculate_angle(snake, food_position):
     snake_head = snake.head
