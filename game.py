@@ -24,6 +24,7 @@ class SnakeGameAI:
         self.prev_distance = self.max_possible_distance
         self.food_move_counter = 0
         self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
+        self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), init_direction=Direction.RIGHT)
 
         self.previous_angle = None
         self.obstacles_quantity = OBSTACLES_QUANTITY
@@ -39,18 +40,15 @@ class SnakeGameAI:
 
     # init game state
     def reset(self):
-        self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), init_direction=Direction.RIGHT)
-        
         self.score = 0
 
         self.obstacles.clear()
         self._place_random_obstacles()
-
         self._place_food()
+        self._place_snake()
         self.frame_iteration = 0
 
         self.previous_angle = None
-
 
     def _place_food(self, random_place=True):
         if random_place:
@@ -71,6 +69,26 @@ class SnakeGameAI:
                         break
 
             self.food.head = food_point
+    
+    def _place_snake(self, random_place=True):
+        if random_place:
+            is_valid_point = False
+            while not is_valid_point:
+                x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+
+                food_point = Point(x, y)
+                is_valid_point = True
+
+                if food_point == self.snake.head:
+                    is_valid_point = False
+
+                for obstacle in self.obstacles:
+                    if food_point == obstacle:
+                        is_valid_point = False
+                        break
+
+            self.snake.head = food_point
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
