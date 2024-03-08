@@ -1,7 +1,7 @@
 import math
 
 from game_utils import calculate_distance, calculate_angle, check_dangers
-from game_settings import SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
+from game_settings import REWARD_CRAWLING, SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
 
 
@@ -32,7 +32,7 @@ class Rewards:
         distance = calculate_distance(snake.head, food.head)
         current_angle = calculate_angle(snake, food.head)
 
-        snake_reward = -0.01 * self.game.counter
+        snake_reward = REWARD_CRAWLING * self.game.counter
 
         # # Angle
         # if current_angle < self.previous_angle:
