@@ -1,3 +1,4 @@
+import time
 import pygame
 import random
 import numpy as np
@@ -20,6 +21,8 @@ class SnakeGameAI:
         self.is_rendering = is_rendering
         self.game_speed = game_speed
         self.counter = 0
+        self.start_time = time.time()
+        self.game_duration = 0
 
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
         self.prev_distance = self.max_possible_distance
@@ -45,6 +48,14 @@ class SnakeGameAI:
     def reset(self):
         self.counter += 1
         self.score = 0
+
+        # Calculate elapsed time
+        end_time = time.time()
+        self.game_duration = end_time - self.start_time
+        self.start_time = time.time()
+
+        # Start timing
+        start_time = time.time()
 
         # self.obstacles.clear()
         # self._place_random_obstacles()
@@ -93,7 +104,7 @@ class SnakeGameAI:
 
     def scores_to_csv(self, filename, scores):
         with open(filename, 'a') as file:
-            file.write(f'{str(scores[-1])} \n')
+            file.write(f'{str(scores[-1])}, {self.game_duration:.4f} \n')
 
     def snake_move(self, action):
         self.snake_is_crashed = self.snake.move(action)

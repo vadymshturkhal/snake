@@ -52,7 +52,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             snake_agent.remember(state_old, snake_next_move, snake_reward, state_new)
 
             # if game.frame_iteration > FRAME_RESTRICTION:
-            if game.snake_is_crashed:
+            # if game.snake_is_crashed:
+            if score == game.counter // 10 + 1:
+            
                 game.reset()
                 snake_agent.n_games += 1
                 snake_agent.train_long_memory()
@@ -78,7 +80,7 @@ is_load_weights_snake = False
 is_load_weights_food = False
 is_rendering = False
 game_speed = 40
-games_to_play = 150
+games_to_play = 100
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 

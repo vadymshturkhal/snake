@@ -10,7 +10,10 @@ with open(SCORE_DATA_FILENAME) as file:
     x = file.readline()
 
     for line in file.readlines():
-        score = int(line)
+        score = int(line.split(',')[0])
+
+        # Time
+        # score = float(line.split(',')[1].split()[0])
         scores.append(score)
 
 # Plot
