@@ -102,10 +102,6 @@ class SnakeGameAI:
 
             self.snake.head = snake_point
 
-    def scores_to_csv(self, filename, scores):
-        with open(filename, 'a') as file:
-            file.write(f'{str(scores[-1])}, {self.game_duration:.4f} \n')
-
     def snake_move(self, action):
         self.snake_is_crashed = self.snake.move(action)
 

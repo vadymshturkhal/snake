@@ -19,9 +19,9 @@ def assure_data_csv(filename, is_load_weights):
     with open(filename, 'w') as file:
         file.write('Score, \n')
 
-def scores_to_csv(filename, scores, game_duration):
+def scores_to_csv(filename, scores, game_duration, snake_reward):
     with open(filename, 'a') as file:
-        file.write(f'{str(scores[-1])}, {game_duration:.4f} \n')
+        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}\n')
 
 def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None):
     scores = []
@@ -32,6 +32,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     last_food_update = last_snake_update
 
     rewards = Rewards(game)
+    snake_game_reward = 0
     while game.counter < games_to_play:
         current_time = time.time()
 
@@ -45,6 +46,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             game.snake_move(snake_next_move)
 
             snake_reward = rewards.get_snake_reward()
+            snake_game_reward += snake_reward
 
             score = game.score
 
@@ -56,8 +58,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             snake_agent.remember(state_old, snake_next_move, snake_reward, state_new)
 
             # if game.frame_iteration > FRAME_RESTRICTION:
-            # if game.snake_is_crashed:
-            if score == game.counter // 10 + 1:
+            if game.snake_is_crashed:
+            # if score == game.counter // 10 + 1:
             
                 game.reset()
                 snake_agent.n_games += 1
@@ -70,7 +72,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 scores.append(score)
                 total_score += score
 
-                scores_to_csv(score_data_filename, scores, game.game_duration)
+                scores_to_csv(score_data_filename, scores, game.game_duration, snake_game_reward)
+                snake_game_reward = 0
         
         # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
             # last_food_update = current_time
