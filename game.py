@@ -24,7 +24,7 @@ class SnakeGameAI:
         self.start_time = time.time()
         self.game_duration = 0
 
-        self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2)
+        self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2) // BLOCK_SIZE
         self.prev_distance = self.max_possible_distance
         self.food_move_counter = 0
         self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
