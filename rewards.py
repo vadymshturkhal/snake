@@ -14,7 +14,7 @@ class Rewards:
     def get_snake_reward(self):
         # Goal reached
         if self.game.is_eaten():
-            return REWARD_WIN
+            return self.game.max_possible_distance
 
         # Crashed
         if self.game.snake_is_crashed:
@@ -31,6 +31,7 @@ class Rewards:
         current_angle = calculate_angle(snake, food.head)
 
         snake_reward = REWARD_CRAWLING * self.game.game_duration
+        snake_reward = snake_reward - self.game.counter * 0.01
 
         # # Angle
         # if current_angle < self.previous_angle:
