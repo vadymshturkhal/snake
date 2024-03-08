@@ -19,7 +19,7 @@ class Rewards:
             return REWARD_WIN
 
         # Crashed
-        if self.game.is_collision():
+        if self.game.snake_is_crashed:
             return REWARD_LOOSE
 
         snake = self.game.snake
@@ -32,23 +32,23 @@ class Rewards:
         distance = calculate_distance(snake.head, food.head)
         current_angle = calculate_angle(snake, food.head)
 
-        snake_reward = 0
+        snake_reward = -0.01
 
-        # Angle
-        if current_angle < self.previous_angle:
-            snake_reward += SNAKE_ANGLE_REWARD
-        else:
-            snake_reward += SNAKE_ANGLE_PUNISH
+        # # Angle
+        # if current_angle < self.previous_angle:
+        #     snake_reward += SNAKE_ANGLE_REWARD
+        # else:
+        #     snake_reward += SNAKE_ANGLE_PUNISH
 
-        self.previous_angle = current_angle
+        # self.previous_angle = current_angle
 
-        # Distance
-        if distance < self.prev_distance:
-            snake_reward += REWARD_CORECT_DIRECTION
-        else:
-            snake_reward += REWARD_WRONG_DIRECTION
+        # # Distance
+        # if distance < self.prev_distance:
+        #     snake_reward += REWARD_CORECT_DIRECTION
+        # else:
+        #     snake_reward += REWARD_WRONG_DIRECTION
 
-        self.prev_distance = distance
+        # self.prev_distance = distance
 
         # for danger in check_dangers(self.game):
         #     if danger:

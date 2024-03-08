@@ -29,6 +29,8 @@ class SnakeGameAI:
         self.previous_angle = None
         self.obstacles_quantity = OBSTACLES_QUANTITY
 
+        self.snake_is_crashed = False
+
         # init display
         if self.is_rendering:
             self.display = pygame.display.set_mode((self.w, self.h))
@@ -42,8 +44,8 @@ class SnakeGameAI:
     def reset(self):
         self.score = 0
 
-        self.obstacles.clear()
-        self._place_random_obstacles()
+        # self.obstacles.clear()
+        # self._place_random_obstacles()
         self._place_food()
         self._place_snake()
         self.frame_iteration = 0
@@ -92,7 +94,7 @@ class SnakeGameAI:
             file.write(f'{str(scores[-1])} \n')
 
     def snake_move(self, action):
-        self.snake.move(action)
+        self.snake_is_crashed = self.snake.move(action)
 
     def food_move(self, action=None):
         # Assuming snake_head and food_position are Point objects with x and y attributes

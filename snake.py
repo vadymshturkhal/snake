@@ -12,7 +12,7 @@ class Snake:
         if self.direction is None:
             self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
-    def move(self, action):
+    def move(self, action) -> bool:
         # [straight, right, left]
 
         clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
@@ -35,13 +35,37 @@ class Snake:
 
         x = self.head.x
         y = self.head.y
+
+        is_crashed = False
+
         if self.direction == Direction.RIGHT:
-            x += BLOCK_SIZE
+            x_new = x + BLOCK_SIZE
+            if x_new < SCREEN_W:
+                x = x_new
+            else:
+                is_crashed = True
+
         elif self.direction == Direction.LEFT:
-            x -= BLOCK_SIZE
+            x_new = x - BLOCK_SIZE
+            if x_new >= 0:
+                x = x_new
+            else:
+                is_crashed = True
+
         elif self.direction == Direction.DOWN:
-            y += BLOCK_SIZE
+            y_new = y + BLOCK_SIZE
+            if y_new < SCREEN_H:
+                y = y_new
+            else:
+                is_crashed = True
+
         elif self.direction == Direction.UP:
-            y -= BLOCK_SIZE
+            y_new = y - BLOCK_SIZE
+            if y_new >= 0:
+                y = y_new
+            else:
+                is_crashed = True
 
         self.head = Point(x, y)
+
+        return is_crashed

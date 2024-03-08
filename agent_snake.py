@@ -122,9 +122,9 @@ class SnakeAgent:
             game.food.head.y < head.y,  # food up
             game.food.head.y > head.y,  # food down
 
-            normalized_distance,
-            normalized_angle,
-            normalized_distance_to_obstacle
+            # normalized_distance,
+            # normalized_angle,
+            # normalized_distance_to_obstacle
             ])
 
         state = torch.from_numpy(np.array(state, dtype=float)).to(self.device)
