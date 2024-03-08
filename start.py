@@ -33,9 +33,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             score = game.score
 
             game.is_eaten()
-            punishment = game.play_step()
+            game.play_step()
 
-            if punishment or game.frame_iteration > FRAME_RESTRICTION:
+            if game.snake_is_crashed:
                 game.reset()
                 snake_agent.n_games += 1
 

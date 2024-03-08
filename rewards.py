@@ -32,7 +32,7 @@ class Rewards:
         distance = calculate_distance(snake.head, food.head)
         current_angle = calculate_angle(snake, food.head)
 
-        snake_reward = -0.01
+        snake_reward = -0.01 * self.game.counter
 
         # # Angle
         # if current_angle < self.previous_angle:
