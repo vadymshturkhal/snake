@@ -8,9 +8,7 @@ from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWAR
 class Rewards:
     def __init__(self, game):
         self.game = game
-        self.max_possible_distance = math.sqrt(game.w**2 + game.h**2)
-        self.prev_distance = self.max_possible_distance
-
+        self.prev_distance = game.max_possible_distance
         self.previous_angle = None
 
     def get_snake_reward(self):
