@@ -51,8 +51,8 @@ class SnakeGameAI:
 
         # self.obstacles.clear()
         # self._place_random_obstacles()
-        self._place_snake(random_place=True)
-        self._place_food()
+        self._place_snake(random_place=False)
+        self._place_food(random_place=False)
         self.frame_iteration = 0
 
         self.previous_angle = None
@@ -62,6 +62,7 @@ class SnakeGameAI:
             is_valid_point = False
             while not is_valid_point:
                 x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                # x = self.w-BLOCK_SIZE
                 y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
 
                 food_point = Point(x, y)
@@ -74,8 +75,9 @@ class SnakeGameAI:
                     if food_point == obstacle:
                         is_valid_point = False
                         break
-
-            self.food.head = food_point
+        else:
+            food_point = Point(self.w - BLOCK_SIZE, self.h // 2 - BLOCK_SIZE)
+        self.food.head = food_point
     
     def _place_snake(self, random_place=True):
         if random_place:
@@ -92,31 +94,17 @@ class SnakeGameAI:
                         is_valid_point = False
                         break
         else:
-            snake_point = Point(0, self.h // 2)
-
-            self.snake.head = snake_point
+            snake_point = Point(0, self.h // 2 - BLOCK_SIZE)
+        self.snake.head = snake_point
 
     def snake_move(self, action):
         self.snake_is_crashed = self.snake.move(action)
         self.snake_steps += 1
 
-    def food_move(self, action=None):
-        # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance = calculate_distance(self.snake.head, self.food.head)
-
-        if distance >= self.prev_distance:
-            reward = 2
-        else:
-            reward = -0.1
-
-        self.food.move(action)
-
-        return reward
-
     def is_eaten(self):
         if self.food.head == self.snake.head:
             self.score += 1
-            self._place_food()
+            self.reset()
             return True
 
         return False
