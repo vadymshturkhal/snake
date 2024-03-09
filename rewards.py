@@ -18,8 +18,7 @@ class Rewards:
 
         # Crashed
         if self.game.snake_is_crashed:
-            return REWARD_LOOSE
+            return REWARD_LOOSE * self.game.counter
 
-        snake_reward = -(REWARD_CRAWLING)
-
+        snake_reward = REWARD_CRAWLING
         return snake_reward
