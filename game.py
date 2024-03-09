@@ -51,7 +51,7 @@ class SnakeGameAI:
 
         # self.obstacles.clear()
         # self._place_random_obstacles()
-        self._place_snake(random_place=False)
+        self._place_snake(random_place=True)
         self._place_food()
         self.frame_iteration = 0
 

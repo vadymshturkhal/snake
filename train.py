@@ -35,15 +35,12 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     timer = Timer()
 
     snake_game_reward = 0
-    while game.counter < games_to_play:
-        timer.start()
-        timer.stop()
+    timer.start()
 
+    while game.counter < games_to_play:
         current_time = time.time()
 
         if current_time - last_snake_update >= SNAKE_SPEED:
-            timer.continue_timer()
-
             last_snake_update = current_time
 
             # Snake Agent
@@ -59,9 +56,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             game.play_step()
 
-            # Stop timer
-            timer.stop()
-
             # Train snake
             state_new = snake_agent.get_state(game)
             snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new)
@@ -70,6 +64,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             # if game.frame_iteration > FRAME_RESTRICTION:
             if game.snake_is_crashed:
             # if score == game.counter // 10 + 1:
+            # if score == 10:
+                elapsed_time = timer.get_elapsed_time()
+                timer.reset()
+
                 game.reset()
                 snake_agent.n_games += 1
                 snake_agent.train_long_memory()
@@ -81,10 +79,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 scores.append(score)
                 total_score += score
 
-                scores_to_csv(score_data_filename, scores, timer.get_elapsed_time(), snake_game_reward)
-                timer.reset()
+                scores_to_csv(score_data_filename, scores, elapsed_time, snake_game_reward)
                 snake_game_reward = 0
-        
+                timer.start()
         # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
             # last_food_update = current_time
             # Random
@@ -93,11 +90,11 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
         # game.scores_to_csv(score_data_filename, scores)
 
 
-is_load_weights_snake = True
+is_load_weights_snake = False
 is_load_weights_food = False
 is_rendering = False
-game_speed = 40
-games_to_play = 200
+game_speed = 400
+games_to_play = 300
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 

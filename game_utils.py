@@ -130,7 +130,6 @@ def check_dangers(game):
             dangers.append(True)
         else:
             dangers.append(False)
-        
     
     return dangers
 
@@ -158,8 +157,8 @@ class Timer:
         if not self.is_running:
             self.start_time = time.time() - self.elapsed_time
             self.is_running = True
-        else:
-            print("Timer is already running.")
+        # else:
+            # print("Timer is already running.")
 
     def get_elapsed_time(self):
         if self.is_running:
