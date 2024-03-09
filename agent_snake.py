@@ -123,7 +123,7 @@ class SnakeAgent:
             game.food.head.y > head.y,  # food down
 
             # normalized_distance,
-            # normalized_angle,
+            normalized_angle,
             # normalized_distance_to_obstacle
             ])
 

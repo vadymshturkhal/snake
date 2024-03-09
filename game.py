@@ -23,6 +23,7 @@ class SnakeGameAI:
         self.counter = 0
         self.start_time = time.time()
         self.game_duration = 0
+        self.snake_steps = 0
 
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2) // BLOCK_SIZE
         self.prev_distance = self.max_possible_distance
@@ -48,19 +49,17 @@ class SnakeGameAI:
     def reset(self):
         self.counter += 1
         self.score = 0
+        self.snake_steps = 0
 
         # Calculate elapsed time
         end_time = time.time()
         self.game_duration = end_time - self.start_time
         self.start_time = time.time()
 
-        # Start timing
-        start_time = time.time()
-
         # self.obstacles.clear()
         # self._place_random_obstacles()
+        self._place_snake(random_place=False)
         self._place_food()
-        self._place_snake()
         self.frame_iteration = 0
 
         self.previous_angle = None
@@ -99,11 +98,14 @@ class SnakeGameAI:
                     if snake_point == obstacle:
                         is_valid_point = False
                         break
+        else:
+            snake_point = Point(0, self.h // 2)
 
             self.snake.head = snake_point
 
     def snake_move(self, action):
         self.snake_is_crashed = self.snake.move(action)
+        self.snake_steps += 1
 
     def food_move(self, action=None):
         # Assuming snake_head and food_position are Point objects with x and y attributes
