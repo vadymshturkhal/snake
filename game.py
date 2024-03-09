@@ -104,7 +104,7 @@ class SnakeGameAI:
     def is_eaten(self):
         if self.food.head == self.snake.head:
             self.score += 1
-            self.reset()
+            self._place_food()
             return True
 
         return False
