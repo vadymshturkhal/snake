@@ -6,7 +6,7 @@ from game_settings import REWARD_WIN, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILEN
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
 import time
 from rewards import Rewards
-
+from game_utils import Timer
 
 
 # Extend the Transition namedtuple with a 'done' field
@@ -32,11 +32,18 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     last_food_update = last_snake_update
 
     rewards = Rewards(game)
+    timer = Timer()
+
     snake_game_reward = 0
     while game.counter < games_to_play:
+        timer.start()
+        timer.stop()
+
         current_time = time.time()
 
         if current_time - last_snake_update >= SNAKE_SPEED:
+            timer.continue_timer()
+
             last_snake_update = current_time
 
             # Snake Agent
@@ -51,6 +58,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             score = game.score
 
             game.play_step()
+
+            # Stop timer
+            timer.stop()
 
             # Train snake
             state_new = snake_agent.get_state(game)
@@ -71,7 +81,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 scores.append(score)
                 total_score += score
 
-                scores_to_csv(score_data_filename, scores, game.game_duration, snake_game_reward)
+                scores_to_csv(score_data_filename, scores, timer.get_elapsed_time(), snake_game_reward)
+                timer.reset()
                 snake_game_reward = 0
         
         # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:

@@ -1,5 +1,6 @@
 from collections import namedtuple
 from enum import Enum
+import time
 import torch
 import numpy as np
 from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H
@@ -132,3 +133,41 @@ def check_dangers(game):
         
     
     return dangers
+
+class Timer:
+    def __init__(self):
+        self.start_time = None
+        self.elapsed_time = 0
+        self.is_running = False
+
+    def start(self):
+        if not self.is_running:
+            self.start_time = time.time() - self.elapsed_time
+            self.is_running = True
+        else:
+            print("Timer is already running.")
+
+    def stop(self):
+        if self.is_running:
+            self.elapsed_time = time.time() - self.start_time
+            self.is_running = False
+        else:
+            print("Timer is not running.")
+
+    def continue_timer(self):
+        if not self.is_running:
+            self.start_time = time.time() - self.elapsed_time
+            self.is_running = True
+        else:
+            print("Timer is already running.")
+
+    def get_elapsed_time(self):
+        if self.is_running:
+            return time.time() - self.start_time
+        else:
+            return self.elapsed_time
+
+    def reset(self):
+        self.start_time = None
+        self.elapsed_time = 0
+        self.is_running = False

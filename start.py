@@ -5,6 +5,8 @@ from game_settings import FRAME_RESTRICTION, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHT
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
 import time
 
+from game_utils import Timer
+
 
 def assure_data_csv(filename, is_load_weights):
     if is_load_weights:
@@ -25,9 +27,17 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     counter = 0
     last_snake_update = time.time()
     last_food_update = last_snake_update
+
+    timer = Timer()
+    
     while counter < games_to_play:
+        timer.start()
+        timer.stop()
+
         current_time = time.time()
         if current_time - last_snake_update >= SNAKE_SPEED:
+            timer.continue_timer()
+
             last_snake_update = current_time
 
             state_old = snake_agent.get_state(game)
@@ -39,6 +49,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             game.is_eaten()
             game.play_step()
 
+            timer.stop()
             if game.snake_is_crashed:
                 game.reset()
                 snake_agent.n_games += 1
@@ -49,7 +60,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 mean_scores.append(mean_score)
 
                 counter += 1
-                scores_to_csv(score_data_filename, scores, game.game_duration, 0)
+                scores_to_csv(score_data_filename, scores, timer.get_elapsed_time(), 0)
+                timer.reset()
 
         if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
             last_food_update = current_time
