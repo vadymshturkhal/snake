@@ -21,8 +21,6 @@ class SnakeGameAI:
         self.is_rendering = is_rendering
         self.game_speed = game_speed
         self.counter = 0
-        self.start_time = time.time()
-        self.game_duration = 0
         self.snake_steps = 0
 
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2) // BLOCK_SIZE
@@ -50,11 +48,6 @@ class SnakeGameAI:
         self.counter += 1
         self.score = 0
         self.snake_steps = 0
-
-        # Calculate elapsed time
-        end_time = time.time()
-        self.game_duration = end_time - self.start_time
-        self.start_time = time.time()
 
         # self.obstacles.clear()
         # self._place_random_obstacles()
