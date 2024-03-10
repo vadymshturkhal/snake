@@ -147,7 +147,9 @@ class SnakeAgent:
     def get_action(self, state):
         # Linear decay rate
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = (self.epochs - self.n_games) / (self.epochs)
+        if self.n_games > 100:
+            self.epsilon = (self.epochs - self.n_games) / (self.epochs - 100)
+        print(max(self.epsilon, SNAKE_MIN_EPSILON), self.n_games)
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if np.random.rand() < max(self.epsilon, SNAKE_MIN_EPSILON):
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
