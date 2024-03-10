@@ -11,7 +11,7 @@ from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAK
 
 class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
-        self.epsilon = epochs
+        self.epsilon = 1
         self.epochs = epochs
 
         self.gamma = 0.9
@@ -147,8 +147,7 @@ class SnakeAgent:
     def get_action(self, state):
         # Linear decay rate
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = (self.epochs - self.n_games) / self.epochs
-
+        self.epsilon = (self.epochs - self.n_games) / (self.epochs)
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if np.random.rand() < max(self.epsilon, SNAKE_MIN_EPSILON):
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
