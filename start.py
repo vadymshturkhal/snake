@@ -41,7 +41,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             last_snake_update = current_time
 
             state_old = snake_agent.get_state(game)
-            snake_move = snake_agent.get_action(state_old)
+            snake_move = snake_agent.get_action(state_old, is_train=False)
             game.snake_move(snake_move)
 
             score = game.score

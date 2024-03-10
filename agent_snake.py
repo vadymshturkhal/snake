@@ -5,7 +5,7 @@ from collections import deque
 from model import Linear_QNet, QTrainer
 
 from game_utils import Direction, Point, calculate_distance, check_dangers, normalize_distance, calculate_angle, ray_trace_to_obstacle
-from game_settings import MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, SNAKE_GAMMA, SNAKE_MIN_EPSILON
+from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, SNAKE_GAMMA, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 
 
@@ -144,12 +144,14 @@ class SnakeAgent:
     def train_short_memory(self, state, action, reward, next_state):
         self.trainer.train_step(state, action, reward, next_state)
 
-    def get_action(self, state):
+    def get_action(self, state, is_train=True):
         # Linear decay rate
-        # random moves: tradeoff exploration / exploitation
-        if self.n_games > 100:
-            self.epsilon = (self.epochs - self.n_games) / (self.epochs - 100)
+        if is_train and self.n_games > EPSILON_SHIFT:
+            self.epsilon = (self.epochs - self.n_games) / (self.epochs - EPSILON_SHIFT)
+        else:
+            self.epsilon = SNAKE_MIN_EPSILON
         print(max(self.epsilon, SNAKE_MIN_EPSILON), self.n_games)
+
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
         if np.random.rand() < max(self.epsilon, SNAKE_MIN_EPSILON):
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
