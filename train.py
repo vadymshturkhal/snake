@@ -17,11 +17,11 @@ def assure_data_csv(filename, is_load_weights):
         return
 
     with open(filename, 'w') as file:
-        file.write('Score, Time, Reward\n')
+        file.write('Score, Time, Reward, Epsilon\n')
 
-def scores_to_csv(filename, scores, game_duration, snake_reward):
+def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon):
     with open(filename, 'a') as file:
-        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}\n')
+        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon}\n')
 
 def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None):
     scores = []
@@ -79,7 +79,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 scores.append(score)
                 total_score += score
 
-                scores_to_csv(score_data_filename, scores, elapsed_time, snake_game_reward)
+                scores_to_csv(score_data_filename, scores, elapsed_time, snake_game_reward, snake_agent.epsilon)
                 snake_game_reward = 0
                 timer.start()
         # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
