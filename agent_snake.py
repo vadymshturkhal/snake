@@ -38,41 +38,37 @@ class SnakeAgent:
     def get_state(self, game):
         head = game.snake.head
 
-        # dangers = check_dangers(game)
-
         point_l = Point(head.x - BLOCK_SIZE, head.y)
         point_r = Point(head.x + BLOCK_SIZE, head.y)
         point_u = Point(head.x, head.y - BLOCK_SIZE)
         point_d = Point(head.x, head.y + BLOCK_SIZE)
 
-        point_ul = Point(head.x - BLOCK_SIZE, head.y - BLOCK_SIZE)
-        point_ur = Point(head.x + BLOCK_SIZE, head.y - BLOCK_SIZE)
-        point_dl = Point(head.x - BLOCK_SIZE, head.y + BLOCK_SIZE)
-        point_dr = Point(head.x + BLOCK_SIZE, head.y + BLOCK_SIZE)
+        moving_left = game.snake.direction == Direction.LEFT
+        moving_right = game.snake.direction == Direction.RIGHT
+        moving_up = game.snake.direction == Direction.UP
+        moving_down = game.snake.direction == Direction.DOWN
 
-        dir_l = game.snake.direction == Direction.LEFT
-        dir_r = game.snake.direction == Direction.RIGHT
-        dir_u = game.snake.direction == Direction.UP
-        dir_d = game.snake.direction == Direction.DOWN
+        # Immediate danger checks
+        danger_straight = (moving_right and game.is_collision(point_r)) or \
+                        (moving_left and game.is_collision(point_l)) or \
+                        (moving_up and game.is_collision(point_u)) or \
+                        (moving_down and game.is_collision(point_d))
+
+        danger_right = (moving_up and game.is_collision(point_r)) or \
+                    (moving_down and game.is_collision(point_l)) or \
+                    (moving_left and game.is_collision(point_u)) or \
+                    (moving_right and game.is_collision(point_d))
+
+        danger_left = (moving_down and game.is_collision(point_r)) or \
+                    (moving_up and game.is_collision(point_l)) or \
+                    (moving_right and game.is_collision(point_u)) or \
+                    (moving_left and game.is_collision(point_d))
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
         distance = calculate_distance(head, game.food.head)
         angle = calculate_angle(game.snake, game.food.head)
-
-        # Assuming `state` is your current state vector and `current_angle` has been calculated
         normalized_angle = angle / 360  # Example normalization if angle is in degrees
-
-        # Example usage
         normalized_distance = normalize_distance(distance, game.max_possible_distance)
-
-        # Obstacles
-        # closest_point, distance_to_closest_obstacle = sort_obstacles(head, game.obstacles)[0]
-
-        # Additional danger checks for diagonal movements
-        danger_ur = (dir_u and game.is_collision(point_ur)) or (dir_r and game.is_collision(point_ur))
-        danger_ul = (dir_u and game.is_collision(point_ul)) or (dir_l and game.is_collision(point_ul))
-        danger_dr = (dir_d and game.is_collision(point_dr)) or (dir_r and game.is_collision(point_dr))
-        danger_dl = (dir_d and game.is_collision(point_dl)) or (dir_l and game.is_collision(point_dl))
 
          # Add ray tracing distance to the state
         distance_to_obstacle = ray_trace_to_obstacle(head, game.snake.direction, game.obstacles)
@@ -80,51 +76,18 @@ class SnakeAgent:
         # Normalize the distance to obstacle for consistency with other state features
         normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
 
+        food_left = game.food.head.x < head.x
+        food_right = game.food.head.x > head.x
+        food_above = game.food.head.y < head.y
+        food_below = game.food.head.y > head.y
+
+
+
         state = np.array([
-            # Danger straight
-            (dir_r and game.is_collision(point_r)) or
-            (dir_l and game.is_collision(point_l)) or
-            (dir_u and game.is_collision(point_u)) or
-            (dir_d and game.is_collision(point_d)),
-
-            # Danger right
-            (dir_u and game.is_collision(point_r)) or
-            (dir_d and game.is_collision(point_l)) or
-            (dir_l and game.is_collision(point_u)) or
-            (dir_r and game.is_collision(point_d)),
-
-            # Danger left
-            (dir_d and game.is_collision(point_r)) or
-            (dir_u and game.is_collision(point_l)) or
-            (dir_r and game.is_collision(point_u)) or
-            (dir_l and game.is_collision(point_d)),
-
-            # Danger Behind
-            # (dir_d and game.is_collision(point_u)) or
-            # (dir_u and game.is_collision(point_d)) or
-            # (dir_r and game.is_collision(point_l)) or
-            # (dir_l and game.is_collision(point_r)),
-
-            # danger_ur,
-            # danger_ul,
-            # danger_dr,
-            # danger_dl,
-
-            # Move direction
-            dir_l,
-            dir_r,
-            dir_u,
-            dir_d,
-
-            # Food location
-            game.food.head.x < head.x,  # food left
-            game.food.head.x > head.x,  # food right
-            game.food.head.y < head.y,  # food up
-            game.food.head.y > head.y,  # food down
-
-            # normalized_distance,
-            # normalized_angle,
-            # normalized_distance_to_obstacle
+            food_left, food_right, food_above, food_below,
+            danger_straight, danger_right, danger_left,
+            moving_up, moving_down, moving_left, moving_right,
+            # distance_to_wall_left, distance_to_wall_right, distance_to_wall_up, distance_to_wall_down,
             ])
 
         state = torch.from_numpy(np.array(state, dtype=float)).to(self.device)
@@ -146,14 +109,16 @@ class SnakeAgent:
 
     def get_action(self, state, is_train=True):
         # Linear decay rate
-        if is_train and self.n_games > EPSILON_SHIFT:
-            self.epsilon = (self.epochs - self.n_games) / (self.epochs - EPSILON_SHIFT)
+        if is_train:
+            if self.n_games > EPSILON_SHIFT:
+                self.epsilon = (self.epochs - self.n_games) / (self.epochs - EPSILON_SHIFT)
         else:
             self.epsilon = SNAKE_MIN_EPSILON
-        print(max(self.epsilon, SNAKE_MIN_EPSILON), self.n_games)
+
+        self.epsilon = max(self.epsilon, SNAKE_MIN_EPSILON)
 
         final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
-        if np.random.rand() < max(self.epsilon, SNAKE_MIN_EPSILON):
+        if np.random.rand() < self.epsilon:
             move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
             final_move[move] = 1
         else:

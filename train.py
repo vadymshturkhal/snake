@@ -94,7 +94,7 @@ is_load_weights_snake = False
 is_load_weights_food = False
 is_rendering = False
 game_speed = 20
-games_to_play = 200
+games_to_play = 150
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 
