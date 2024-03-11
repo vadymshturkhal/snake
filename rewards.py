@@ -1,7 +1,7 @@
 import math
 
 from game_utils import calculate_distance, calculate_angle, check_dangers
-from game_settings import REWARD_CRAWLING, SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
+from game_settings import EPSILON_SHIFT, REWARD_CRAWLING, SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
 
 
@@ -13,12 +13,23 @@ class Rewards:
 
     def get_snake_reward(self):
         # Goal reached
-        if self.game.is_eaten():
-            return REWARD_WIN
+        if self.game.counter < EPSILON_SHIFT:
+            if self.game.is_eaten():
+                return REWARD_WIN
 
-        # Crashed
-        if self.game.snake_is_crashed:
-            return REWARD_LOOSE
+            # Crashed
+            if self.game.snake_is_crashed:
+                return 0
 
-        snake_reward = REWARD_CRAWLING
+            snake_reward = REWARD_CRAWLING
+        else:
+            if self.game.is_eaten():
+                return REWARD_WIN
+
+            # Crashed
+            if self.game.snake_is_crashed:
+                return -10
+
+            snake_reward = -REWARD_CRAWLING
+
         return snake_reward
