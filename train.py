@@ -21,7 +21,7 @@ def assure_data_csv(filename, is_load_weights):
 
 def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon):
     with open(filename, 'a') as file:
-        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon}\n')
+        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}\n')
 
 def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None):
     scores = []
@@ -92,9 +92,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
 is_load_weights_snake = False
 is_load_weights_food = False
-is_rendering = False
-game_speed = 20
-games_to_play = 150
+is_rendering = True
+game_speed = 100
+games_to_play = 100
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 

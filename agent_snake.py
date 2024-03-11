@@ -82,27 +82,32 @@ class SnakeAgent:
 
         snake_vision = self.get_vision_based_state(game)
 
-        food_left = game.food.position.x < head.x
-        food_right = game.food.position.x > head.x
-        food_above = game.food.position.y < head.y
-        food_below = game.food.position.y > head.y
+        # Relative food location based on snake's current direction
+        if game.snake.direction == Direction.UP:
+            food_left = game.food.position.x < head.x
+            food_right = game.food.position.x > head.x
+            food_above = game.food.position.y < head.y
+            food_below = game.food.position.y > head.y
+        elif game.snake.direction == Direction.DOWN:
+            food_left = game.food.position.x > head.x
+            food_right = game.food.position.x < head.x
+            food_above = game.food.position.y > head.y
+            food_below = game.food.position.y < head.y
+        elif game.snake.direction == Direction.LEFT:
+            food_left = game.food.position.y > head.y
+            food_right = game.food.position.y < head.y
+            food_above = game.food.position.x < head.x
+            food_below = game.food.position.x > head.x
+        elif game.snake.direction == Direction.RIGHT:
+            food_left = game.food.position.y < head.y
+            food_right = game.food.position.y > head.y
+            food_above = game.food.position.x > head.x
+            food_below = game.food.position.x < head.x
 
         moving_left = game.snake.direction == Direction.LEFT
         moving_right = game.snake.direction == Direction.RIGHT
         moving_up = game.snake.direction == Direction.UP
         moving_down = game.snake.direction == Direction.DOWN
-
-        # Assuming snake_head and food_position are Point objects with x and y attributes
-        # distance = calculate_distance(head, game.food.position)
-        # angle = calculate_angle(game.snake, game.food.position)
-        # normalized_angle = angle / 360  # Example normalization if angle is in degrees
-        # normalized_distance = normalize_distance(distance, game.max_possible_distance)
-
-        # Add ray tracing distance to the state
-        # distance_to_obstacle = ray_trace_to_obstacle(head, game.snake.direction, game.obstacles)
-
-        # Normalize the distance to obstacle for consistency with other state features
-        # normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
 
         state = np.array([
             *snake_vision,
@@ -119,9 +124,10 @@ class SnakeAgent:
 
     def train_long_memory(self):
         if len(self.memory) < BATCH_SIZE:
-            return  # Not enough samples in the memory yet
+            transitions = self.memory
+        else:
+            transitions = random.sample(self.memory, BATCH_SIZE)
 
-        transitions = random.sample(self.memory, BATCH_SIZE)
         for state, action, reward, next_state in transitions:
            self.trainer.train_step(state, action, reward, next_state)
 
