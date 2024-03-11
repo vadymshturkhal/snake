@@ -5,8 +5,8 @@ from game_settings import DIRECTIONS_QUANTITY, BLOCK_SIZE, SCREEN_W, SCREEN_H
 
 
 class Food:
-    def __init__(self, head):
-        self.head = head
+    def __init__(self, position):
+        self.position = position
         self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
     def move(self, action=None):
@@ -36,8 +36,8 @@ class Food:
 
         self.direction = new_dir
 
-        x = self.head.x
-        y = self.head.y
+        x = self.position.x
+        y = self.position.y
         if self.direction == Direction.RIGHT:
             x = min(x + BLOCK_SIZE, SCREEN_W - BLOCK_SIZE)
         elif self.direction == Direction.LEFT:
@@ -47,4 +47,4 @@ class Food:
         elif self.direction == Direction.UP:
             y = max(y - BLOCK_SIZE, 0)
 
-        self.head = Point(x, y)
+        self.position = Point(x, y)

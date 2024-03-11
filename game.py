@@ -16,8 +16,8 @@ font = pygame.font.SysFont('arial', 25)
 
 class SnakeGameAI:
     def __init__(self, is_rendering=False, game_speed=20):
-        self.w = SCREEN_W
-        self.h = SCREEN_H
+        self.width = SCREEN_W
+        self.height = SCREEN_H
         self.is_rendering = is_rendering
         self.game_speed = game_speed
         self.counter = 0
@@ -26,7 +26,7 @@ class SnakeGameAI:
         self.max_possible_distance = math.sqrt(SCREEN_W**2 + SCREEN_H**2) // BLOCK_SIZE
         self.prev_distance = self.max_possible_distance
         self.food_move_counter = 0
-        self.food = Food(head=Point(SCREEN_W / 2, SCREEN_H / 2))
+        self.food = Food(position=Point(SCREEN_W / 2, SCREEN_H / 2))
         self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), init_direction=Direction.RIGHT)
 
         self.previous_angle = None
@@ -36,7 +36,7 @@ class SnakeGameAI:
 
         # init display
         if self.is_rendering:
-            self.display = pygame.display.set_mode((self.w, self.h))
+            self.display = pygame.display.set_mode((self.width, self.height))
             pygame.display.set_caption('Snake')
             self.clock = pygame.time.Clock()
 
@@ -61,9 +61,9 @@ class SnakeGameAI:
         if random_place:
             is_valid_point = False
             while not is_valid_point:
-                x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                x = random.randint(0, (self.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
                 # x = self.w-BLOCK_SIZE
-                y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                y = random.randint(0, (self.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
 
                 food_point = Point(x, y)
                 is_valid_point = True
@@ -76,15 +76,15 @@ class SnakeGameAI:
                         is_valid_point = False
                         break
         else:
-            food_point = Point(self.w - BLOCK_SIZE, self.h // 2 - BLOCK_SIZE)
-        self.food.head = food_point
+            food_point = Point(self.width - BLOCK_SIZE, self.height // 2 - BLOCK_SIZE)
+        self.food.position = food_point
     
     def _place_snake(self, random_place=True):
         if random_place:
             is_valid_point = False
             while not is_valid_point:
-                x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-                y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                x = random.randint(0, (self.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                y = random.randint(0, (self.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
 
                 snake_point = Point(x, y)
                 is_valid_point = True
@@ -94,7 +94,7 @@ class SnakeGameAI:
                         is_valid_point = False
                         break
         else:
-            snake_point = Point(0, self.h // 2 - BLOCK_SIZE)
+            snake_point = Point(0, self.height // 2 - BLOCK_SIZE)
         self.snake.head = snake_point
 
     def snake_move(self, action):
@@ -102,7 +102,7 @@ class SnakeGameAI:
         self.snake_steps += 1
 
     def is_eaten(self):
-        if self.food.head == self.snake.head:
+        if self.food.position == self.snake.head:
             self.score += 1
             self._place_food()
             return True
@@ -128,7 +128,7 @@ class SnakeGameAI:
             pt = self.snake.head
 
         # Hits boundary
-        if pt.x > self.w - BLOCK_SIZE or pt.x < 0 or pt.y > self.h - BLOCK_SIZE or pt.y < 0:
+        if pt.x > self.width - BLOCK_SIZE or pt.x < 0 or pt.y > self.height - BLOCK_SIZE or pt.y < 0:
             return True
 
         # Hits obstacles
@@ -165,7 +165,7 @@ class SnakeGameAI:
         pygame.draw.rect(self.display, BLUE1, pygame.Rect(self.snake.head.x, self.snake.head.y, BLOCK_SIZE, BLOCK_SIZE))
 
         # Draw food
-        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.head.x, self.food.head.y, BLOCK_SIZE, BLOCK_SIZE))
+        pygame.draw.rect(self.display, RED, pygame.Rect(self.food.position.x, self.food.position.y, BLOCK_SIZE, BLOCK_SIZE))
 
         # Draw obstacles
         for ob in self.obstacles:

@@ -65,8 +65,8 @@ class SnakeAgent:
                     (moving_left and game.is_collision(point_d))
 
         # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance = calculate_distance(head, game.food.head)
-        angle = calculate_angle(game.snake, game.food.head)
+        distance = calculate_distance(head, game.food.position)
+        angle = calculate_angle(game.snake, game.food.position)
         normalized_angle = angle / 360  # Example normalization if angle is in degrees
         normalized_distance = normalize_distance(distance, game.max_possible_distance)
 
@@ -76,10 +76,10 @@ class SnakeAgent:
         # Normalize the distance to obstacle for consistency with other state features
         normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
 
-        food_left = game.food.head.x < head.x
-        food_right = game.food.head.x > head.x
-        food_above = game.food.head.y < head.y
-        food_below = game.food.head.y > head.y
+        food_left = game.food.position.x < head.x
+        food_right = game.food.position.x > head.x
+        food_above = game.food.position.y < head.y
+        food_below = game.food.position.y > head.y
 
 
 
