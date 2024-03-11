@@ -78,7 +78,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
 is_load_weights = True
 is_rendering = True
-game_speed = 40
+game_speed = 20
 games_to_play = 10
 
 SNAKE_SPEED

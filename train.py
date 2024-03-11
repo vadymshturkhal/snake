@@ -61,8 +61,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new)
             snake_agent.remember(state_old, snake_next_move, snake_reward, state_new)
 
-            if game.frame_iteration > FRAME_RESTRICTION and any([game.snake_is_crashed, snake_reward == REWARD_WIN]):
-            # if game.snake_is_crashed:
+            # if game.frame_iteration > FRAME_RESTRICTION and any([game.snake_is_crashed, snake_reward == REWARD_WIN]):
+            if game.snake_is_crashed:
             # if score == game.counter // 10 + 1:
             # if score == 4:
                 elapsed_time = timer.get_elapsed_time()

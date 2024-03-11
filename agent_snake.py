@@ -35,57 +35,78 @@ class SnakeAgent:
 
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
+    def get_vision_based_state(self, game, vision_range=1):
+        """
+        Generate a vision-based state representation around the snake's head.
+    
+        The function creates a grid centered around the snake's head, with each cell
+        representing different entities in the game (empty space, food, snake body, or wall).
+        This grid is then flattened into a vector to serve as the state representation
+        for input into a machine learning model.
+
+        Parameters:
+            - game: A game instance containing the current state of the game,
+                    including the snake's position, the food's position, and game dimensions.
+
+            - vision_range: How far the snake can see in each direction.
+
+        Returns:
+        - state_vector: A flattened numpy array representing the contents of the grid
+                        around the snake's head.
+        """
+        grid_size = 2 * vision_range + 1  # Calculate the size of the vision grid
+        state_grid = np.zeros((grid_size, grid_size))  # Initialize the grid to zeros
+
+        # Define the grid's center point (the snake's head position)
+        center_x, center_y = game.snake.head.x, game.snake.head.y
+
+        # Populate the grid
+        for i in range(-vision_range, vision_range + 1):
+            for j in range(-vision_range, vision_range + 1):
+                point = Point(center_x + i * BLOCK_SIZE, center_y + j * BLOCK_SIZE)
+                
+                # Check if the point is outside the game boundaries (a wall)
+                if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
+                    state_grid[i + vision_range, j + vision_range] = 2
+                # Check if the point is the location of the food
+                elif point == game.food.position:
+                    state_grid[i + vision_range, j + vision_range] = 1
+
+        # Flatten the grid to create a state vector or use as is for CNN input
+        state_vector = state_grid.flatten()
+        
+        return state_vector
+
     def get_state(self, game):
         head = game.snake.head
 
-        point_l = Point(head.x - BLOCK_SIZE, head.y)
-        point_r = Point(head.x + BLOCK_SIZE, head.y)
-        point_u = Point(head.x, head.y - BLOCK_SIZE)
-        point_d = Point(head.x, head.y + BLOCK_SIZE)
-
-        moving_left = game.snake.direction == Direction.LEFT
-        moving_right = game.snake.direction == Direction.RIGHT
-        moving_up = game.snake.direction == Direction.UP
-        moving_down = game.snake.direction == Direction.DOWN
-
-        # Immediate danger checks
-        danger_straight = (moving_right and game.is_collision(point_r)) or \
-                        (moving_left and game.is_collision(point_l)) or \
-                        (moving_up and game.is_collision(point_u)) or \
-                        (moving_down and game.is_collision(point_d))
-
-        danger_right = (moving_up and game.is_collision(point_r)) or \
-                    (moving_down and game.is_collision(point_l)) or \
-                    (moving_left and game.is_collision(point_u)) or \
-                    (moving_right and game.is_collision(point_d))
-
-        danger_left = (moving_down and game.is_collision(point_r)) or \
-                    (moving_up and game.is_collision(point_l)) or \
-                    (moving_right and game.is_collision(point_u)) or \
-                    (moving_left and game.is_collision(point_d))
-
-        # Assuming snake_head and food_position are Point objects with x and y attributes
-        distance = calculate_distance(head, game.food.position)
-        angle = calculate_angle(game.snake, game.food.position)
-        normalized_angle = angle / 360  # Example normalization if angle is in degrees
-        normalized_distance = normalize_distance(distance, game.max_possible_distance)
-
-         # Add ray tracing distance to the state
-        distance_to_obstacle = ray_trace_to_obstacle(head, game.snake.direction, game.obstacles)
-
-        # Normalize the distance to obstacle for consistency with other state features
-        normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
+        snake_vision = self.get_vision_based_state(game)
 
         food_left = game.food.position.x < head.x
         food_right = game.food.position.x > head.x
         food_above = game.food.position.y < head.y
         food_below = game.food.position.y > head.y
 
+        moving_left = game.snake.direction == Direction.LEFT
+        moving_right = game.snake.direction == Direction.RIGHT
+        moving_up = game.snake.direction == Direction.UP
+        moving_down = game.snake.direction == Direction.DOWN
 
+        # Assuming snake_head and food_position are Point objects with x and y attributes
+        # distance = calculate_distance(head, game.food.position)
+        # angle = calculate_angle(game.snake, game.food.position)
+        # normalized_angle = angle / 360  # Example normalization if angle is in degrees
+        # normalized_distance = normalize_distance(distance, game.max_possible_distance)
+
+        # Add ray tracing distance to the state
+        # distance_to_obstacle = ray_trace_to_obstacle(head, game.snake.direction, game.obstacles)
+
+        # Normalize the distance to obstacle for consistency with other state features
+        # normalized_distance_to_obstacle = normalize_distance(distance_to_obstacle, game.max_possible_distance)
 
         state = np.array([
+            *snake_vision,
             food_left, food_right, food_above, food_below,
-            danger_straight, danger_right, danger_left,
             moving_up, moving_down, moving_left, moving_right,
             # distance_to_wall_left, distance_to_wall_right, distance_to_wall_up, distance_to_wall_down,
             ])
