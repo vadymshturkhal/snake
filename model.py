@@ -53,7 +53,7 @@ class QTrainer:
 
         # 1: predicted Q values with current state
         # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
-        q_update = reward[0] + self.gamma * torch.max(self.model(next_state[0]))
+        q_update = reward[0] + self.gamma * torch.max(self.model(next_state).detach())
         q_values = self.model(state)
 
         target = q_values.clone()
