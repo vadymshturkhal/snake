@@ -12,26 +12,29 @@ class Snake:
         if self.direction is None:
             self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
-    def move(self, action) -> bool:
-        # [straight, right, left]
-
-        clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
-
-        # Current direction index
-        idx = clock_wise.index(self.direction)
-
-        if np.array_equal(action, [1, 0, 0]):
-            new_dir = clock_wise[idx] # no change
-        elif np.array_equal(action, [0, 1, 0]):
-            next_idx = (idx + 1) % DIRECTIONS_QUANTITY
-            new_dir = clock_wise[next_idx] # right turn r -> d -> l -> u
-        elif np.array_equal(action, [0, 0, 1]): # [0, 0, 1]
-            next_idx = (idx - 1) % DIRECTIONS_QUANTITY
-            new_dir = clock_wise[next_idx] # left turn r -> u -> l -> d
+    def move(self, action, is_human=False) -> bool:
+        if is_human:
+            self.direction = action
         else:
-            raise Exception('Unknown direction', )
+            # [straight, right, left]
+            clock_wise = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
 
-        self.direction = new_dir
+            # Current direction index
+            idx = clock_wise.index(self.direction)
+
+            if np.array_equal(action, [1, 0, 0]):
+                new_dir = clock_wise[idx] # no change
+            elif np.array_equal(action, [0, 1, 0]):
+                next_idx = (idx + 1) % DIRECTIONS_QUANTITY
+                new_dir = clock_wise[next_idx] # right turn r -> d -> l -> u
+            elif np.array_equal(action, [0, 0, 1]): # [0, 0, 1]
+                next_idx = (idx - 1) % DIRECTIONS_QUANTITY
+                new_dir = clock_wise[next_idx] # left turn r -> u -> l -> d
+            else:
+                raise Exception('Unknown direction', )
+
+            self.direction = new_dir
+
 
         x = self.head.x
         y = self.head.y
