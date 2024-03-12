@@ -77,7 +77,7 @@ class SnakeAgent:
 
         # Flatten the grid to create a state vector or use as is for CNN input
         state_vector = state_grid.flatten()
-        
+
         return state_vector
 
     def get_state(self, game):
