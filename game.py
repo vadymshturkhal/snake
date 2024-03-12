@@ -98,7 +98,7 @@ class SnakeGameAI:
         self.snake.head = snake_point
 
     def snake_move(self, action):
-        self.snake_is_crashed = self.snake.move(action)
+        self.snake_is_crashed = any([self.snake.move(action), self.is_collision_with_obstacle()])
         self.snake_steps += 1
 
     def is_eaten(self):
@@ -123,15 +123,10 @@ class SnakeGameAI:
             self._update_ui()
             self.clock.tick(self.game_speed)
 
-    def is_collision(self, pt=None):
+    def is_collision_with_obstacle(self, pt=None):
         if pt is None:
             pt = self.snake.head
 
-        # Hits boundary
-        if pt.x > self.width - BLOCK_SIZE or pt.x < 0 or pt.y > self.height - BLOCK_SIZE or pt.y < 0:
-            return True
-
-        # Hits obstacles
         # Check if head hits any obstacle
         for obstacle in self.obstacles:
             if obstacle == pt:
@@ -145,8 +140,8 @@ class SnakeGameAI:
         for _ in range(self.obstacles_quantity):
             is_valid_point = False
             while not is_valid_point:
-                x = random.randint(0, (self.w-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-                y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                x = random.randint(0, (self.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                y = random.randint(0, (self.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
 
                 obstacle_point = Point(x, y)
                 is_valid_point = True
