@@ -6,7 +6,7 @@ import math
 from snake import Snake
 from food import Food
 
-from game_utils import calculate_distance, Direction, Point, WHITE, RED, BLUE1, BLUE2, BLACK
+from game_utils import Direction, Point, WHITE, RED, BLUE1, BLUE2, BLACK
 from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H, REWARD_LOOSE
 from game_settings import DIRECTIONS_QUANTITY, OBSTACLES_QUANTITY
 
