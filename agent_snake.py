@@ -71,6 +71,9 @@ class SnakeAgent:
                 # Check if the point is the location of the food
                 elif point == game.food.position:
                     state_grid[i + vision_range, j + vision_range] = 1
+                # Check if the point is an obstacle
+                elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
+                    state_grid[i + vision_range, j + vision_range] = 3
 
         # Flatten the grid to create a state vector or use as is for CNN input
         state_vector = state_grid.flatten()

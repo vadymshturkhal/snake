@@ -37,7 +37,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     snake_game_reward = 0
     timer.start()
 
-    while game.counter < games_to_play:
+    while game.counter <= games_to_play:
         current_time = time.time()
 
         if current_time - last_snake_update >= SNAKE_SPEED:
