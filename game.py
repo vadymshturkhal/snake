@@ -28,10 +28,6 @@ class SnakeGameAI:
         self.food = Food(position=Point(SCREEN_W / 2, SCREEN_H / 2))
         self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), init_direction=Direction.RIGHT)
 
-        # Load the snake head sprite
-        self.snake_head_sprite = pygame.image.load('./sprites/snake_head.png')
-        self.snake_head_sprite = pygame.transform.scale(self.snake_head_sprite, (BLOCK_SIZE, BLOCK_SIZE))
-
         self.previous_angle = None
         self.obstacles_quantity = OBSTACLES_QUANTITY
 
@@ -156,25 +152,12 @@ class SnakeGameAI:
 
             self.obstacles.append(obstacle_point)
 
-    def rotate_snake_sprite(self):
-        if self.snake.direction == Direction.UP:
-            rotated_sprite = pygame.transform.rotate(self.snake_head_sprite, 0)  # Assumes the original sprite is facing up
-        elif self.snake.direction == Direction.RIGHT:
-            rotated_sprite = pygame.transform.rotate(self.snake_head_sprite, 270)  # Rotate clockwise
-        elif self.snake.direction == Direction.DOWN:
-            rotated_sprite = pygame.transform.rotate(self.snake_head_sprite, 180)
-        else:  # self.snake.direction == "LEFT"
-            rotated_sprite = pygame.transform.rotate(self.snake_head_sprite, 90)
-
-        return rotated_sprite
-
     def _update_ui(self):
         self.display.fill(BLACK)
 
         # Determine the rotation of the snake sprite
-        rotated_snake_sprite = self.rotate_snake_sprite()
-        sprite_rect = rotated_snake_sprite.get_rect(center=(self.snake.head.x + BLOCK_SIZE / 2, self.snake.head.y + BLOCK_SIZE / 2))
-        self.display.blit(rotated_snake_sprite, sprite_rect.topleft)
+        sprite_rect = self.snake.sprite_rotated.get_rect(center=(self.snake.head.x + BLOCK_SIZE / 2, self.snake.head.y + BLOCK_SIZE / 2))
+        self.display.blit(self.snake.sprite_rotated, sprite_rect.topleft)
 
         # Draw food
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.position.x, self.food.position.y, BLOCK_SIZE, BLOCK_SIZE))

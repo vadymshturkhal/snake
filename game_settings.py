@@ -3,6 +3,9 @@ SNAKE_WEIGHTS_FILENAME = './model/model_snake.pth'
 FOOD_WEIGHTS_FILENAME = './model/model_food.pth'
 SCORE_DATA_FILENAME = './data/latest.csv'
 
+# SPRITES
+SNAKE_SPRITE_PATH = './sprites/snake_head.png'
+
 # Screen
 SCREEN_W = 340
 SCREEN_H = 340
