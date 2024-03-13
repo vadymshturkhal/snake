@@ -96,7 +96,7 @@ class SnakeGameAI:
             snake_point = Point(0, self.height // 2 - BLOCK_SIZE)
         self.snake.head = snake_point
 
-    def snake_move(self, action, is_human=False):
+    def snake_apply_action(self, action, is_human=False):
         self.snake_is_crashed = any([self.snake.move(action, is_human=is_human), self.is_collision_with_obstacle()])
         self.snake_steps += 1
 
