@@ -3,7 +3,7 @@ from enum import Enum
 import time
 import torch
 import numpy as np
-from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H
+from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, SCREEN_W, SCREEN_H
 
 
 Point = namedtuple('Point', 'x, y')
@@ -25,6 +25,9 @@ RED = (200,0,0)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
+
+CLOCK_WISE = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
+
 
 def calculate_distance(snake_head, food_head):
     # Manhattan

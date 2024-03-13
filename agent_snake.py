@@ -138,6 +138,9 @@ class SnakeAgent:
         self.trainer.train_step(state, action, reward, next_state)
 
     def get_action(self, state, is_train=True):
+        """
+        Return vector [0,0,0] with first two positions represent rotation, third pushes forward.
+        """
         # Linear decay rate
         if is_train:
             if self.n_games > EPSILON_SHIFT:
