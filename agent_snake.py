@@ -74,11 +74,37 @@ class SnakeAgent:
                 # Check if the point is an obstacle
                 elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
                     state_grid[j + 1, i + 1] = 3
- 
+        
+        relative_state_grid = self.rotate_grid(state_grid, game.snake.direction)
+        print(relative_state_grid)
         # Flatten the grid to create a state vector or use as is for CNN input
-        state_vector = state_grid.flatten()
+        relative_state_vector = relative_state_grid.flatten()
 
-        return state_vector
+        return relative_state_vector
+
+    def rotate_grid(self, grid, direction):
+        """
+        Rotate the grid so that it aligns with the snake's current direction.
+
+        Parameters:
+        - grid: The vision grid as a numpy array.
+        - direction: The current direction of the snake.
+
+        Returns:
+        - Rotated grid as a numpy array.
+        """
+        if direction == Direction.UP:
+            # No rotation needed.
+            return grid
+        elif direction == Direction.LEFT:
+            # Rotate -90 degrees.
+            return np.rot90(grid, -1)
+        elif direction == Direction.RIGHT:
+            # Rotate 90 degrees
+            return np.rot90(grid, 1)
+        elif direction == Direction.DOWN:
+            # Rotate 180 degrees.
+            return np.rot90(grid, 2)
 
     def get_state(self, game):
         head = game.snake.head

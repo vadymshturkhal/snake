@@ -89,8 +89,6 @@ is_rendering = True
 game_speed = 10
 games_to_play = 10
 
-SNAKE_SPEED
-
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights)
 
 snake_agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME)
