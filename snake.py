@@ -6,8 +6,9 @@ from game_settings import DIRECTIONS_QUANTITY, BLOCK_SIZE, SCREEN_W, SCREEN_H, S
 
 
 class Snake:
-    def __init__(self, head, init_direction=None):
+    def __init__(self, head, game, init_direction=None):
         self.head = head
+        self.game = game
         self.direction = init_direction
         self.prev_direction = self.direction
 
@@ -44,35 +45,28 @@ class Snake:
 
         is_crashed = False
 
+        # Temporary variables to hold the new potential position
+        x_new = x
+        y_new = y
+
         if self.direction == Direction.RIGHT:
             x_new = x + BLOCK_SIZE
-            if x_new < SCREEN_W:
-                x = x_new
-            else:
-                is_crashed = True
-
         elif self.direction == Direction.LEFT:
             x_new = x - BLOCK_SIZE
-            if x_new >= 0:
-                x = x_new
-            else:
-                is_crashed = True
-
         elif self.direction == Direction.DOWN:
             y_new = y + BLOCK_SIZE
-            if y_new < SCREEN_H:
-                y = y_new
-            else:
-                is_crashed = True
-
         elif self.direction == Direction.UP:
             y_new = y - BLOCK_SIZE
-            if y_new >= 0:
-                y = y_new
-            else:
-                is_crashed = True
 
-        self.head = Point(x, y)
+        # Check boundary collision
+        if x_new >= SCREEN_W or x_new < 0 or y_new >= SCREEN_H or y_new < 0:
+            is_crashed = True
+        # Check obstacle collision
+        elif any(obstacle.x == x_new and obstacle.y == y_new for obstacle in self.game.obstacles):
+            is_crashed = True
+        else:
+            # Update the head position only if there's no crash
+            self.head = Point(x_new, y_new)
 
         return is_crashed
 
