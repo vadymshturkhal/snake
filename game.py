@@ -105,7 +105,8 @@ class SnakeGameAI:
             self.snake_is_crashed = any([self.snake.move_after_rotation(), self.is_collision_with_obstacle()])
             self.snake_steps += 1
         else:
-            raise Exception(f'Unknown action for snake: {action}')
+            if not is_human:
+                raise Exception(f'Unknown action for snake: {action}')
 
         # self.snake_is_crashed = any([self.snake.move(action, is_human=is_human), self.is_collision_with_obstacle()])
         # self.snake_steps += 1

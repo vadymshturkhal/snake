@@ -45,26 +45,23 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             # snake_move = snake_agent.get_action(state_old, is_train=False)
             # game.snake_move(snake_move)
 
-            direction = None
+            action = [0, 0, 0]
+
             for event in pygame.event.get():
+                # action = [0, 0, 0]  # for continuous
+
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
-                        direction = Direction.LEFT
-                        game.snake.rotate_snake('left')
+                        action = [1, 0, 0]
                     elif event.key == pygame.K_RIGHT:
-                        direction = Direction.RIGHT
-                        game.snake.rotate_snake('right')
+                        action = [0, 1, 0]
                     elif event.key == pygame.K_UP:
-                        direction = Direction.UP
-                        game.snake.move_after_rotation()
-                    elif event.key == pygame.K_DOWN:
-                        direction = Direction.DOWN
+                        action = [0, 0, 1]
 
-            # if direction is not None:
-                # game.snake_move(direction, is_human=True)
+            game.snake_apply_action(action, is_human=True)
             score = game.score
 
             game.is_eaten()
@@ -89,7 +86,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
 is_load_weights = True
 is_rendering = True
-game_speed = 40
+game_speed = 10
 games_to_play = 10
 
 SNAKE_SPEED
