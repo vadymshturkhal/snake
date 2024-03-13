@@ -45,9 +45,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             # Snake Agent
             state_old = snake_agent.get_state(game)
-            snake_next_move = snake_agent.get_action(state_old)
-
-            game.snake_move(snake_next_move)
+            snake_action = snake_agent.get_action(state_old)
+            game.snake_apply_action(snake_action)
 
             snake_reward = rewards.get_snake_reward()
             snake_game_reward += snake_reward
@@ -58,8 +57,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             # Train snake
             state_new = snake_agent.get_state(game)
-            snake_agent.train_short_memory(state_old, snake_next_move, snake_reward, state_new)
-            snake_agent.remember(state_old, snake_next_move, snake_reward, state_new)
+            snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new)
+            snake_agent.remember(state_old, snake_action, snake_reward, state_new)
 
             if game.frame_iteration > FRAME_RESTRICTION and any([game.snake_is_crashed, snake_reward == REWARD_WIN]):
             # if game.snake_is_crashed:
@@ -92,8 +91,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
 is_load_weights_snake = False
 is_load_weights_food = False
-is_rendering = False
-game_speed = 100
+is_rendering = True
+game_speed = 10
 games_to_play = 160
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
