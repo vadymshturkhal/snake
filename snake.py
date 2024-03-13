@@ -83,15 +83,15 @@ class Snake:
         self._rotate_sprite()
         return is_crashed
 
-    def rotate_snake(self, current_direction, desired_direction: str):
+    def rotate_snake(self, desired_direction: str):
         if desired_direction == 'left':
             # Rotate left
-            idx = CLOCK_WISE.index(current_direction)
+            idx = CLOCK_WISE.index(self.direction)
             next_idx = (idx - 1) % DIRECTIONS_QUANTITY
             next_direction = CLOCK_WISE[next_idx]
         elif desired_direction == 'right':
             # Rotate right
-            idx = CLOCK_WISE.index(current_direction)
+            idx = CLOCK_WISE.index(self.direction)
             next_idx = (idx + 1) % DIRECTIONS_QUANTITY
             next_direction = CLOCK_WISE[next_idx]
         else:
