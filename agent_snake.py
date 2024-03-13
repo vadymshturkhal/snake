@@ -74,9 +74,9 @@ class SnakeAgent:
                 # Check if the point is an obstacle
                 elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
                     state_grid[j + 1, i + 1] = 3
-        
+
         relative_state_grid = self.rotate_grid(state_grid, game.snake.direction)
-        print(relative_state_grid)
+
         # Flatten the grid to create a state vector or use as is for CNN input
         relative_state_vector = relative_state_grid.flatten()
 
