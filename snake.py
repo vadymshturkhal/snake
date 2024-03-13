@@ -9,6 +9,7 @@ class Snake:
     def __init__(self, head, init_direction=None):
         self.head = head
         self.direction = init_direction
+        self.prev_direction = self.direction
 
         # Load the snake head sprite
         self.sprite = pygame.image.load(SNAKE_SPRITE_PATH)
@@ -19,6 +20,8 @@ class Snake:
             self.direction = random.choice([Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN])
 
     def move(self, action, is_human=False) -> bool:
+        self.prev_direction = self.direction
+
         if is_human:
             self.direction = action
         else:
@@ -80,7 +83,9 @@ class Snake:
         return is_crashed
 
     def _rotate_sprite(self):
-        print(self.direction)
+        if self.prev_direction == self.direction:
+            return
+
         if self.direction == Direction.UP:
             rotated_sprite = pygame.transform.rotate(self.sprite, 0)  # Assumes the original sprite is facing up
         elif self.direction == Direction.RIGHT:
