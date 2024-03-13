@@ -97,8 +97,18 @@ class SnakeGameAI:
         self.snake.head = snake_point
 
     def snake_apply_action(self, action, is_human=False):
-        self.snake_is_crashed = any([self.snake.move(action, is_human=is_human), self.is_collision_with_obstacle()])
-        self.snake_steps += 1
+        if action == [1, 0, 0]: 
+            self.snake.rotate_snake('left')
+        elif action == [0, 1, 0]:
+            self.snake.rotate_snake('right')
+        elif action == [0, 0, 1]:
+            self.snake_is_crashed = any([self.snake.move_after_rotation(), self.is_collision_with_obstacle()])
+            self.snake_steps += 1
+        else:
+            raise Exception(f'Unknown action for snake: {action}')
+
+        # self.snake_is_crashed = any([self.snake.move(action, is_human=is_human), self.is_collision_with_obstacle()])
+        # self.snake_steps += 1
 
     def is_eaten(self):
         if self.food.position == self.snake.head:
