@@ -1,3 +1,4 @@
+from turtle import st
 import torch
 import random
 import numpy as np
@@ -64,17 +65,16 @@ class SnakeAgent:
         for i in range(-vision_range, vision_range + 1):
             for j in range(-vision_range, vision_range + 1):
                 point = Point(center_x + i * BLOCK_SIZE, center_y + j * BLOCK_SIZE)
-                
                 # Check if the point is outside the game boundaries (a wall)
                 if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
-                    state_grid[i + vision_range, j + vision_range] = 2
+                    state_grid[j + 1, i + 1] = 2
                 # Check if the point is the location of the food
                 elif point == game.food.position:
-                    state_grid[i + vision_range, j + vision_range] = 1
+                    state_grid[j + 1, i + 1] = 1
                 # Check if the point is an obstacle
                 elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
-                    state_grid[i + vision_range, j + vision_range] = 3
-
+                    state_grid[j + 1, i + 1] = 3
+ 
         # Flatten the grid to create a state vector or use as is for CNN input
         state_vector = state_grid.flatten()
 
