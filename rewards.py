@@ -1,7 +1,7 @@
 import math
 
 from game_utils import calculate_distance, calculate_angle, check_dangers
-from game_settings import EPSILON_SHIFT, REWARD_CRAWLING, SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
+from game_settings import EPSILON_SHIFT, REWARD_CRAWLING, REWARD_ROTATION, SNAKE_ANGLE_PUNISH, SNAKE_ANGLE_REWARD
 from game_settings import REWARD_WRONG_DIRECTION, REWARD_CORECT_DIRECTION, REWARD_WIN, REWARD_LOOSE
 
 
@@ -11,7 +11,7 @@ class Rewards:
         self.prev_distance = game.max_possible_distance
         self.previous_angle = None
 
-    def get_snake_reward(self):
+    def get_snake_reward(self, action):
         # Goal reached
         if self.game.counter < EPSILON_SHIFT:
             if self.game.is_eaten():
@@ -21,7 +21,10 @@ class Rewards:
             if self.game.snake_is_crashed:
                 return 0
 
-            snake_reward = REWARD_CRAWLING
+            if action == [0, 0, 1]:
+                snake_reward = REWARD_CRAWLING
+            else:
+                snake_reward = REWARD_ROTATION       
         else:
             if self.game.is_eaten():
                 return REWARD_WIN
@@ -30,6 +33,9 @@ class Rewards:
             if self.game.snake_is_crashed:
                 return -10
 
-            snake_reward = -REWARD_CRAWLING
+            if action == [0, 0, 1]:
+                snake_reward = -REWARD_CRAWLING
+            else:
+                snake_reward = -REWARD_ROTATION
 
         return snake_reward
