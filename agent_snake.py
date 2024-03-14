@@ -60,7 +60,16 @@ class SnakeAgent:
 
         # Define the grid's center point (the snake's head position)
         center_x, center_y = game.snake.head.x, game.snake.head.y
+        self.populate_grid(game, state_grid, center_x, center_y, vision_range)
+        
+        relative_state_grid = self.rotate_grid(state_grid, game.snake.direction)
 
+        # Flatten the grid to create a state vector or use as is for CNN input
+        relative_state_vector = relative_state_grid.flatten()
+
+        return relative_state_vector
+
+    def populate_grid(self, game, state_grid, center_x, center_y, vision_range):
         # Populate the grid
         for i in range(-vision_range, vision_range + 1):
             for j in range(-vision_range, vision_range + 1):
@@ -73,14 +82,7 @@ class SnakeAgent:
                     state_grid[j + 1, i + 1] = 1
                 # Check if the point is an obstacle
                 elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
-                    state_grid[j + 1, i + 1] = 3
-
-        relative_state_grid = self.rotate_grid(state_grid, game.snake.direction)
-
-        # Flatten the grid to create a state vector or use as is for CNN input
-        relative_state_vector = relative_state_grid.flatten()
-
-        return relative_state_vector
+                    state_grid[j + 1, i + 1] = 2
 
     def rotate_grid(self, grid, direction):
         """
