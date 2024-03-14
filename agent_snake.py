@@ -8,7 +8,7 @@ from model import Linear_QNet, QTrainer
 from game_utils import Direction, Point, calculate_distance, check_dangers, normalize_distance, calculate_angle, ray_trace_to_obstacle
 from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, SNAKE_GAMMA, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
-
+from game_settings import CODE_SNAKE, CODE_UNKNOWN, CODE_VALID_PATH, CODE_OBSTACLES, CODE_FOOD
 
 class SnakeAgent:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
@@ -57,6 +57,7 @@ class SnakeAgent:
         """
         grid_size = 2 * vision_range + 1  # Calculate the size of the vision grid
         state_grid = np.zeros((grid_size, grid_size))  # Initialize the grid to zeros
+        state_grid[vision_range, vision_range] = CODE_SNAKE
 
         # Define the grid's center point (the snake's head position)
         center_x, center_y = game.snake.head.x, game.snake.head.y
@@ -69,20 +70,34 @@ class SnakeAgent:
 
         return relative_state_vector
 
-    def populate_grid(self, game, state_grid, center_x, center_y, vision_range):
-        # Populate the grid
-        for i in range(-vision_range, vision_range + 1):
-            for j in range(-vision_range, vision_range + 1):
-                point = Point(center_x + i * BLOCK_SIZE, center_y + j * BLOCK_SIZE)
-                # Check if the point is outside the game boundaries (a wall)
-                if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
-                    state_grid[j + 1, i + 1] = 2
-                # Check if the point is the location of the food
-                elif point == game.food.position:
-                    state_grid[j + 1, i + 1] = 1
-                # Check if the point is an obstacle
-                elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
-                    state_grid[j + 1, i + 1] = 2
+    def populate_grid(self, game, state_grid, center_x, center_y, max_vision_range):
+        """
+        Populate the vision grid layer by layer, from outermost to innermost.
+        """
+        # Iterate from the outermost layer inwards
+        for vision_range in range(max_vision_range, 0, -1):
+            for i in range(-vision_range, vision_range + 1):
+                for j in range(-vision_range, vision_range + 1):
+                    # Calculate the position for the current cell
+                    point_x = center_x + i * BLOCK_SIZE
+                    point_y = center_y + j * BLOCK_SIZE
+                    point = Point(point_x, point_y)
+
+                    # Mapping the calculated point to the grid's indexing system
+                    grid_x = j + max_vision_range
+                    grid_y = i + max_vision_range
+
+                    # Check and assign values based on game state, similar to your existing logic
+                    if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
+                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Wall
+                    elif point == game.food.position:
+                        state_grid[grid_x, grid_y] = CODE_FOOD  # Food
+                    elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
+                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Obstacle
+                    # No need to explicitly mark the snake's head or body, as it's the reference center
+
+        # Note: This approach does not explicitly clear each layer before populating,
+        # as each layer overrides its values based on current game state.
 
     def rotate_grid(self, grid, direction):
         """
@@ -111,7 +126,7 @@ class SnakeAgent:
     def get_state(self, game):
         head = game.snake.head
 
-        snake_vision = self.get_vision_based_state(game)
+        snake_vision = self.get_vision_based_state(game, vision_range=2)
 
         # Relative food location based on snake's current direction
         if game.snake.direction == Direction.UP:
