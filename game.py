@@ -26,7 +26,7 @@ class SnakeGameAI:
         self.prev_distance = self.max_possible_distance
         self.food_move_counter = 0
         self.food = Food(position=Point(SCREEN_W / 2, SCREEN_H / 2))
-        self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), init_direction=Direction.UP)
+        self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), game=self, init_direction=Direction.UP)
 
         self.previous_angle = None
         self.obstacles_quantity = OBSTACLES_QUANTITY
