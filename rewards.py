@@ -24,14 +24,14 @@ class Rewards:
             if action == [0, 0, 1]:
                 snake_reward = REWARD_CRAWLING
             else:
-                snake_reward = REWARD_ROTATION       
+                snake_reward = REWARD_ROTATION
         else:
             if self.game.is_eaten():
                 return REWARD_WIN
 
             # Crashed
             if self.game.snake_is_crashed:
-                return -10
+                return REWARD_LOOSE
 
             if action == [0, 0, 1]:
                 snake_reward = -REWARD_CRAWLING
