@@ -28,7 +28,7 @@ class Obstacles:
             self.obstacles.append(obstacle_point)
 
     def is_point_at_obstacle(self, point):
-        for obstacle in self.obstacles.obstacles:
+        for obstacle in self.obstacles:
             if point == obstacle:
                 return True
         return False

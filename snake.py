@@ -1,6 +1,6 @@
 import pygame
 import random
-import numpy as np
+
 from game_utils import CLOCK_WISE, Point, Direction
 from game_settings import DIRECTIONS_QUANTITY, BLOCK_SIZE, SCREEN_W, SCREEN_H, SNAKE_SPRITE_PATH
 
@@ -62,7 +62,7 @@ class Snake:
         if x_new >= SCREEN_W or x_new < 0 or y_new >= SCREEN_H or y_new < 0:
             is_crashed = True
         # Check obstacle collision
-        elif any(obstacle.x == x_new and obstacle.y == y_new for obstacle in self.game.obstacles):
+        elif self.game.obstacles.is_point_at_obstacle(Point(x_new, y_new)):
             is_crashed = True
         else:
             # Update the head position only if there's no crash

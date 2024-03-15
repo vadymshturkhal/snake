@@ -92,7 +92,7 @@ class SnakeAgent:
                         state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Wall
                     elif point == game.food.position:
                         state_grid[grid_x, grid_y] = CODE_FOOD  # Food
-                    elif any(point.x == obstacle.x and point.y == obstacle.y for obstacle in game.obstacles):
+                    elif game.obstacles.is_point_at_obstacle(point):
                         state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Obstacle
                     # No need to explicitly mark the snake's head or body, as it's the reference center
 

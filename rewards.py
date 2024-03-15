@@ -13,29 +13,17 @@ class Rewards:
 
     def get_snake_reward(self, action):
         # Goal reached
-        if self.game.counter < EPSILON_SHIFT:
-            if self.game.is_eaten():
-                return REWARD_WIN
+        if self.game.is_eaten():
+            return REWARD_WIN
 
-            # Crashed
-            if self.game.snake_is_crashed:
-                return 0
+        # Crashed
+        if self.game.snake_is_crashed:
+            return REWARD_LOOSE
 
-            if action == [0, 0, 1]:
-                snake_reward = REWARD_CRAWLING
-            else:
-                snake_reward = REWARD_ROTATION
+        if action == [0, 0, 1]:
+            snake_reward = -REWARD_CRAWLING
         else:
-            if self.game.is_eaten():
-                return REWARD_WIN
+            snake_reward = -REWARD_ROTATION
 
-            # Crashed
-            if self.game.snake_is_crashed:
-                return REWARD_LOOSE
-
-            if action == [0, 0, 1]:
-                snake_reward = -REWARD_CRAWLING
-            else:
-                snake_reward = -REWARD_ROTATION
 
         return snake_reward
