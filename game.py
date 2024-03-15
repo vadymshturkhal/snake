@@ -1,7 +1,7 @@
 import pygame
 import random
-import numpy as np
 import math
+from obstacles import Obstacles
 from snake import Snake
 from food import Food
 
@@ -27,10 +27,9 @@ class SnakeGameAI:
         self.food_move_counter = 0
         self.food = Food(position=Point(SCREEN_W / 2, SCREEN_H / 2))
         self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), game=self, init_direction=Direction.UP)
+        self.obstacles = Obstacles(self)
 
         self.previous_angle = None
-        self.obstacles_quantity = OBSTACLES_QUANTITY
-
         self.snake_is_crashed = False
 
         # init display
@@ -39,7 +38,6 @@ class SnakeGameAI:
             pygame.display.set_caption('Snake')
             self.clock = pygame.time.Clock()
 
-        self.obstacles = []
         self.reset()
 
     # init game state
@@ -48,8 +46,7 @@ class SnakeGameAI:
         self.score = 0
         self.snake_steps = 0
 
-        # self.obstacles.clear()
-        # self._place_random_obstacles()
+        self.obstacles.place_random_obstacles(OBSTACLES_QUANTITY)
         self._place_snake(random_place=True)
         self._place_food(random_place=True)
         self.frame_iteration = 0
@@ -71,10 +68,8 @@ class SnakeGameAI:
                 if food_point == self.snake.head:
                     is_valid_point = False
 
-                for obstacle in self.obstacles:
-                    if food_point == obstacle:
-                        is_valid_point = False
-                        break
+                if self.obstacles.is_point_at_obstacle(food_point):
+                    is_valid_point = False
         else:
             food_point = Point(self.width - BLOCK_SIZE, self.height // 2 - BLOCK_SIZE)
         self.food.position = food_point
@@ -89,10 +84,8 @@ class SnakeGameAI:
                 snake_point = Point(x, y)
                 is_valid_point = True
 
-                for obstacle in self.obstacles:
-                    if snake_point == obstacle:
-                        is_valid_point = False
-                        break
+                if self.obstacles.is_point_at_obstacle(snake_point):
+                    is_valid_point = False
         else:
             snake_point = Point(0, self.height // 2 - BLOCK_SIZE)
         self.snake.head = snake_point
@@ -103,14 +96,11 @@ class SnakeGameAI:
         elif action == [0, 1, 0]:
             self.snake.rotate_snake('right')
         elif action == [0, 0, 1]:
-            self.snake_is_crashed = any([self.snake.move_after_rotation(), self.is_collision_with_obstacle()])
+            self.snake_is_crashed = any([self.snake.move_after_rotation(), self.obstacles.is_point_at_obstacle(self.snake.head)])
             self.snake_steps += 1
         else:
             if not is_human:
                 raise Exception(f'Unknown action for snake: {action}')
-
-        # self.snake_is_crashed = any([self.snake.move(action, is_human=is_human), self.is_collision_with_obstacle()])
-        # self.snake_steps += 1
 
     def is_eaten(self):
         if self.food.position == self.snake.head:
@@ -134,36 +124,6 @@ class SnakeGameAI:
             self._update_ui()
             self.clock.tick(self.game_speed)
 
-    def is_collision_with_obstacle(self, pt=None):
-        if pt is None:
-            pt = self.snake.head
-
-        # Check if head hits any obstacle
-        for obstacle in self.obstacles:
-            if obstacle == pt:
-                return True
-
-        return False
-
-    def _place_random_obstacles(self):
-        self.obstacles = []
-        
-        for _ in range(self.obstacles_quantity):
-            is_valid_point = False
-            while not is_valid_point:
-                x = random.randint(0, (self.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-                y = random.randint(0, (self.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-
-                obstacle_point = Point(x, y)
-                is_valid_point = True
-
-                for obstacle in self.obstacles:
-                    if obstacle_point == obstacle:
-                        is_valid_point = False
-                        break
-
-            self.obstacles.append(obstacle_point)
-
     def _update_ui(self):
         self.display.fill(BLACK)
 
@@ -175,7 +135,7 @@ class SnakeGameAI:
         pygame.draw.rect(self.display, RED, pygame.Rect(self.food.position.x, self.food.position.y, BLOCK_SIZE, BLOCK_SIZE))
 
         # Draw obstacles
-        for ob in self.obstacles:
+        for ob in self.obstacles.obstacles:
                 pygame.draw.rect(self.display, (128, 128, 128), pygame.Rect(ob.x, ob.y, BLOCK_SIZE, BLOCK_SIZE))  # Draw obstacles in gray
 
         text = font.render("Score: " + str(self.score), True, WHITE)
