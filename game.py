@@ -6,8 +6,7 @@ from snake import Snake
 from food import Food
 
 from game_utils import Direction, Point, WHITE, RED, BLACK
-from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H
-from game_settings import OBSTACLES_QUANTITY
+from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H, OBSTACLES_QUANTITY
 
 
 pygame.init()
