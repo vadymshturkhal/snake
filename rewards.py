@@ -21,9 +21,9 @@ class Rewards:
             return REWARD_LOOSE
 
         if action == [0, 0, 1]:
-            snake_reward = -REWARD_CRAWLING
+            snake_reward = REWARD_CRAWLING
         else:
-            snake_reward = -REWARD_ROTATION
+            snake_reward = REWARD_ROTATION
 
 
         return snake_reward

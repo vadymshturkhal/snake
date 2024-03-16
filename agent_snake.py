@@ -5,7 +5,7 @@ from collections import deque
 from model import Linear_QNet, QTrainer
 
 from game_utils import Direction, Point
-from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, SNAKE_GAMMA, SNAKE_MIN_EPSILON
+from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_GAMMA, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
 
@@ -56,7 +56,6 @@ class SnakeAgent:
         """
         grid_size = 2 * vision_range + 1  # Calculate the size of the vision grid
         state_grid = np.zeros((grid_size, grid_size))  # Initialize the grid to zeros
-        state_grid[vision_range, vision_range] = CODE_SNAKE
 
         # Define the grid's center point (the snake's head position)
         center_x, center_y = game.snake.head.x, game.snake.head.y
@@ -88,12 +87,16 @@ class SnakeAgent:
 
                     # Check and assign values based on game state, similar to your existing logic
                     if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
-                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Wall
+                        state_grid[grid_x, grid_y] = REWARD_LOOSE  # Wall
                     elif point == game.food.position:
-                        state_grid[grid_x, grid_y] = CODE_FOOD  # Food
+                        state_grid[grid_x, grid_y] = REWARD_WIN  # Food
                     elif game.obstacles.is_point_at_obstacle(point):
-                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Obstacle
+                        state_grid[grid_x, grid_y] = REWARD_LOOSE  # Obstacle
+                    else:
+                        state_grid[grid_x, grid_y] = REWARD_CRAWLING
                     # No need to explicitly mark the snake's head or body, as it's the reference center
+
+        state_grid[max_vision_range, max_vision_range] = REWARD_ROTATION
 
         # Note: This approach does not explicitly clear each layer before populating,
         # as each layer overrides its values based on current game state.
