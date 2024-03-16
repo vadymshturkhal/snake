@@ -10,7 +10,7 @@ from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAK
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
 
 class SnakeAgent:
-    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100):
+    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True):
         self.epsilon = 1
         self.epochs = epochs
 
@@ -26,8 +26,7 @@ class SnakeAgent:
             checkpoint = torch.load(weights_filename, map_location=self.device)
             checkpoint = torch.load(weights_filename, self.device)
 
-            # self.n_games = checkpoint['epoch']
-            self.n_games = 0
+            self.n_games = checkpoint['epoch'] if is_load_n_games else 0
             self.model.load_state_dict(checkpoint['model_state_dict'])
             self.model.eval()
         else:

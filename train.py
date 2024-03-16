@@ -90,14 +90,14 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
 
 is_load_weights_snake = True
+is_load_n_games = True
 is_load_weights_food = False
 is_rendering = False
 game_speed = 40
 games_to_play = 160
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
-
-agent = SnakeAgent(is_load_weights=is_load_weights_snake, weights_filename=SNAKE_WEIGHTS_FILENAME, epochs=games_to_play)
+agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
 food_agent = FoodAgent(is_load_weights=is_load_weights_food, weights_filename=FOOD_WEIGHTS_FILENAME, epochs=games_to_play)
 
 game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed)
