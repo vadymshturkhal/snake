@@ -5,7 +5,7 @@ from collections import deque
 from model import Linear_QNet, QTrainer
 
 from game_utils import Direction, Point
-from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_GAMMA, SNAKE_MIN_EPSILON
+from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_GAMMA, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
 
@@ -196,9 +196,9 @@ class SnakeAgent:
 
         self.epsilon = max(self.epsilon, SNAKE_MIN_EPSILON)
 
-        final_move = [0] * AVAILABLE_SNAKE_DIRECTIONS_QUANTITY
+        final_move = [0] * SNAKE_ACTION_LENGTH
         if np.random.rand() < self.epsilon:
-            move = random.randint(0, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY - 1)
+            move = random.randint(0, SNAKE_ACTION_LENGTH - 1)
             final_move[move] = 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
