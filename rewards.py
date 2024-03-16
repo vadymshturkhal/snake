@@ -25,5 +25,4 @@ class Rewards:
         else:
             snake_reward = REWARD_ROTATION
 
-
         return snake_reward
