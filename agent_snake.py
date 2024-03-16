@@ -5,7 +5,7 @@ import numpy as np
 from collections import deque
 from model import Linear_QNet, QTrainer
 
-from game_utils import Direction, Point, calculate_distance, check_dangers, normalize_distance, calculate_angle, ray_trace_to_obstacle
+from game_utils import Direction, Point
 from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, AVAILABLE_SNAKE_DIRECTIONS_QUANTITY, BLOCK_SIZE, SNAKE_GAMMA, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
