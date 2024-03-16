@@ -1,4 +1,3 @@
-from turtle import st
 import torch
 import random
 import numpy as np
@@ -156,9 +155,10 @@ class SnakeAgent:
         moving_down = game.snake.direction == Direction.DOWN
 
         state = np.array([
-            *snake_vision,
-            food_left, food_right, food_above, food_below,
             moving_up, moving_down, moving_left, moving_right,
+            food_left, food_right, food_above, food_below,
+            *snake_vision,
+
             # distance_to_wall_left, distance_to_wall_right, distance_to_wall_up, distance_to_wall_down,
             ])
 

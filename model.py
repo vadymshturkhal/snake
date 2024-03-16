@@ -35,7 +35,8 @@ class QTrainer:
         self.gamma = gamma
         self.model = model
         self.optimizer = optim.Adam(model.parameters(), lr=self.lr, weight_decay=WEIGHT_DECAY)
-        self.criterion = nn.MSELoss()
+        # self.criterion = nn.MSELoss()
+        self.criterion = nn.SmoothL1Loss()
 
     def train_step(self, state, action, reward, next_state):
         state = torch.tensor(state, dtype=torch.float)
