@@ -13,11 +13,12 @@ pygame.init()
 font = pygame.font.SysFont('arial', 25)
 
 class SnakeGameAI:
-    def __init__(self, is_rendering=False, game_speed=20):
+    def __init__(self, is_rendering=False, game_speed=20, is_add_obstacles=False):
         self.width = SCREEN_W
         self.height = SCREEN_H
         self.is_rendering = is_rendering
         self.game_speed = game_speed
+        self.is_add_obstacles = is_add_obstacles
         self.counter = 0
         self.snake_steps = 0
 
@@ -45,7 +46,9 @@ class SnakeGameAI:
         self.score = 0
         self.snake_steps = 0
 
-        # self.obstacles.place_random_obstacles(OBSTACLES_QUANTITY)
+        if self.is_add_obstacles:
+            self.obstacles.place_random_obstacles(OBSTACLES_QUANTITY)
+
         self._place_snake(random_place=True)
         self._place_food(random_place=True)
         self.frame_iteration = 0
