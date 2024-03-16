@@ -45,7 +45,7 @@ class SnakeGameAI:
         self.score = 0
         self.snake_steps = 0
 
-        self.obstacles.place_random_obstacles(OBSTACLES_QUANTITY)
+        # self.obstacles.place_random_obstacles(OBSTACLES_QUANTITY)
         self._place_snake(random_place=True)
         self._place_food(random_place=True)
         self.frame_iteration = 0

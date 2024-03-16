@@ -128,7 +128,7 @@ class SnakeAgent:
     def get_state(self, game):
         head = game.snake.head
 
-        snake_vision = self.get_vision_based_state(game, vision_range=1)
+        snake_vision = self.get_vision_based_state(game, vision_range=2)
 
         # Relative food location based on snake's current direction
         if game.snake.direction == Direction.UP:
