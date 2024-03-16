@@ -87,16 +87,16 @@ class SnakeAgent:
 
                     # Check and assign values based on game state, similar to your existing logic
                     if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
-                        state_grid[grid_x, grid_y] = REWARD_LOOSE  # Wall
+                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Wall
                     elif point == game.food.position:
-                        state_grid[grid_x, grid_y] = REWARD_WIN  # Food
+                        state_grid[grid_x, grid_y] = CODE_FOOD  # Food
                     elif game.obstacles.is_point_at_obstacle(point):
-                        state_grid[grid_x, grid_y] = REWARD_LOOSE  # Obstacle
+                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Obstacle
                     else:
-                        state_grid[grid_x, grid_y] = REWARD_CRAWLING
+                        state_grid[grid_x, grid_y] = 0
                     # No need to explicitly mark the snake's head or body, as it's the reference center
 
-        state_grid[max_vision_range, max_vision_range] = REWARD_ROTATION
+        state_grid[max_vision_range, max_vision_range] = CODE_SNAKE
 
         # Note: This approach does not explicitly clear each layer before populating,
         # as each layer overrides its values based on current game state.
