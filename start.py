@@ -1,7 +1,7 @@
 from agent_snake import SnakeAgent
 from agent_food import FoodAgent
 from game import SnakeGameAI
-from game_settings import FRAME_RESTRICTION, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import FRAME_RESTRICTION, IS_ADD_OBSTACLES, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
 import time
 
@@ -85,7 +85,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 is_load_weights_snake = True
 is_load_weights_food = False
 is_load_n_games = True
-is_add_obstacles = False
 is_rendering = True
 game_speed = 40
 games_to_play = 10
@@ -95,5 +94,5 @@ assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
 food_agent = None
 
-game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=is_add_obstacles)
+game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=IS_ADD_OBSTACLES)
 train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent)
