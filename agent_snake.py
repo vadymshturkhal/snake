@@ -5,7 +5,7 @@ import numpy as np
 from collections import deque
 from model import Linear_QNet, QTrainer
 
-from game_utils import Direction, Point
+from game_utils import Direction, Point, calculate_distance
 from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_GAMMA, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
@@ -88,13 +88,16 @@ class SnakeAgent:
 
                     # Check and assign values based on game state, similar to your existing logic
                     if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
-                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Wall
+                        # Wall
+                        state_grid[grid_x, grid_y] = calculate_distance(game.snake.head, point) 
                     elif point == game.food.position:
-                        state_grid[grid_x, grid_y] = CODE_FOOD  # Food
+                         # Food
+                        state_grid[grid_x, grid_y] = CODE_FOOD 
                     elif game.obstacles.is_point_at_obstacle(point):
-                        state_grid[grid_x, grid_y] = CODE_OBSTACLES  # Obstacle
+                         # Obstacle
+                        state_grid[grid_x, grid_y] = calculate_distance(game.snake.head, point)  
                     else:
-                        state_grid[grid_x, grid_y] = 0
+                        pass
                     # No need to explicitly mark the snake's head or body, as it's the reference center
 
         state_grid[max_vision_range, max_vision_range] = CODE_SNAKE
@@ -130,7 +133,6 @@ class SnakeAgent:
         head = game.snake.head
 
         snake_vision = self.get_vision_based_state(game, vision_range=2)
-        distance_to_all_obstacles = game.obstacles.get_distance_to_all_obstacles(game.snake.head)
 
         # Relative food location based on snake's current direction
         if game.snake.direction == Direction.UP:
@@ -163,7 +165,6 @@ class SnakeAgent:
             moving_up, moving_down, moving_left, moving_right,
             food_left, food_right, food_above, food_below,
             *snake_vision,
-            *distance_to_all_obstacles,
             ])
 
         state = torch.from_numpy(np.array(state, dtype=float)).to(self.device)
