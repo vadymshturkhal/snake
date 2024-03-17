@@ -20,4 +20,9 @@ class Rewards:
         else:
             snake_reward = REWARD_ROTATION
 
+        distance_to_all_obstacles = self.game.obstacles.get_distance_to_all_obstacles(self.game.snake.head)
+
+        if min(distance_to_all_obstacles) <= 3:
+            snake_reward -= 1/min(distance_to_all_obstacles) * 0.1
+
         return snake_reward
