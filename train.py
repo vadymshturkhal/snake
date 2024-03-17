@@ -1,7 +1,7 @@
 from agent_snake import SnakeAgent
 from game import SnakeGameAI
 from collections import namedtuple
-from game_settings import IS_ADD_OBSTACLES, REWARD_WIN, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import IS_ADD_OBSTACLES, REWARD_WIN, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
 import time
 from rewards import Rewards
@@ -85,12 +85,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 snake_game_reward = 0
                 bumps = 0
                 timer.start()
-        # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
-            # last_food_update = current_time
-            # Random
-            # game.food_move()
-
-        # game.scores_to_csv(score_data_filename, scores)
 
 
 is_load_weights_snake = True
