@@ -1,5 +1,4 @@
 from agent_snake import SnakeAgent
-from agent_food import FoodAgent
 from game import SnakeGameAI
 from game_settings import FRAME_RESTRICTION, SNAKE_WEIGHTS_FILENAME, FOOD_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
