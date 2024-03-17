@@ -186,6 +186,7 @@ class SnakeAgent:
     def get_action(self, state, is_train=True):
         """
         Return vector [0,0,0] with first two positions represent rotation, third pushes forward.
+        Adjusted for epsilon-soft policy.
         """
         # Linear decay rate
         if is_train:
@@ -197,8 +198,20 @@ class SnakeAgent:
         self.epsilon = max(self.epsilon, SNAKE_MIN_EPSILON)
 
         final_move = [0] * SNAKE_ACTION_LENGTH
+
         if np.random.rand() < self.epsilon:
-            move = random.randint(0, SNAKE_ACTION_LENGTH - 1)
+            # Distribute a small probability to all actions, keeping the majority for the best action
+            probabilities = np.ones(SNAKE_ACTION_LENGTH) * (self.epsilon / SNAKE_ACTION_LENGTH)
+
+            state0 = torch.tensor(state, dtype=torch.float)
+            prediction = self.model(state0)
+            best_move = torch.argmax(prediction).item()
+
+            # Adjust probability for the best action
+            probabilities[best_move] += (1.0 - self.epsilon)
+
+            # Choose action based on modified probabilities
+            move = np.random.choice(np.arange(SNAKE_ACTION_LENGTH), p=probabilities)
             final_move[move] = 1
         else:
             state0 = torch.tensor(state, dtype=torch.float)
