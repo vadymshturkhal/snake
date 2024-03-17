@@ -33,7 +33,7 @@ def calculate_distance(snake_head, food_head):
     # Manhattan
     dx = abs(food_head.x - snake_head.x)
     dy = abs(food_head.y - snake_head.y)
-    return dx + dy * BLOCK_SIZE
+    return (dx + dy) // BLOCK_SIZE
 
 def calculate_angle(snake, food_position):
     snake_head = snake.head
