@@ -16,11 +16,11 @@ def assure_data_csv(filename, is_load_weights):
         return
 
     with open(filename, 'w') as file:
-        file.write('Score, Time, Reward, Epsilon\n')
+        file.write('Score, Time, Reward, Epsilon, Bumps\n')
 
-def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon):
+def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon, bumps):
     with open(filename, 'a') as file:
-        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}\n')
+        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}\n')
 
 def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None):
     scores = []
@@ -34,6 +34,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     timer = Timer()
 
     snake_game_reward = 0
+    bumps = 0
     timer.start()
 
     while game.counter <= games_to_play:
@@ -59,6 +60,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new)
             snake_agent.remember(state_old, snake_action, snake_reward, state_new)
 
+            if game.snake_is_crashed:
+                bumps += 1
+
             if game.frame_iteration > FRAME_RESTRICTION and any([game.snake_is_crashed, snake_reward == REWARD_WIN]):
             # if game.snake_is_crashed:
             # if score == game.counter // 10 + 1:
@@ -77,8 +81,9 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                 scores.append(score)
                 total_score += score
 
-                scores_to_csv(score_data_filename, scores, elapsed_time, snake_game_reward, snake_agent.epsilon)
+                scores_to_csv(score_data_filename, scores, elapsed_time, snake_game_reward, snake_agent.epsilon, bumps=bumps)
                 snake_game_reward = 0
+                bumps = 0
                 timer.start()
         # if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
             # last_food_update = current_time
@@ -88,7 +93,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
         # game.scores_to_csv(score_data_filename, scores)
 
 
-is_load_weights_snake = False
+is_load_weights_snake = True
 is_load_weights_food = False
 is_load_n_games = False
 is_rendering = False
