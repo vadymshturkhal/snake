@@ -1,6 +1,6 @@
 import random
 from game_settings import BLOCK_SIZE
-from game_utils import Point
+from game_utils import Point, calculate_distance, normalize_distance
 
 
 class Obstacles:
@@ -32,3 +32,20 @@ class Obstacles:
             if point == obstacle:
                 return True
         return False
+
+    def get_distance_to_closest_obstacle(self, point):
+        min_distance = float('inf')  # Initialize with infinity
+
+        for obstacle in self.obstacles:
+            distance = calculate_distance(point, obstacle)
+            if distance < min_distance:
+                min_distance = distance
+
+        return min_distance
+
+    def get_distance_to_all_obstacles(self, point):
+        distances = []
+        for obstacle in self.obstacles:
+            distance = calculate_distance(point, obstacle)
+            distances.append(distance)
+        return distances
