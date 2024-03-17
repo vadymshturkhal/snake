@@ -1,3 +1,4 @@
+from turtle import distance
 import torch
 import random
 import numpy as np
@@ -129,6 +130,7 @@ class SnakeAgent:
         head = game.snake.head
 
         snake_vision = self.get_vision_based_state(game, vision_range=2)
+        distance_to_all_obstacles = game.obstacles.get_distance_to_all_obstacles(game.snake.head)
 
         # Relative food location based on snake's current direction
         if game.snake.direction == Direction.UP:
@@ -161,8 +163,7 @@ class SnakeAgent:
             moving_up, moving_down, moving_left, moving_right,
             food_left, food_right, food_above, food_below,
             *snake_vision,
-
-            # distance_to_wall_left, distance_to_wall_right, distance_to_wall_up, distance_to_wall_down,
+            *distance_to_all_obstacles,
             ])
 
         state = torch.from_numpy(np.array(state, dtype=float)).to(self.device)
