@@ -5,8 +5,6 @@ from game_settings import REWARD_WIN, REWARD_LOOSE
 class Rewards:
     def __init__(self, game):
         self.game = game
-        self.prev_distance = game.max_possible_distance
-        self.previous_angle = None
 
     def get_snake_reward(self, action):
         # Goal reached
