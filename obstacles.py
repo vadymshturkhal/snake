@@ -56,6 +56,13 @@ class Obstacles:
         if not self.is_point_at_obstacle(obstacle_point):
             self.obstacles.append(obstacle_point)
 
+    def remove_obstacle_at_point(self, x, y):
+        """Remove an obstacle at a specified point, if present."""
+        # Create a Point object for the x, y coordinates
+        point_to_remove = Point(x, y)
+        # Use a list comprehension to filter out the obstacle at the clicked point
+        self.obstacles = [obstacle for obstacle in self.obstacles if obstacle != point_to_remove]
+
     def save_obstacles(self, filename='obstacles.txt'):
         with open(filename, 'w') as f:
             for obstacle in self.obstacles:
