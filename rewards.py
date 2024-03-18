@@ -1,4 +1,4 @@
-from game_settings import REWARD_CRAWLING, REWARD_ROTATION
+from game_settings import IS_ADD_OBSTACLES, REWARD_CRAWLING, REWARD_ROTATION
 from game_settings import REWARD_WIN, REWARD_LOOSE
 
 
@@ -20,9 +20,10 @@ class Rewards:
         else:
             snake_reward = REWARD_ROTATION
 
-        distance_to_all_obstacles = self.game.obstacles.get_distance_to_all_obstacles(self.game.snake.head)
+        if IS_ADD_OBSTACLES:
+            distance_to_all_obstacles = self.game.obstacles.get_distance_to_all_obstacles(self.game.snake.head)
 
-        if min(distance_to_all_obstacles) <= 3:
-            snake_reward -= 1/min(distance_to_all_obstacles) * 0.1
+            if min(distance_to_all_obstacles) <= 3:
+                snake_reward -= 1/min(distance_to_all_obstacles) * 0.1
 
         return snake_reward
