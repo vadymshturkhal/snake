@@ -10,7 +10,7 @@ import pygame
 from game_utils import Timer
 
 
-def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None, map_to_load=False):
+def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None, map_to_load=None):
     scores = []
     mean_scores = []
     total_score = 0
@@ -21,7 +21,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
     timer = Timer()
     
-    if map_to_load:
+    if map_to_load is not None:
         game.obstacles.load_obstacles_from_file(MAPS_FOLDER + map_to_load)
 
     while counter < games_to_play:
