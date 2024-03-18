@@ -52,12 +52,16 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                     elif event.key == pygame.K_UP:
                         action = [0, 0, 1]
                 
-                elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click
+                elif event.type == pygame.MOUSEBUTTONDOWN:
                     # Get mouse position and adjust it to your BLOCK_SIZE
                     x, y = event.pos
                     x = (x // BLOCK_SIZE) * BLOCK_SIZE
                     y = (y // BLOCK_SIZE) * BLOCK_SIZE
-                    game.obstacles.place_obstacle_at_point(x, y)
+
+                    if event.button == 1:  # Left click
+                        game.obstacles.place_obstacle_at_point(x, y)
+                    elif event.button == 3:  # Right click
+                        game.obstacles.remove_obstacle_at_point(x, y)
 
             game.snake_apply_action(action, is_human=True)
             score = game.score
