@@ -49,3 +49,21 @@ class Obstacles:
             distance = calculate_distance(point, obstacle)
             distances.append(distance)
         return distances
+
+    def place_obstacle_at_point(self, x, y):
+        """Place an obstacle at a specified point."""
+        obstacle_point = Point(x, y)
+        if not self.is_point_at_obstacle(obstacle_point):
+            self.obstacles.append(obstacle_point)
+
+    def save_obstacles(self, filename='obstacles.txt'):
+        with open(filename, 'w') as f:
+            for obstacle in self.obstacles:
+                f.write(f'{obstacle.x},{obstacle.y}\n')
+
+    def load_obstacles_from_file(self, filename='obstacles.txt'):
+        """Load obstacles from a file and place them in the game."""
+        with open(filename, 'r') as f:
+            for line in f:
+                x, y = line.strip().split(',')
+                self.place_obstacle_at_point(int(x), int(y))
