@@ -22,8 +22,8 @@ class SnakeGameAI:
         self.counter = 0
         self.snake_steps = 0
         self.food_move_counter = 0
-        self.food = Food(position=Point(SCREEN_W / 2, SCREEN_H / 2))
-        self.snake = Snake(head=Point(SCREEN_W / 2, SCREEN_H / 2), game=self, init_direction=Direction.UP)
+        self.food = Food(position=Point(SCREEN_W - BLOCK_SIZE, SCREEN_H - BLOCK_SIZE))
+        self.snake = Snake(head=Point(BLOCK_SIZE, BLOCK_SIZE), game=self, init_direction=Direction.UP)
         self.obstacles = Obstacles(self)
 
         self.previous_angle = None
@@ -46,8 +46,8 @@ class SnakeGameAI:
         if self.is_add_obstacles:
             self.obstacles.place_random_obstacles(OBSTACLES_QUANTITY)
 
-        self._place_snake(random_place=True)
-        self._place_food(random_place=True)
+        self._place_snake(random_place=False)
+        self._place_food(random_place=False)
         self.frame_iteration = 0
         self.snake_is_crashed = False
 
@@ -70,7 +70,7 @@ class SnakeGameAI:
                 if self.obstacles.is_point_at_obstacle(food_point):
                     is_valid_point = False
         else:
-            food_point = Point(self.width - BLOCK_SIZE, self.height // 2 - BLOCK_SIZE)
+            food_point = Point(self.width - BLOCK_SIZE, (self.height - BLOCK_SIZE) // 2)
         self.food.position = food_point
     
     def _place_snake(self, random_place=True):
@@ -86,7 +86,7 @@ class SnakeGameAI:
                 if self.obstacles.is_point_at_obstacle(snake_point):
                     is_valid_point = False
         else:
-            snake_point = Point(0, self.height // 2 - BLOCK_SIZE)
+            snake_point = Point(0, (self.height - BLOCK_SIZE) // 2)
         self.snake.head = snake_point
 
     def snake_apply_action(self, action, is_human=False):
