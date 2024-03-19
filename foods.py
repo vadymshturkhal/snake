@@ -6,9 +6,10 @@ from game_utils import Point, calculate_distance
 
 
 class Foods:
-    def __init__(self, game):
+    def __init__(self, game, load_from_filename=None):
         self.game = game
         self.foods = []
+        self._load_from_filename = load_from_filename
 
     @property
     def is_empty(self):
@@ -23,24 +24,30 @@ class Foods:
     def place_food(self, random_place=True):
         """Create new Food points"""
         if random_place:
-            for _ in range(FOOD_QUANTITY):
-                is_valid_point = False
-                while not is_valid_point:
-                    x = random.randint(0, (self.game.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-                    y = random.randint(0, (self.game.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
-
-                    food_point = Point(x, y)
-                    is_valid_point = True
-
-                    if food_point == self.game.snake.head:
-                        is_valid_point = False
-
-                    if self.game.obstacles.is_point_at_obstacle(food_point):
-                        is_valid_point = False
-                self.foods.append(food_point)
+            if FOOD_QUANTITY > 0:
+                self._place_food_at_random_place(FOOD_QUANTITY)
+            else:
+                raise Exception("Can't place random food with FOOD_QUANTITY <= 0")
         else:
             # Load from file
-            pass
+            self.load_foods_from_file()
+
+    def _place_food_at_random_place(self, quantity):
+        for _ in range(quantity):
+            is_valid_point = False
+            while not is_valid_point:
+                x = random.randint(0, (self.game.width-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+                y = random.randint(0, (self.game.height-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
+
+                food_point = Point(x, y)
+                is_valid_point = True
+
+                if food_point == self.game.snake.head:
+                    is_valid_point = False
+
+                if self.game.obstacles.is_point_at_obstacle(food_point):
+                    is_valid_point = False
+            self.foods.append(food_point)
 
     def get_closest_food(self, point):
         min_distance = float('inf')  # Initialize with infinity
@@ -62,8 +69,8 @@ class Foods:
         if food_point in self.foods:
             self.foods.remove(food_point)
 
-    def save_foods(self, filename):
-        with open(filename, 'w') as file:
+    def save_foods(self):
+        with open(self._load_from_filename, 'w') as file:
             writer = csv.writer(file)
             writer.writerow(['Foods'])
             for food in self.foods:
@@ -71,10 +78,10 @@ class Foods:
                 position = f'({food.x}, {food.y})'
                 writer.writerow([position])
 
-    def load_foods_from_file(self, filename):
+    def load_foods_from_file(self):
         """Load obstacles from a file and place them in the game."""
         try:
-            with open(filename, mode='r') as file:
+            with open(self._load_from_filename, mode='r') as file:
                 reader = csv.DictReader(file)
                 for row in reader:
                     # Parse the position string to extract x and y
@@ -85,7 +92,7 @@ class Foods:
         except FileNotFoundError:
             # If the file doesn't exist, create it by opening it in write mode and then closing it.
             # This is useful if you want to ensure the file exists for future operations.
-            self.save_foods(filename)
+            self.save_foods()
 
     def __iter__(self):
         """Make the Foods class iterable over its food items."""

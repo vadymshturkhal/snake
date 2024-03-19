@@ -5,11 +5,12 @@ from obstacles import Obstacles
 from snake import Snake
 
 from game_utils import Direction, Point, WHITE, RED, BLACK
-from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H, OBSTACLES_QUANTITY
+from game_settings import BLOCK_SIZE, MAPS_FOLDER, SCREEN_W, SCREEN_H, OBSTACLES_QUANTITY
 
 
 pygame.init()
 font = pygame.font.SysFont('arial', 25)
+FOODS_TO_LOAD = './level_2/foods.csv'
 
 class SnakeGameAI:
     def __init__(self, is_rendering=False, game_speed=20, is_add_obstacles=False):
@@ -22,7 +23,7 @@ class SnakeGameAI:
         self.snake_steps = 0
         self.snake = Snake(head=Point(BLOCK_SIZE, BLOCK_SIZE), game=self, init_direction=Direction.UP)
         self.obstacles = Obstacles(self)
-        self.foods = Foods(self)
+        self.foods = Foods(self, load_from_filename=MAPS_FOLDER + FOODS_TO_LOAD)
 
         self.previous_angle = None
         self.snake_is_crashed = False
@@ -46,7 +47,7 @@ class SnakeGameAI:
 
         self._place_snake(random_place=False)
         self.foods.clear()
-        self.foods.place_food(random_place=True)
+        self.foods.place_food(random_place=False)
         self.frame_iteration = 0
         self.snake_is_crashed = False
 
