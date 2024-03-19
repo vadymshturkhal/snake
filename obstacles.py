@@ -5,8 +5,8 @@ from game_utils import Point, calculate_distance, normalize_distance
 
 class Obstacles:
     def __init__(self, game) -> None:
-        self.obstacles = []
         self.game = game
+        self.obstacles = []
 
     def place_random_obstacles(self, obstacles_quantity):
         self.obstacles.clear()
@@ -74,3 +74,10 @@ class Obstacles:
             for line in f:
                 x, y = line.strip().split(',')
                 self.place_obstacle_at_point(int(x), int(y))
+
+    def __iter__(self):
+        """Make the Obstacles class iterable over its obstacle items."""
+        # This method returns an iterator for the container. 
+        # In this case, we can simply yield from self.obstacles since lists are already iterable.
+        for obstacle in self.obstacles:
+            yield obstacle

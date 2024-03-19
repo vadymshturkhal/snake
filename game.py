@@ -117,7 +117,7 @@ class SnakeGameAI:
             pygame.draw.rect(self.display, RED, pygame.Rect(food.x, food.y, BLOCK_SIZE, BLOCK_SIZE))
 
         # Draw obstacles
-        for ob in self.obstacles.obstacles:
+        for ob in self.obstacles:
                 pygame.draw.rect(self.display, (128, 128, 128), pygame.Rect(ob.x, ob.y, BLOCK_SIZE, BLOCK_SIZE))  # Draw obstacles in gray
 
         text = font.render("Score: " + str(self.score), True, WHITE)
