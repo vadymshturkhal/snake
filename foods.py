@@ -21,8 +21,31 @@ class Foods:
     def clear(self):
         self.foods.clear()
 
-    def place_food(self, random_place=True):
-        """Create new Food points"""
+    def place_food(self, random_place: bool =True):
+        """
+        Places food items in the game environment. Food items can be placed
+        randomly or loaded from a predefined file.
+
+        Parameters:
+        - random_place (bool): If True, food items will be placed at random
+            locations within the game environment. The number of food items
+            placed is determined by the FOOD_QUANTITY global variable. If
+            False, food items will be loaded from a file.
+
+        Raises:
+        - Exception: If random_place is True but FOOD_QUANTITY is less than
+            or equal to 0, an exception is raised indicating that food cannot
+            be placed randomly.
+
+        Usage:
+        - When random_place is True and FOOD_QUANTITY is positive, food items
+            are placed at random locations that do not coincide with the snake's
+            head or any existing obstacles.
+        - If random_place is False, the method attempts to load food item
+            positions from a file. This requires the load_foods_from_file method
+            to be implemented, which should handle reading food item positions
+            from a predefined file format.
+        """
         if random_place:
             if FOOD_QUANTITY > 0:
                 self._place_food_at_random_place(FOOD_QUANTITY)
@@ -32,7 +55,35 @@ class Foods:
             # Load from file
             self.load_foods_from_file()
 
-    def _place_food_at_random_place(self, quantity):
+    def _place_food_at_random_place(self, quantity: int):
+        """
+        A helper method used to place a specified number of food items at random
+        locations within the game environment. Ensures food items do not overlap
+        with the snake's head or obstacles.
+
+        Parameters:
+        - quantity (int): The number of food items to place randomly in the
+            game environment.
+
+        Details:
+        This method attempts to find suitable locations for placing the specified
+        number of food items by randomly selecting positions within the bounds of
+        the game environment. A position is considered suitable if it does not
+        coincide with the snake's head or any existing obstacles.
+
+        For each food item, the method:
+        1. Randomly generates x and y coordinates within the game boundaries,
+            aligning them with the BLOCK_SIZE grid.
+        2. Checks if the generated position coincides with the snake's head or
+            any obstacles.
+        3. If the position is suitable, adds the food item to the `foods` list.
+            If not, repeats the process.
+
+        Note: This method directly modifies the `foods` list attribute of the
+        class by appending new Point instances representing the positions of the
+        newly placed food items.
+        """
+
         for _ in range(quantity):
             is_valid_point = False
             while not is_valid_point:
@@ -49,7 +100,7 @@ class Foods:
                     is_valid_point = False
             self.foods.append(food_point)
 
-    def get_closest_food(self, point):
+    def get_closest_food(self, point: Point) -> Point:
         min_distance = float('inf')  # Initialize with infinity
         closest_food = None
         for food in self.foods:
@@ -59,12 +110,12 @@ class Foods:
                 closest_food = food
         return closest_food
 
-    def place_food_at_point(self, point):
+    def place_food_at_point(self, point: Point):
         """Place a food item at the specified point."""
         if point not in self.foods:  # Avoid duplicate food points
             self.foods.append(point)
 
-    def remove_food_at_point(self, food_point):
+    def remove_food_at_point(self, food_point: Point):
         """Remove a food item at the specified point, if present."""
         if food_point in self.foods:
             self.foods.remove(food_point)
