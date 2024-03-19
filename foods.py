@@ -46,6 +46,8 @@ class Foods:
             to be implemented, which should handle reading food item positions
             from a predefined file format.
         """
+        self.foods.clear()
+
         if random_place:
             if FOOD_QUANTITY > 0:
                 self._place_food_at_random_place(FOOD_QUANTITY)
