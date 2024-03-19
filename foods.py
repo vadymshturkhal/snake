@@ -21,41 +21,17 @@ class Foods:
     def clear(self):
         self.foods.clear()
 
-    def place_food(self, random_place: bool =True):
-        """
-        Places food items in the game environment. Food items can be placed
-        randomly or loaded from a predefined file.
-
-        Parameters:
-        - random_place (bool): If True, food items will be placed at random
-            locations within the game environment. The number of food items
-            placed is determined by the FOOD_QUANTITY global variable. If
-            False, food items will be loaded from a file.
-
-        Raises:
-        - Exception: If random_place is True but FOOD_QUANTITY is less than
-            or equal to 0, an exception is raised indicating that food cannot
-            be placed randomly.
-
-        Usage:
-        - When random_place is True and FOOD_QUANTITY is positive, food items
-            are placed at random locations that do not coincide with the snake's
-            head or any existing obstacles.
-        - If random_place is False, the method attempts to load food item
-            positions from a file. This requires the load_foods_from_file method
-            to be implemented, which should handle reading food item positions
-            from a predefined file format.
-        """
+    def place_food(self):
         self.foods.clear()
 
-        if random_place:
-            if FOOD_QUANTITY > 0:
-                self._place_food_at_random_place(FOOD_QUANTITY)
-            else:
-                raise Exception("Can't place random food with FOOD_QUANTITY <= 0")
-        else:
-            # Load from file
+        if self._load_from_filename is not None:
             self.load_foods_from_file()
+
+        if len(self.foods) < FOOD_QUANTITY:
+            self._place_food_at_random_place(FOOD_QUANTITY - len(self.foods))
+        
+        if len(self.foods) <= 0:
+            raise Exception("Can't place random food with FOOD_QUANTITY <= 0")
 
     def _place_food_at_random_place(self, quantity: int):
         """

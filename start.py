@@ -86,7 +86,7 @@ is_load_weights_snake = True
 is_load_weights_food = False
 is_load_n_games = True
 is_rendering = True
-game_speed = 10
+game_speed = 40
 games_to_play = 10
 obstacles_to_load = './level_2/obstacles.csv'
 

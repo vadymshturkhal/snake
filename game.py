@@ -46,7 +46,7 @@ class SnakeGameAI:
             self.obstacles.place_random_obstacles(OBSTACLES_QUANTITY)
 
         self._place_snake(random_place=False)
-        self.foods.place_food(random_place=False)
+        self.foods.place_food()
         self.frame_iteration = 0
         self.snake_is_crashed = False
 
@@ -81,15 +81,14 @@ class SnakeGameAI:
                 raise Exception(f'Unknown action for snake: {action}')
 
     def is_eaten(self):
-        for food in self.foods:
-            if food == self.snake.head:
-                self.score += 1
-                self.foods.remove_food_at_point(food)
+        if self.foods.is_food_at_point(self.snake.head):
+            self.score += 1
+            self.foods.remove_food_at_point(self.snake.head)
 
-                if self.foods.is_empty:
-                    self._place_snake(random_place=False)
-                    self.foods.place_food(random_place=True)
-                return True
+            if self.foods.is_empty:
+                self._place_snake(random_place=False)
+                self.foods.place_food()
+            return True
         return False
 
     def play_step(self):
