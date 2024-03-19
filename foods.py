@@ -12,7 +12,11 @@ class Foods:
     def is_empty(self):
         return len(self.foods) == 0
 
+    def clear(self):
+        self.foods.clear()
+
     def place_food(self, random_place=True):
+        """Create new Food points"""
         if random_place:
             for _ in range(FOOD_QUANTITY):
                 is_valid_point = False
