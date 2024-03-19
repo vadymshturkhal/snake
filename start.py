@@ -87,9 +87,9 @@ is_load_weights_snake = True
 is_load_weights_food = False
 is_load_n_games = True
 is_rendering = True
-game_speed = 40
+game_speed = 10
 games_to_play = 10
-map_to_load = 'one_block.txt'
+map_to_load = 'two_blocks.txt'
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 
