@@ -95,7 +95,7 @@ is_load_weights = True
 is_rendering = True
 game_speed = 10
 games_to_play = 3
-map_to_load = 'new_map.txt'
+map_to_load = 'new_map.csv'
 
 snake_agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME)
 food_agent = None

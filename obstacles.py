@@ -1,3 +1,5 @@
+import ast
+import csv
 import random
 from game_settings import BLOCK_SIZE
 from game_utils import Point, calculate_distance, normalize_distance
@@ -58,22 +60,28 @@ class Obstacles:
         # Use a list comprehension to filter out the obstacle at the clicked point
         self.obstacles = [obstacle for obstacle in self.obstacles if obstacle != point_to_remove]
 
-    def save_obstacles(self, filename='obstacles.txt'):
-        with open(filename, 'w') as f:
+    def save_obstacles(self, filename):
+        with open(filename, 'w') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Obstacles'])
             for obstacle in self.obstacles:
-                f.write(f'{obstacle.x},{obstacle.y}\n')
+                # Write the coordinates as a single string in the format '(x, y)'
+                position = f'({obstacle.x}, {obstacle.y})'
+                writer.writerow([position])
 
-    def load_obstacles_from_file(self, filename='obstacles.txt'):
+    def load_obstacles_from_file(self, filename):
         """Load obstacles from a file and place them in the game."""
         try:
-            with open(filename, 'r') as f:
-                for line in f:
-                    x, y = line.strip().split(',')
-                    self.place_obstacle_at_point(Point(int(x), int(y)))
+            with open(filename, mode='r') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    # Parse the position string to extract x and y
+                    position = ast.literal_eval(row['Obstacles'])
+                    self.place_obstacle_at_point(Point(*position))
         except FileNotFoundError:
             # If the file doesn't exist, create it by opening it in write mode and then closing it.
             # This is useful if you want to ensure the file exists for future operations.
-            open(filename, 'w').close()
+            self.save_obstacles(filename)
 
     def __iter__(self):
         """Make the Obstacles class iterable over its obstacle items."""
