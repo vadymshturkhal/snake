@@ -7,7 +7,7 @@ from game_settings import SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
 import time
 import pygame
 
-from game_utils import Timer
+from game_utils import Point, Timer
 
 
 def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None, map_to_load=None):
@@ -60,11 +60,12 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                     x, y = event.pos
                     x = (x // BLOCK_SIZE) * BLOCK_SIZE
                     y = (y // BLOCK_SIZE) * BLOCK_SIZE
+                    point = Point(x, y)
 
                     if event.button == 1:  # Left click
-                        game.obstacles.place_obstacle_at_point(x, y)
+                        game.obstacles.place_obstacle_at_point(point)
                     elif event.button == 3:  # Right click
-                        game.obstacles.remove_obstacle_at_point(x, y)
+                        game.obstacles.remove_obstacle_at_point(point)
 
             game.snake_apply_action(action, is_human=True)
             score = game.score
@@ -93,7 +94,7 @@ is_load_weights = True
 is_rendering = True
 game_speed = 10
 games_to_play = 3
-map_to_load = 'one_block.txt'
+map_to_load = 'new_map.txt'
 
 snake_agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME)
 food_agent = None
