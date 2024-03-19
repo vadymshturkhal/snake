@@ -12,6 +12,9 @@ class Foods:
     def is_empty(self):
         return len(self.foods) == 0
 
+    def is_food_at_point(self, point):
+        return point in self.foods
+
     def clear(self):
         self.foods.clear()
 
