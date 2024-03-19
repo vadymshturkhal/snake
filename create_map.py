@@ -21,7 +21,6 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
     timer = Timer()
     game.obstacles.load_obstacles_from_file(MAPS_FOLDER + obstacles_to_load)
-    game.foods.load_foods_from_file(MAPS_FOLDER + foods_to_load)
     while counter < games_to_play:
         timer.start()
         timer.stop()
@@ -37,7 +36,7 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     game.obstacles.save_obstacles(MAPS_FOLDER + obstacles_to_load)
-                    game.foods.save_foods(MAPS_FOLDER + foods_to_load)
+                    game.foods.save_foods()
                     pygame.quit()
                     quit()
                 if event.type == pygame.KEYDOWN:
@@ -94,11 +93,10 @@ is_load_weights = True
 is_rendering = True
 game_speed = 10
 games_to_play = 3
-obstacles_to_load = './level_2/new_obstacles.csv'
-foods_to_load = './level_2/new_foods.csv'
-
+obstacles_to_load = './level_1/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 
 snake_agent = SnakeAgent(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME)
 food_agent = None
-game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=True)
-train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent, obstacles_to_load=obstacles_to_load, foods_to_load=foods_to_load)
+game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=True, foods_to_load=foods_to_load)
+train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent, obstacles_to_load)

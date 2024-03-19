@@ -88,12 +88,14 @@ is_load_n_games = True
 is_rendering = True
 game_speed = 40
 games_to_play = 10
-obstacles_to_load = './level_2/obstacles.csv'
+obstacles_to_load = './level_1/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
+
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 
 snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
 food_agent = None
 
-game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=IS_ADD_OBSTACLES)
+game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load)
 train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent, obstacles_to_load)
