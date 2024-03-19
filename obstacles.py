@@ -8,7 +8,7 @@ class Obstacles:
         self.game = game
         self.obstacles = []
 
-    def place_random_obstacles(self, obstacles_quantity):
+    def place_random_obstacles(self, obstacles_quantity: int):
         self.obstacles.clear()
         
         for _ in range(obstacles_quantity):
@@ -27,13 +27,13 @@ class Obstacles:
 
             self.obstacles.append(obstacle_point)
 
-    def is_point_at_obstacle(self, point):
+    def is_point_at_obstacle(self, point: Point) -> bool:
         for obstacle in self.obstacles:
             if point == obstacle:
                 return True
         return False
 
-    def get_distance_to_closest_obstacle(self, point):
+    def get_distance_to_closest_obstacle(self, point: Point):
         min_distance = float('inf')  # Initialize with infinity
 
         for obstacle in self.obstacles:
@@ -43,23 +43,21 @@ class Obstacles:
 
         return min_distance
 
-    def get_distance_to_all_obstacles(self, point):
+    def get_distance_to_all_obstacles(self, point: Point):
         distances = []
         for obstacle in self.obstacles:
             distance = calculate_distance(point, obstacle)
             distances.append(distance)
         return distances
 
-    def place_obstacle_at_point(self, x, y):
+    def place_obstacle_at_point(self, point: Point):
         """Place an obstacle at a specified point."""
-        obstacle_point = Point(x, y)
-        if not self.is_point_at_obstacle(obstacle_point):
-            self.obstacles.append(obstacle_point)
+        if not self.is_point_at_obstacle(point):
+            self.obstacles.append(point)
 
-    def remove_obstacle_at_point(self, x, y):
+    def remove_obstacle_at_point(self, point_to_remove: Point):
         """Remove an obstacle at a specified point, if present."""
         # Create a Point object for the x, y coordinates
-        point_to_remove = Point(x, y)
         # Use a list comprehension to filter out the obstacle at the clicked point
         self.obstacles = [obstacle for obstacle in self.obstacles if obstacle != point_to_remove]
 
