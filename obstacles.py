@@ -8,6 +8,9 @@ class Obstacles:
         self.game = game
         self.obstacles = []
 
+    def is_point_at_obstacle(self, point: Point) -> bool:
+        return point in self.obstacles
+
     def place_random_obstacles(self, obstacles_quantity: int):
         self.obstacles.clear()
         
@@ -26,12 +29,6 @@ class Obstacles:
                         break
 
             self.obstacles.append(obstacle_point)
-
-    def is_point_at_obstacle(self, point: Point) -> bool:
-        for obstacle in self.obstacles:
-            if point == obstacle:
-                return True
-        return False
 
     def get_distance_to_closest_obstacle(self, point: Point):
         min_distance = float('inf')  # Initialize with infinity

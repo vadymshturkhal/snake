@@ -57,9 +57,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                     point = Point(x, y)
 
                     if event.button == 1:  # Left click
-                        game.obstacles.place_obstacle_at_point(point)
-                    elif event.button == 3:  # Right click
-                        game.obstacles.remove_obstacle_at_point(point)
+                        if not game.obstacles.is_point_at_obstacle(point):
+                            game.obstacles.place_obstacle_at_point(point)
+                        else:
+                            game.obstacles.remove_obstacle_at_point(point)
                     elif event.button == 2:  # Middle click
                         # Toggle placing and deleting food
                         if not game.foods.is_food_at_point(point):
