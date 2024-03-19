@@ -88,8 +88,8 @@ is_load_n_games = True
 is_rendering = True
 game_speed = 40
 games_to_play = 10
-obstacles_to_load = './level_1/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
+obstacles_to_load = './level_2/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_2/foods.csv'
 
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)

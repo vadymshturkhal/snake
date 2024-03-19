@@ -22,7 +22,7 @@ def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon, 
     with open(filename, 'a') as file:
         file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}\n')
 
-def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None, map_to_load=None):
+def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None, obstacles_to_load=None, foods_to_load=None):
     scores = []
     total_score = 0
     record = 0
@@ -37,8 +37,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
     bumps = 0
     timer.start()
 
-    if map_to_load is not None:
-        game.obstacles.load_obstacles_from_file(MAPS_FOLDER + map_to_load)
+    if obstacles_to_load is not None:
+        game.obstacles.load_obstacles_from_file(MAPS_FOLDER + obstacles_to_load)
 
     while game.counter <= games_to_play:
         current_time = time.time()
@@ -96,12 +96,13 @@ is_load_n_games = False
 is_rendering = False
 game_speed = 40
 games_to_play = 160
-map_to_load = 'one_block.txt'
+obstacles_to_load = './level_1_2/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_1_2/foods.csv'
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 
 snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
 food_agent = None
 
-game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=IS_ADD_OBSTACLES)
-train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent, map_to_load=map_to_load)
+game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load)
+train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent, obstacles_to_load)
