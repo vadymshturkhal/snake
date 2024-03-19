@@ -79,7 +79,9 @@ class Foods:
                 for row in reader:
                     # Parse the position string to extract x and y
                     position = ast.literal_eval(row['Foods'])
-                    self.place_food_at_point(Point(*position))
+                    food_point = Point(*position)
+                    self.foods.append(food_point)
+                    self.place_food_at_point(food_point)
         except FileNotFoundError:
             # If the file doesn't exist, create it by opening it in write mode and then closing it.
             # This is useful if you want to ensure the file exists for future operations.

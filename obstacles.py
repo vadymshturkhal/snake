@@ -77,6 +77,9 @@ class Obstacles:
                 for row in reader:
                     # Parse the position string to extract x and y
                     position = ast.literal_eval(row['Obstacles'])
+
+                    obstacle_point = Point(*position)
+                    self.obstacles.append(obstacle_point)
                     self.place_obstacle_at_point(Point(*position))
         except FileNotFoundError:
             # If the file doesn't exist, create it by opening it in write mode and then closing it.
