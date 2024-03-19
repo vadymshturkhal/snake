@@ -72,7 +72,7 @@ class Obstacles:
             with open(filename, 'r') as f:
                 for line in f:
                     x, y = line.strip().split(',')
-                    self.place_obstacle_at_point(int(x), int(y))
+                    self.place_obstacle_at_point(Point(int(x), int(y)))
         except FileNotFoundError:
             # If the file doesn't exist, create it by opening it in write mode and then closing it.
             # This is useful if you want to ensure the file exists for future operations.
