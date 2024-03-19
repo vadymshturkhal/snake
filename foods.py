@@ -43,11 +43,10 @@ class Foods:
                 closest_food = food
         return closest_food
 
-    def place_food_at_point(self, x, y):
+    def place_food_at_point(self, point):
         """Place a food item at the specified point."""
-        food_point = Point(x, y)
-        if food_point not in self.food:  # Avoid duplicate food points
-            self.food.append(food_point)
+        if point not in self.foods:  # Avoid duplicate food points
+            self.foods.append(point)
 
     def remove_food_at_point(self, food_point):
         """Remove a food item at the specified point, if present."""
