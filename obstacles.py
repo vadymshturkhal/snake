@@ -68,10 +68,15 @@ class Obstacles:
 
     def load_obstacles_from_file(self, filename='obstacles.txt'):
         """Load obstacles from a file and place them in the game."""
-        with open(filename, 'r') as f:
-            for line in f:
-                x, y = line.strip().split(',')
-                self.place_obstacle_at_point(int(x), int(y))
+        try:
+            with open(filename, 'r') as f:
+                for line in f:
+                    x, y = line.strip().split(',')
+                    self.place_obstacle_at_point(int(x), int(y))
+        except FileNotFoundError:
+            # If the file doesn't exist, create it by opening it in write mode and then closing it.
+            # This is useful if you want to ensure the file exists for future operations.
+            open(filename, 'w').close()
 
     def __iter__(self):
         """Make the Obstacles class iterable over its obstacle items."""
