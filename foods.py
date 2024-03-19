@@ -52,3 +52,10 @@ class Foods:
         """Remove a food item at the specified point, if present."""
         if food_point in self.foods:
             self.foods.remove(food_point)
+
+    def __iter__(self):
+        """Make the Foods class iterable over its food items."""
+        # This method returns an iterator for the container. In this case, we can
+        # simply yield from self.foods since lists are already iterable.
+        for food in self.foods:
+            yield food

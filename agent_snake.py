@@ -90,7 +90,7 @@ class SnakeAgent:
                     if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
                         # Wall
                         state_grid[grid_x, grid_y] = calculate_distance(game.snake.head, point) 
-                    elif point in game.foods.foods:
+                    elif point in game.foods:
                          # Food
                         state_grid[grid_x, grid_y] = CODE_FOOD 
                     elif game.obstacles.is_point_at_obstacle(point):

@@ -80,7 +80,7 @@ class SnakeGameAI:
                 raise Exception(f'Unknown action for snake: {action}')
 
     def is_eaten(self):
-        for food in self.foods.foods:
+        for food in self.foods:
             if food == self.snake.head:
                 self.score += 1
                 self.foods.remove_food_at_point(food)
@@ -113,7 +113,7 @@ class SnakeGameAI:
         self.display.blit(self.snake.sprite_rotated, sprite_rect.topleft)
 
         # Draw food
-        for food in self.foods.foods:
+        for food in self.foods:
             pygame.draw.rect(self.display, RED, pygame.Rect(food.x, food.y, BLOCK_SIZE, BLOCK_SIZE))
 
         # Draw obstacles
