@@ -1,3 +1,5 @@
+import ast
+import csv
 import random
 from game_settings import BLOCK_SIZE, FOOD_QUANTITY
 from game_utils import Point, calculate_distance
@@ -59,6 +61,29 @@ class Foods:
         """Remove a food item at the specified point, if present."""
         if food_point in self.foods:
             self.foods.remove(food_point)
+
+    def save_foods(self, filename):
+        with open(filename, 'w') as file:
+            writer = csv.writer(file)
+            writer.writerow(['Foods'])
+            for food in self.foods:
+                # Write the coordinates as a single string in the format '(x, y)'
+                position = f'({food.x}, {food.y})'
+                writer.writerow([position])
+
+    def load_foods_from_file(self, filename):
+        """Load obstacles from a file and place them in the game."""
+        try:
+            with open(filename, mode='r') as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    # Parse the position string to extract x and y
+                    position = ast.literal_eval(row['Foods'])
+                    self.place_food_at_point(Point(*position))
+        except FileNotFoundError:
+            # If the file doesn't exist, create it by opening it in write mode and then closing it.
+            # This is useful if you want to ensure the file exists for future operations.
+            self.save_foods(filename)
 
     def __iter__(self):
         """Make the Foods class iterable over its food items."""
