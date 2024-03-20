@@ -54,11 +54,7 @@ class QTrainer:
             action = torch.unsqueeze(action, 0)
             reward = torch.unsqueeze(reward, 0)
 
-        # 1: predicted Q values with current state
-        # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
-        # q_update = reward[0] + self.gamma * torch.max(self.model(next_state).detach())
-
-        # Make sure to include 'done' condition in your calculation of q_update
+        # Q_new = r + y * max(next_predicted Q value) -> only do this if not done
         if not done:
             q_update = reward[0] + self.gamma * torch.max(self.model(next_state).detach())
         else:
