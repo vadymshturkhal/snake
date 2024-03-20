@@ -58,15 +58,17 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
 
             game.play_step()
 
+            done = game.is_eaten()
+
             # Train snake
             state_new = snake_agent.get_state(game)
-            snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new)
-            snake_agent.remember(state_old, snake_action, snake_reward, state_new)
+            snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new, done)
+            snake_agent.remember(state_old, snake_action, snake_reward, state_new, done)
 
             if game.snake_is_crashed:
                 bumps += 1
 
-            if game.is_eaten():
+            if done:
             # if game.frame_iteration > FRAME_RESTRICTION and any([game.snake_is_crashed, snake_reward == REWARD_WIN]):
             # if game.snake_is_crashed:
             # if score == game.counter // 10 + 1:
@@ -96,9 +98,9 @@ is_load_weights_food = False
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
-games_to_play = 160
-obstacles_to_load = './level_4/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_4/foods.csv'
+games_to_play = 100
+obstacles_to_load = './level_1/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 
 assure_data_csv(SCORE_DATA_FILENAME, is_load_weights_snake)
 

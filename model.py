@@ -40,7 +40,7 @@ class QTrainer:
         # self.criterion = nn.MSELoss()
         self.criterion = nn.SmoothL1Loss()
 
-    def train_step(self, state, action, reward, next_state):
+    def train_step(self, state, action, reward, next_state, done):
         state = torch.tensor(state, dtype=torch.float)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long)
@@ -56,7 +56,14 @@ class QTrainer:
 
         # 1: predicted Q values with current state
         # 2: Q_new = r + y * max(next_predicted Q value) -> only do this if not done
-        q_update = reward[0] + self.gamma * torch.max(self.model(next_state).detach())
+        # q_update = reward[0] + self.gamma * torch.max(self.model(next_state).detach())
+
+        # Make sure to include 'done' condition in your calculation of q_update
+        if not done:
+            q_update = reward[0] + self.gamma * torch.max(self.model(next_state).detach())
+        else:
+            q_update = reward
+
         q_values = self.model(state)
 
         target = q_values.clone()
