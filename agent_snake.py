@@ -132,7 +132,7 @@ class SnakeAgent:
     def get_state(self, game):
         head = game.snake.head
 
-        snake_vision = self.get_vision_based_state(game, vision_range=2)
+        snake_vision = self.get_vision_based_state(game, vision_range=3)
 
         closest_food = game.foods.get_closest_food(head)
 
