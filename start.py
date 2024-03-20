@@ -19,7 +19,7 @@ def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon, 
     with open(filename, 'a') as file:
         file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}\n')
 
-def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None, obstacles_to_load=None, foods_to_load=None):
+def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, food_agent=None, obstacles_to_load=None, foods_to_load=None):
     scores = []
     mean_scores = []
     total_score = 0
@@ -63,7 +63,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
             if game.snake_is_crashed:
                 bumps += 1
 
-            if game.snake_is_crashed:
+            if game.is_eaten():
+            # if game.snake_is_crashed:
                 game.reset()
                 snake_agent.n_games += 1
 

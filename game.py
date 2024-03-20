@@ -24,6 +24,7 @@ class SnakeGameAI:
         self.snake = Snake(head=Point(BLOCK_SIZE, BLOCK_SIZE), game=self, init_direction=Direction.UP)
         self.obstacles = Obstacles(self)
         self.foods = Foods(self, load_from_filename=foods_to_load)
+        self._is_food_eaten = False
 
         self.previous_angle = None
         self.snake_is_crashed = False
@@ -49,6 +50,7 @@ class SnakeGameAI:
         self.foods.place_food()
         self.frame_iteration = 0
         self.snake_is_crashed = False
+        self._is_food_eaten = False
 
         self.previous_angle = None
 
@@ -88,8 +90,8 @@ class SnakeGameAI:
             if self.foods.is_empty:
                 self._place_snake(random_place=False)
                 self.foods.place_food()
-            return True
-        return False
+            self._is_food_eaten = True
+        return self._is_food_eaten
 
     def play_step(self):
         for event in pygame.event.get():
