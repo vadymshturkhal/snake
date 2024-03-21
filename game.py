@@ -90,7 +90,7 @@ class SnakeGameAI:
             if self.foods.is_empty:
                 self._place_snake(random_place=False)
                 self.foods.place_food()
-            self._is_food_eaten = True
+                self._is_food_eaten = True
         return self._is_food_eaten
 
     def play_step(self):
