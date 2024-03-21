@@ -1,15 +1,11 @@
 from agent_snake import SnakeAgent
 from game import SnakeGameAI
-from collections import namedtuple
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, REWARD_WIN, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
 import time
 from rewards import Rewards
 from game_utils import Timer
 
-
-# Extend the Transition namedtuple with a 'done' field
-Transition = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
 
 def assure_data_csv(filename, is_load_weights):
     if is_load_weights:
@@ -24,7 +20,6 @@ def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon, 
 
 def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, food_agent=None, obstacles_to_load=None, foods_to_load=None):
     scores = []
-    total_score = 0
 
     last_snake_update = time.time()
     last_food_update = last_snake_update
@@ -90,7 +85,6 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
                 snake_agent.model.save(epoch=snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
                 scores.append(score)
-                total_score += score
 
                 scores_to_csv(score_data_filename, scores, elapsed_time, snake_game_reward, snake_agent.epsilon, bumps, steps, rotations)
                 snake_game_reward = 0

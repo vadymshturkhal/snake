@@ -13,31 +13,30 @@ def assure_data_csv(filename, is_load_weights):
         return
 
     with open(filename, 'w') as file:
-        file.write('Score, Time, Reward, Epsilon, Bumps\n')
+        file.write('Score, Time, Reward, Epsilon, Bumps, Steps, Rotations\n')
 
-def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon, bumps):
+def scores_to_csv(filename, scores, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations):
     with open(filename, 'a') as file:
-        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}\n')
+        file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}, {steps}, {rotations}\n')
 
 def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, food_agent=None, obstacles_to_load=None, foods_to_load=None):
     scores = []
-    mean_scores = []
-    total_score = 0
 
-    counter = 0
     last_snake_update = time.time()
     last_food_update = last_snake_update
 
     rewards = Rewards(game)
     snake_game_reward = 0
     bumps = 0
+    steps = 0
+    rotations = 0
 
     timer = Timer()
 
     if obstacles_to_load is not None:
         game.obstacles.load_obstacles_from_file(MAPS_FOLDER + obstacles_to_load)
 
-    while counter < games_to_play:
+    while games_to_play > 0:
         timer.start()
         timer.stop()
 
@@ -62,6 +61,11 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
 
             if game.snake_is_crashed:
                 bumps += 1
+ 
+            if snake_action == [0, 0, 1]:
+                steps += 1
+            else:
+                rotations += 1
 
             if game.is_eaten():
             # if game.snake_is_crashed:
@@ -69,14 +73,13 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
                 snake_agent.n_games += 1
 
                 scores.append(score)
-                total_score += score
-                mean_score = total_score / snake_agent.n_games
-                mean_scores.append(mean_score)
 
-                counter += 1
-                scores_to_csv(score_data_filename, scores, timer.get_elapsed_time(), snake_game_reward, snake_agent.epsilon, bumps)
+                games_to_play -= 1
+                scores_to_csv(score_data_filename, scores, timer.get_elapsed_time(), snake_game_reward, snake_agent.epsilon, bumps, steps, rotations)
                 snake_game_reward = 0
                 bumps = 0
+                steps = 0
+                rotations = 0
                 timer.reset()
 
         if current_time - last_food_update >= SNAKE_SPEED * FOOD_SPEED_MULTIPLIER:
@@ -88,7 +91,7 @@ is_load_weights_food = False
 is_load_n_games = True
 is_rendering = True
 game_speed = 40
-games_to_play = 100
+games_to_play = 10
 obstacles_to_load = './level_1/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 
