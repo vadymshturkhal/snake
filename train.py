@@ -22,11 +22,11 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
     scores = []
 
     last_snake_update = time.time()
-    last_food_update = last_snake_update
 
     rewards = Rewards(game)
     timer = Timer()
 
+    max_reward = float('-inf')
     snake_game_reward = 0
     bumps = 0
     steps = 0
@@ -82,7 +82,9 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
                 snake_agent.n_games += 1
                 snake_agent.train_long_memory()
 
-                snake_agent.model.save(epoch=snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
+                if snake_game_reward >= max_reward:
+                    max_reward = snake_game_reward
+                    snake_agent.model.save(epoch=snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
                 scores.append(score)
 
@@ -97,7 +99,7 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
 is_load_weights_snake = False
 is_load_n_games = True
 is_rendering = False
-game_speed = 400
+game_speed = 40
 games_to_play = 100
 obstacles_to_load = './level_1/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
