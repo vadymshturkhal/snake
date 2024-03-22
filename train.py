@@ -12,6 +12,7 @@ class TrainAgent:
     def __init__(self, is_load_weights):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load)
         self.snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
+        self.rewards = Rewards(self.game)
         self.is_load_weights = is_load_weights
 
     def assure_data_csv(self):
@@ -34,7 +35,6 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
     train_agent = TrainAgent(is_load_weights_snake)
     train_agent.assure_data_csv()
 
-    rewards = Rewards(train_agent.game)
     timer = Timer()
 
     max_reward = float('-inf')
@@ -59,7 +59,7 @@ def train(snake_agent, game: SnakeGameAI, score_data_filename, games_to_play=0, 
             snake_action = snake_agent.get_action(state_old)
             game.snake_apply_action(snake_action)
 
-            snake_reward = rewards.get_snake_reward(action=snake_action)
+            snake_reward = train_agent.rewards.get_snake_reward(action=snake_action)
             snake_game_reward += snake_reward
 
 
