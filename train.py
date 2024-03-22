@@ -44,7 +44,7 @@ class TrainAgent:
         timer.start()
 
         if obstacles_to_load is not None:
-            self.game.obstacles.load_obstacles_from_file(MAPS_FOLDER + obstacles_to_load)
+            self.game.obstacles.load_obstacles_from_file(obstacles_to_load)
 
         while self.game.counter <= games_to_play:
             current_time = time.time()
@@ -105,8 +105,9 @@ is_load_n_games = False
 is_rendering = False
 game_speed = 40
 games_to_play = 100
-obstacles_to_load = './level_2/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_2/foods.csv'
+obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 
-train_agent = TrainAgent()
-train_agent.train(obstacles_to_load)
+if __name__ == '__main__':
+    train_agent = TrainAgent()
+    train_agent.train(obstacles_to_load)
