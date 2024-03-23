@@ -25,13 +25,11 @@ class SnakeAgent:
         # Load the weights onto the CPU or GPU
         if is_load_weights:
             checkpoint = torch.load(weights_filename, map_location=self.device)
-            checkpoint = torch.load(weights_filename, self.device)
 
             self.n_games = checkpoint['epoch'] if is_load_n_games else 0
             self.model.load_state_dict(checkpoint['model_state_dict'])
             self.model.eval()
         else:
-            self.model.to(self.device)
             self.n_games = 0
 
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
