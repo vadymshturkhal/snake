@@ -20,14 +20,12 @@ class TrainAgent:
         with open(SCORE_DATA_FILENAME, 'w') as file:
             file.write('Score, Time, Reward, Epsilon, Bumps, Steps, Rotations\n')
 
-    def scores_to_csv(self, scores, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations):
+    def scores_to_csv(self, score, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations):
         with open(SCORE_DATA_FILENAME, 'a') as file:
-            file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}, {steps}, {rotations}\n')
+            file.write(f'{str(score)}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}, {steps}, {rotations}\n')
 
     def train(self, obstacles_to_load=None):
         self.assure_data_csv()
-
-        scores = []
 
         last_snake_update = time.time()
 
@@ -40,6 +38,7 @@ class TrainAgent:
         bumps = 0
         steps = 0
         rotations = 0
+        score = 0
 
         timer.start()
 
@@ -63,7 +62,7 @@ class TrainAgent:
                 self.game.play_step()
 
                 done = self.game.is_eaten()
-                score = self.game.score
+                score += self.game.score
 
                 # Train snake
                 state_new = self.snake_agent.get_state(self.game)
@@ -89,20 +88,19 @@ class TrainAgent:
                         max_reward = snake_game_reward
                         self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
-                    scores.append(score)
-
-                    self.scores_to_csv(scores, elapsed_time, snake_game_reward, self.snake_agent.epsilon, bumps, steps, rotations)
+                    self.scores_to_csv(score, elapsed_time, snake_game_reward, self.snake_agent.epsilon, bumps, steps, rotations)
                     snake_game_reward = 0
                     bumps = 0
                     steps = 0
                     rotations = 0
+                    score = 0
                     self.game.reset()
                     timer.start()
 
 
 is_load_weights_snake = False
 is_load_n_games = False
-is_rendering = False
+is_rendering = True
 game_speed = 40
 games_to_play = 100
 obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
