@@ -20,14 +20,12 @@ class TrainAgent:
         with open(SCORE_DATA_FILENAME, 'w') as file:
             file.write('Score, Time, Reward, Epsilon, Bumps, Steps, Rotations\n')
 
-    def scores_to_csv(self, scores, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations):
+    def scores_to_csv(self, score, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations):
         with open(SCORE_DATA_FILENAME, 'a') as file:
-            file.write(f'{str(scores[-1])}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}, {steps}, {rotations}\n')
+            file.write(f'{str(score)}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}, {steps}, {rotations}\n')
 
     def train(self, obstacles_to_load=None):
         self.assure_data_csv()
-
-        scores = []
 
         last_snake_update = time.time()
 
@@ -40,11 +38,12 @@ class TrainAgent:
         bumps = 0
         steps = 0
         rotations = 0
+        score = 0
 
         timer.start()
 
         if obstacles_to_load is not None:
-            self.game.obstacles.load_obstacles_from_file(MAPS_FOLDER + obstacles_to_load)
+            self.game.obstacles.load_obstacles_from_file(obstacles_to_load)
 
         while self.game.counter <= games_to_play:
             current_time = time.time()
@@ -63,7 +62,12 @@ class TrainAgent:
                 self.game.play_step()
 
                 done = self.game.is_eaten()
-                score = self.game.score
+                score += self.game.score
+
+                # Train snake
+                state_new = self.snake_agent.get_state(self.game)
+                self.snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new, done)
+                self.snake_agent.remember(state_old, snake_action, snake_reward, state_new, done)
 
                 if self.game.snake_is_crashed:
                     bumps += 1
@@ -78,18 +82,18 @@ class TrainAgent:
                     timer.reset()
 
                     self.snake_agent.n_games += 1
+                    self.snake_agent.train_long_memory()
 
                     if snake_game_reward >= max_reward:
                         max_reward = snake_game_reward
                         self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
-                    scores.append(score)
-
-                    self.scores_to_csv(scores, elapsed_time, snake_game_reward, self.snake_agent.epsilon, bumps, steps, rotations)
+                    self.scores_to_csv(score, elapsed_time, snake_game_reward, self.snake_agent.epsilon, bumps, steps, rotations)
                     snake_game_reward = 0
                     bumps = 0
                     steps = 0
                     rotations = 0
+                    score = 0
                     self.game.reset()
                     timer.start()
 
@@ -99,8 +103,9 @@ is_load_n_games = True
 is_rendering = True
 game_speed = 40
 games_to_play = 100
-obstacles_to_load = './level_2/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_2/foods.csv'
+obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 
-train_agent = TrainAgent()
-train_agent.train(obstacles_to_load)
+if __name__ == '__main__':
+    train_agent = TrainAgent()
+    train_agent.train(obstacles_to_load)
