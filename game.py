@@ -86,8 +86,9 @@ class SnakeGameAI:
             self.foods.remove_food_at_point(self.snake.head)
 
         if self.foods.is_empty:
-            self._place_snake(random_place=False)
-            self.foods.place_food()
+            # Uncomment if len(foods) > 1
+            # self._place_snake(random_place=False)
+            # self.foods.place_food()
             return True
         return False
 
