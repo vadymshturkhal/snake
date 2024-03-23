@@ -136,27 +136,33 @@ class SnakeAgent:
 
         closest_food = game.foods.get_closest_food(head)
 
-        # Relative food location based on snake's current direction
-        if game.snake.direction == Direction.UP:
-            food_left = closest_food.x < head.x
-            food_right = closest_food.x > head.x
-            food_above = closest_food.y < head.y
-            food_below = closest_food.y > head.y
-        elif game.snake.direction == Direction.DOWN:
-            food_left = closest_food.x > head.x
-            food_right = closest_food.x < head.x
-            food_above = closest_food.y > head.y
-            food_below = closest_food.y < head.y
-        elif game.snake.direction == Direction.LEFT:
-            food_left = closest_food.y > head.y
-            food_right = closest_food.y < head.y
-            food_above = closest_food.x < head.x
-            food_below = closest_food.x > head.x
-        elif game.snake.direction == Direction.RIGHT:
-            food_left = closest_food.y < head.y
-            food_right = closest_food.y > head.y
-            food_above = closest_food.x > head.x
-            food_below = closest_food.x < head.x
+        if closest_food is None:
+            food_left = False
+            food_right = False
+            food_above = False
+            food_below = False
+        else:
+            # Relative food location based on snake's current direction
+            if game.snake.direction == Direction.UP:
+                food_left = closest_food.x < head.x
+                food_right = closest_food.x > head.x
+                food_above = closest_food.y < head.y
+                food_below = closest_food.y > head.y
+            elif game.snake.direction == Direction.DOWN:
+                food_left = closest_food.x > head.x
+                food_right = closest_food.x < head.x
+                food_above = closest_food.y > head.y
+                food_below = closest_food.y < head.y
+            elif game.snake.direction == Direction.LEFT:
+                food_left = closest_food.y > head.y
+                food_right = closest_food.y < head.y
+                food_above = closest_food.x < head.x
+                food_below = closest_food.x > head.x
+            elif game.snake.direction == Direction.RIGHT:
+                food_left = closest_food.y < head.y
+                food_right = closest_food.y > head.y
+                food_above = closest_food.x > head.x
+                food_below = closest_food.x < head.x
 
         moving_left = game.snake.direction == Direction.LEFT
         moving_right = game.snake.direction == Direction.RIGHT
