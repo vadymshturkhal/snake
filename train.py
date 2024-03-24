@@ -83,7 +83,7 @@ class TrainAgent:
                     self.snake_agent.n_games += 1
                     self.snake_agent.train_long_memory()
 
-                    if snake_game_reward >= 6:
+                    if snake_game_reward >= max_reward:
                         max_reward = snake_game_reward
                         self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
