@@ -1,6 +1,6 @@
 from agent_snake import SnakeAgent
 from game import SnakeGameAI
-from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_VISION_RANGE, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
 import time
 from rewards import Rewards
@@ -10,7 +10,7 @@ from game_utils import Timer
 class TrainAgent:
     def __init__(self):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load)
-        self.snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
+        self.snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games, SNAKE_VISION_RANGE])
         self.rewards = Rewards(self.game)
 
     def assure_data_csv(self):
@@ -64,11 +64,6 @@ class TrainAgent:
                 done = self.game.is_eaten()
                 score += self.game.score
 
-                # Train snake
-                state_new = self.snake_agent.get_state(self.game)
-                self.snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new, done)
-                self.snake_agent.remember(state_old, snake_action, snake_reward, state_new, done)
-
                 if self.game.snake_is_crashed:
                     bumps += 1
 
@@ -82,7 +77,6 @@ class TrainAgent:
                     timer.reset()
 
                     self.snake_agent.n_games += 1
-                    self.snake_agent.train_long_memory()
 
                     if snake_game_reward >= max_reward:
                         max_reward = snake_game_reward
