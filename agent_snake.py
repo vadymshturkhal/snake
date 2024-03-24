@@ -11,9 +11,10 @@ from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAK
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
 
 class SnakeAgent:
-    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True):
+    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True, vision_range=1):
         self.epsilon = 1
         self.epochs = epochs
+        self.vision_range = vision_range
 
         self.gamma = SNAKE_GAMMA
         self.memory = deque(maxlen=MAX_MEMORY)
@@ -86,13 +87,13 @@ class SnakeAgent:
                     # Check and assign values based on game state, similar to your existing logic
                     if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
                         # Wall
-                        state_grid[grid_x, grid_y] = calculate_distance(game.snake.head, point) 
+                        state_grid[grid_x, grid_y] = CODE_OBSTACLES
                     elif point in game.foods:
                          # Food
                         state_grid[grid_x, grid_y] = CODE_FOOD 
                     elif game.obstacles.is_point_at_obstacle(point):
                          # Obstacle
-                        state_grid[grid_x, grid_y] = calculate_distance(game.snake.head, point)  
+                        state_grid[grid_x, grid_y] = CODE_OBSTACLES
                     else:
                         pass
                     # No need to explicitly mark the snake's head or body, as it's the reference center
@@ -129,7 +130,7 @@ class SnakeAgent:
     def get_state(self, game):
         head = game.snake.head
 
-        snake_vision = self.get_vision_based_state(game, vision_range=3)
+        snake_vision = self.get_vision_based_state(game, vision_range=self.vision_range)
 
         closest_food = game.foods.get_closest_food(head)
 
