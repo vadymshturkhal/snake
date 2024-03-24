@@ -61,8 +61,11 @@ class TrainAgent:
 
                 self.game.play_step()
 
-                done = self.game.is_eaten()
-                score += self.game.score
+                # done = self.game.is_eaten()
+                done = self.game.snake_is_crashed
+
+                # score = if want to eat fixed size of foods
+                # else score +=
 
                 # Train snake
                 state_new = self.snake_agent.get_state(self.game)
@@ -84,11 +87,11 @@ class TrainAgent:
                     self.snake_agent.n_games += 1
                     self.snake_agent.train_long_memory()
 
-                    if snake_game_reward >= max_reward:
+                    if snake_game_reward >= 6:
                         max_reward = snake_game_reward
                         self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
-                    self.scores_to_csv(score, elapsed_time, snake_game_reward, self.snake_agent.epsilon, bumps, steps, rotations)
+                    self.scores_to_csv(self.game.score, elapsed_time, snake_game_reward, self.snake_agent.epsilon, bumps, steps, rotations)
                     snake_game_reward = 0
                     bumps = 0
                     steps = 0
@@ -101,10 +104,10 @@ class TrainAgent:
 is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
-game_speed = 40
+game_speed = 140
 games_to_play = 100
-obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
+obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_0/foods.csv'
 
 if __name__ == '__main__':
     train_agent = TrainAgent()

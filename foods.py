@@ -29,7 +29,7 @@ class Foods:
 
         if len(self.foods) < FOOD_QUANTITY:
             self._place_food_at_random_place(FOOD_QUANTITY - len(self.foods))
-        
+
         if len(self.foods) <= 0:
             raise Exception("Can't place random food with FOOD_QUANTITY <= 0")
 
