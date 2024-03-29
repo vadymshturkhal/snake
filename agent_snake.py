@@ -1,4 +1,3 @@
-from turtle import distance
 import torch
 import random
 import numpy as np
@@ -22,6 +21,7 @@ class SnakeAgent:
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
         self.model.to(self.device)
+        self.last_action = [0] * SNAKE_ACTION_LENGTH
 
         # Load the weights onto the CPU or GPU
         if is_load_weights:
@@ -168,6 +168,7 @@ class SnakeAgent:
         moving_down = game.snake.direction == Direction.DOWN
 
         state = np.array([
+            *self.last_action,
             moving_up, moving_down, moving_left, moving_right,
             food_left, food_right, food_above, food_below,
             *snake_vision,
@@ -227,4 +228,5 @@ class SnakeAgent:
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
+        self.last_action = final_move
         return final_move
