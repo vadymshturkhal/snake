@@ -59,9 +59,8 @@ class TrainAgent:
                 snake_reward = self.rewards.get_snake_reward(action=snake_action)
                 snake_game_reward += snake_reward
 
+                done = self.game.is_eaten_food
                 self.game.play_step()
-
-                done = self.game.snake_is_crashed
 
                 # Train snake
                 state_new = self.snake_agent.get_state(self.game)
@@ -99,7 +98,7 @@ class TrainAgent:
 
 is_load_weights_snake = False
 is_load_n_games = False
-is_rendering = False
+is_rendering = True
 game_speed = 140
 games_to_play = 100
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
