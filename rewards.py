@@ -8,7 +8,7 @@ class Rewards:
 
     def get_snake_reward(self, action):
         # Goal reached
-        if self.game.is_eaten():
+        if self.game.is_eaten_food:
             return REWARD_WIN
 
         # Crashed
@@ -16,15 +16,9 @@ class Rewards:
             return REWARD_LOOSE
 
         # Penalty
-        # if action == [0, 0, 1]:
-            # snake_reward = REWARD_CRAWLING
-        # else:
-            # snake_reward = REWARD_ROTATION
+        if action == [0, 0, 1]:
+            snake_reward = REWARD_CRAWLING
+        else:
+            snake_reward = REWARD_ROTATION
 
-        # if IS_ADD_OBSTACLES:
-        #     distance_to_all_obstacles = self.game.obstacles.get_distance_to_all_obstacles(self.game.snake.head)
-
-        #     if min(distance_to_all_obstacles) <= 3:
-        #         snake_reward -= 1/min(distance_to_all_obstacles) * 0.1
-
-        return 0
+        return snake_reward

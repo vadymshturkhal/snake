@@ -59,9 +59,9 @@ class TrainAgent:
                 snake_reward = self.rewards.get_snake_reward(action=snake_action)
                 snake_game_reward += snake_reward
 
+                done = self.game.is_eaten()
                 self.game.play_step()
 
-                done = self.game.is_eaten()
                 score += self.game.score
 
                 if self.game.snake_is_crashed:

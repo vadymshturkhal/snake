@@ -25,6 +25,7 @@ class SnakeGameAI:
         self.obstacles = Obstacles(self)
         self.foods = Foods(self, load_from_filename=foods_to_load)
         self.is_place_food = is_place_food
+        self.is_eaten_food = False
 
         self.previous_angle = None
         self.snake_is_crashed = False
@@ -81,19 +82,6 @@ class SnakeGameAI:
             if not is_human:
                 raise Exception(f'Unknown action for snake: {action}')
 
-    @property
-    def is_eaten(self):
-        if self.foods.is_food_at_point(self.snake.head):
-            self.score += 1
-            self.foods.remove_food_at_point(self.snake.head)
-
-            if self.foods.is_empty:
-                if self.is_place_food:
-                    self._place_snake(random_place=False)
-                    self.foods.place_food()
-            return True
-        return False
-
     def play_step(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -102,6 +90,19 @@ class SnakeGameAI:
                 quit()
 
         self.frame_iteration += 1
+
+        if self.foods.is_empty:
+            if self.is_place_food:
+                self._place_snake(random_place=False)
+                self.foods.place_food()
+
+        if self.foods.is_food_at_point(self.snake.head):
+            self.score += 1
+            self.foods.remove_food_at_point(self.snake.head)
+
+            self.is_eaten_food = True
+        else:
+            self.is_eaten_food =  False
 
         # Update UI and clock
         if self.is_rendering:
