@@ -5,8 +5,9 @@ from collections import deque
 from model import Linear_QNet, QTrainer
 
 from game_utils import Direction, Point
-from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_GAMMA, SNAKE_MIN_EPSILON
+from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
+from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
 
 class SnakeAgent:
@@ -200,8 +201,7 @@ class SnakeAgent:
         """
         # Linear decay rate
         if is_train:
-            if self.n_games > EPSILON_SHIFT:
-                self.epsilon = (self.epochs - self.n_games) / (self.epochs - EPSILON_SHIFT)
+            self._update_epsilon_linear()
         else:
             self.epsilon = SNAKE_MIN_EPSILON
 
@@ -231,3 +231,26 @@ class SnakeAgent:
 
         self.last_action = final_move
         return final_move
+
+    def _update_epsilon_linear(self):
+        """
+        Update the epsilon value linearly from start_epsilon to end_epsilon over total_games.
+        
+        Parameters:
+        - current_game: The current game number (1 to total_games).
+        - start_epsilon: The starting value of epsilon at game 1.
+        - end_epsilon: The final value of epsilon at game total_games.
+        - total_games: The total number of games over which epsilon will decay.
+        
+        Returns:
+        - Updated epsilon value for the current game.
+        """
+
+        # Calculate the amount of decay per game
+        decay_per_game = (SNAKE_START_EPSILON - SNAKE_MIN_EPSILON) / (self.epochs - 1)
+        
+        # Update epsilon linearly based on the current game number
+        new_epsilon = SNAKE_START_EPSILON - (decay_per_game * (self.n_games - 1))
+        
+        # Ensure epsilon does not go below the end_epsilon
+        self.epsilon = new_epsilon
