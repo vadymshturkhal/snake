@@ -13,7 +13,7 @@ font = pygame.font.SysFont('arial', 25)
 
 
 class SnakeGameAI:
-    def __init__(self, is_rendering=False, game_speed=20, is_add_obstacles=False, foods_to_load=None):
+    def __init__(self, is_rendering=False, game_speed=20, is_add_obstacles=False, foods_to_load=None, is_place_food=False):
         self.width = SCREEN_W
         self.height = SCREEN_H
         self.is_rendering = is_rendering
@@ -24,6 +24,7 @@ class SnakeGameAI:
         self.snake = Snake(head=Point(BLOCK_SIZE, BLOCK_SIZE), game=self, init_direction=Direction.UP)
         self.obstacles = Obstacles(self)
         self.foods = Foods(self, load_from_filename=foods_to_load)
+        self.is_place_food = is_place_food
 
         self.previous_angle = None
         self.snake_is_crashed = False
@@ -80,14 +81,16 @@ class SnakeGameAI:
             if not is_human:
                 raise Exception(f'Unknown action for snake: {action}')
 
+    @property
     def is_eaten(self):
         if self.foods.is_food_at_point(self.snake.head):
             self.score += 1
             self.foods.remove_food_at_point(self.snake.head)
 
             if self.foods.is_empty:
-                self._place_snake(random_place=False)
-                self.foods.place_food()
+                if self.is_place_food:
+                    self._place_snake(random_place=False)
+                    self.foods.place_food()
             return True
         return False
 
