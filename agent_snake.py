@@ -169,6 +169,7 @@ class SnakeAgent:
 
         state = np.array([
             *self.last_action,
+            *game.snake.head,
             moving_up, moving_down, moving_left, moving_right,
             food_left, food_right, food_above, food_below,
             *snake_vision,
