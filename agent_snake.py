@@ -4,7 +4,7 @@ import numpy as np
 from collections import deque
 from model import Linear_QNet, QTrainer
 
-from game_utils import Direction, Point, calculate_distance
+from game_utils import Direction, Point
 from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_GAMMA, SNAKE_MIN_EPSILON
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
@@ -88,19 +88,17 @@ class SnakeAgent:
                     # Check and assign values based on game state, similar to your existing logic
                     if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
                         # Wall
-                        state_grid[grid_x, grid_y] = CODE_OBSTACLES
+                        state_grid[grid_x, grid_y] = REWARD_LOOSE
                     elif point in game.foods:
                          # Food
-                        state_grid[grid_x, grid_y] = CODE_FOOD 
+                        state_grid[grid_x, grid_y] = REWARD_WIN 
                     elif game.obstacles.is_point_at_obstacle(point):
                          # Obstacle
-                        state_grid[grid_x, grid_y] = CODE_OBSTACLES
+                        state_grid[grid_x, grid_y] = REWARD_LOOSE
                     else:
-                        pass
-                    # No need to explicitly mark the snake's head or body, as it's the reference center
+                        state_grid[grid_x, grid_y] = REWARD_CRAWLING
 
-        state_grid[max_vision_range, max_vision_range] = CODE_SNAKE
-
+        state_grid[max_vision_range, max_vision_range] = REWARD_ROTATION
         # Note: This approach does not explicitly clear each layer before populating,
         # as each layer overrides its values based on current game state.
 
