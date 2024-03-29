@@ -22,6 +22,7 @@ class SnakeAgent:
         self.model = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
         self.model.to(self.device)
         self.last_action = [0] * SNAKE_ACTION_LENGTH
+        self.last_reward = 0
 
         # Load the weights onto the CPU or GPU
         if is_load_weights:
@@ -170,6 +171,7 @@ class SnakeAgent:
         state = np.array([
             *self.last_action,
             *game.snake.head,
+            self.last_reward,
             moving_up, moving_down, moving_left, moving_right,
             food_left, food_right, food_above, food_below,
             *snake_vision,
