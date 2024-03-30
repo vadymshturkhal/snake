@@ -205,8 +205,8 @@ class SnakeAgent:
         else:
             self.epsilon = SNAKE_MIN_EPSILON
 
-        self.epsilon = max(self.epsilon, SNAKE_MIN_EPSILON)
-
+        print(self.epsilon)
+        
         final_move = [0] * SNAKE_ACTION_LENGTH
 
         if np.random.rand() < self.epsilon:
@@ -254,3 +254,4 @@ class SnakeAgent:
         
         # Ensure epsilon does not go below the end_epsilon
         self.epsilon = new_epsilon
+        self.epsilon = max(self.epsilon, SNAKE_MIN_EPSILON)
