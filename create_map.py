@@ -66,10 +66,10 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
                         else:
                             game.foods.remove_food_at_point(point)
 
+            state_old = snake_agent.get_state(game)
             game.snake_apply_action(action, is_human=True)
             score = game.score
 
-            game.is_eaten()
             game.play_step()
 
             timer.stop()
