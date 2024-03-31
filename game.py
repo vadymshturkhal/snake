@@ -97,7 +97,7 @@ class SnakeGameAI:
             self.score += 1
             self.foods.remove_food_at_point(self.snake.head)
 
-            self.is_eaten_food = True
+            self.is_eaten_food = self.foods
         else:
             self.is_eaten_food =  False
 
