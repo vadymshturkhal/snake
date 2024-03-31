@@ -8,10 +8,6 @@ from game_utils import Direction, Point, WHITE, RED, BLACK
 from game_settings import BLOCK_SIZE, MAPS_FOLDER, SCREEN_W, SCREEN_H, OBSTACLES_QUANTITY
 
 
-pygame.init()
-font = pygame.font.SysFont('arial', 25)
-
-
 class SnakeGameAI:
     def __init__(self, is_rendering=False, game_speed=20, is_add_obstacles=False, foods_to_load=None, is_place_food=False):
         self.counter = 0
@@ -31,6 +27,8 @@ class SnakeGameAI:
 
         # init display
         if self.is_rendering:
+            pygame.init()
+            self.font = pygame.font.SysFont('arial', 25)
             self.display = pygame.display.set_mode((self.width, self.height))
             pygame.display.set_caption('Snake')
             self.clock = pygame.time.Clock()
@@ -80,11 +78,16 @@ class SnakeGameAI:
                 raise Exception(f'Unknown action for snake: {action}')
 
     def play_step(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                print('Quit')
-                quit()
+        # Update UI and clock
+        if self.is_rendering:
+            self._update_ui()
+            self.clock.tick(self.game_speed)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    print('Quit')
+                    quit()
 
         self.frame_iteration += 1
 
@@ -101,10 +104,7 @@ class SnakeGameAI:
         else:
             self.is_eaten_food =  False
 
-        # Update UI and clock
-        if self.is_rendering:
-            self._update_ui()
-            self.clock.tick(self.game_speed)
+
 
     def _update_ui(self):
         self.display.fill(BLACK)
@@ -121,6 +121,6 @@ class SnakeGameAI:
         for ob in self.obstacles:
                 pygame.draw.rect(self.display, (128, 128, 128), pygame.Rect(ob.x, ob.y, BLOCK_SIZE, BLOCK_SIZE))  # Draw obstacles in gray
 
-        text = font.render("Score: " + str(self.score), True, WHITE)
+        text = self.font.render("Score: " + str(self.score), True, WHITE)
         self.display.blit(text, [0, 0])
         pygame.display.flip()
