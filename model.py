@@ -58,7 +58,7 @@ class QTrainer:
         if not done:
             q_update = reward[0] + self.gamma * torch.max(self.model(next_state).detach())
         else:
-            q_update = reward
+            q_update = reward[0]
 
         q_values = self.model(state)
 
@@ -72,3 +72,32 @@ class QTrainer:
         loss.backward()
 
         self.optimizer.step()
+
+    def evaluate_policy(self, states, theta=0.01):
+            """
+            Evaluate the current policy by estimating the state-value function V.
+
+            Parameters:
+            - states: List of all non-terminal states.
+            - theta: Small threshold determining the accuracy of estimation.
+
+            Returns:
+            - V: Dictionary mapping states to their estimated values.
+            """
+            # Initialize V(s) arbitrarily for all non-terminal states
+            V = {state: 0.0 for state in states}
+            delta = float('inf')
+
+            with torch.no_grad():  # Disable gradient calculation for evaluation
+                while delta >= theta:
+                    delta = 0.0
+                    for state in states:
+                        v = V[state]
+                        Q_values = self.model(torch.tensor(state, dtype=torch.float)).detach()
+                        # Update V(s) using the current policy's action probabilities
+                        # Here, we assume a greedy policy over Q-values learned by the model
+                        V[state] = torch.max(Q_values).item()
+                        # Calculate the change in value for stopping condition
+                        delta = max(delta, abs(v - V[state]))
+            
+            return V
