@@ -65,8 +65,6 @@ class QTrainer:
         target = q_values.clone()
         target[0][torch.argmax(action[0]).item()] = q_update
     
-        # pred.clone()
-        # preds[argmax(action)] = Q_new
         self.optimizer.zero_grad()
         loss = self.criterion(target, q_values)
         loss.backward()

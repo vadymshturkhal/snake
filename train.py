@@ -9,7 +9,7 @@ from game_utils import Timer
 
 class TrainAgent:
     def __init__(self):
-        self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load)
+        self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
         self.snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games, SNAKE_VISION_RANGE])
         self.rewards = Rewards(self.game)
 
@@ -49,13 +49,20 @@ class TrainAgent:
             self.game.snake_apply_action(snake_action)
 
             snake_reward = self.rewards.get_snake_reward(action=snake_action)
+            state_new = self.snake_agent.get_state(self.game)
             snake_game_reward += snake_reward
+            self.snake_agent.last_reward = snake_reward
 
-            done = self.game.is_eaten_food
+            # done = self.game.is_eaten_food
+            # done = self.game.snake_is_crashed
+            done = FRAME_RESTRICTION - self.game.frame_iteration == 0
             self.game.play_step()
 
+            # if self.game.is_eaten_food:
+                # self.game.foods.place_food()
+
             # Train snake
-            state_new = self.snake_agent.get_state(self.game)
+            
             self.snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new, done)
             self.snake_agent.remember(state_old, snake_action, snake_reward, state_new, done)
 
@@ -74,6 +81,7 @@ class TrainAgent:
                 self.snake_agent.n_games += 1
                 self.snake_agent.train_long_memory()
 
+                # Save snake model
                 if snake_game_reward >= max_reward:
                     max_reward = snake_game_reward
                     self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
@@ -89,8 +97,8 @@ class TrainAgent:
 is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
-game_speed = 140
-games_to_play = 100
+game_speed = 40
+games_to_play = 120
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_0/foods.csv'
 
