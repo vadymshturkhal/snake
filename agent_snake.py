@@ -4,7 +4,7 @@ import numpy as np
 from collections import deque
 from model import Linear_QNet, QTrainer
 
-from game_utils import Direction, Point
+from game_utils import Direction, Point, calculate_distance
 from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN
@@ -167,10 +167,13 @@ class SnakeAgent:
         moving_up = game.snake.direction == Direction.UP
         moving_down = game.snake.direction == Direction.DOWN
 
+        closest_food = game.foods.get_closest_food(game.snake.head)
+        if closest_food is None:
+            distance_between_snake_food = 0
+        else:
+            distance_between_snake_food = calculate_distance(game.snake.head, game.foods.get_closest_food(game.snake.head))
+
         state = np.array([
-            *self.last_action,
-            *game.snake.head,
-            self.last_reward,
             moving_up, moving_down, moving_left, moving_right,
             food_left, food_right, food_above, food_below,
             *snake_vision,
@@ -205,8 +208,6 @@ class SnakeAgent:
         else:
             self.epsilon = SNAKE_MIN_EPSILON
 
-        print(self.epsilon)
-        
         final_move = [0] * SNAKE_ACTION_LENGTH
 
         if np.random.rand() < self.epsilon:
@@ -247,10 +248,10 @@ class SnakeAgent:
         """
 
         # Calculate the amount of decay per game
-        decay_per_game = (SNAKE_START_EPSILON - SNAKE_MIN_EPSILON) / (self.epochs - 1)
+        decay_per_game = (SNAKE_START_EPSILON - SNAKE_MIN_EPSILON) / (self.epochs)
         
         # Update epsilon linearly based on the current game number
-        new_epsilon = SNAKE_START_EPSILON - (decay_per_game * (self.n_games - 1))
+        new_epsilon = SNAKE_START_EPSILON - (decay_per_game * (self.n_games))
         
         # Ensure epsilon does not go below the end_epsilon
         self.epsilon = new_epsilon
