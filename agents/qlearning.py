@@ -39,6 +39,10 @@ class QLearning:
             state = states[i]
             loss = self.trainer.train_step(prev_state, prev_action, prev_reward, state, done=False)
             episode_loss.append(loss)
+        
+        # Terminal state
+        loss = self.trainer.train_step(states[-1], actions[-1], rewards[-1], next_state=0, done=True)
+        episode_loss.append(loss)
         return episode_loss
 
     def get_action(self, state, is_train=True):
