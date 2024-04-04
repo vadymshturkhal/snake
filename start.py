@@ -9,9 +9,17 @@ from game_utils import Timer
 
 class TrainAgent:
     def __init__(self):
-        self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load)
+        self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
         self.snake_agent = QLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
         self.rewards = Rewards(self.game)
+        self._states = []
+        self._actions = []
+        self._rewards = []
+
+        self._snake_game_reward = 0
+        self._bumps = 0
+        self._steps = 0
+        self._rotations = 0
 
     def assure_data_csv(self):
         if is_load_weights_snake:
@@ -27,18 +35,11 @@ class TrainAgent:
     def train(self, obstacles_to_load=None):
         self.assure_data_csv()
 
-        last_snake_update = time.time()
-
         self.assure_data_csv()
 
         timer = Timer()
 
         max_reward = float('-inf')
-        snake_game_reward = 0
-        bumps = 0
-        steps = 0
-        rotations = 0
-        score = 0
 
         timer.start()
 
@@ -46,50 +47,57 @@ class TrainAgent:
             self.game.obstacles.load_obstacles_from_file(obstacles_to_load)
 
         while self.game.counter <= games_to_play:
-            current_time = time.time()
+            # Snake Agent
+            state_old = self.game.get_snake_state()
+            snake_action = self.snake_agent.get_action(state_old)
+            self.game.snake_apply_action(snake_action)
 
-            if current_time - last_snake_update >= SNAKE_SPEED:
-                last_snake_update = current_time
+            snake_reward = self.rewards.get_snake_reward(action=snake_action)
+            state_new = self.game.get_snake_state()
+            self._snake_game_reward += snake_reward
+            self.snake_agent.last_reward = snake_reward
 
-                # Snake Agent
-                state_old = self.game.get_snake_state()
-                snake_action = self.snake_agent.get_action(state_old, is_train=False)
-                self.game.snake_apply_action(snake_action)
+            done = self.game.snake_is_crashed
+            self.game.play_step()
 
-                snake_reward = self.rewards.get_snake_reward(action=snake_action)
-                snake_game_reward += snake_reward
+            self.snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new, done)
+            self.snake_agent.remember(state_old, snake_action, snake_reward, state_new, done)
 
-                done = self.game.is_eaten_food
-                self.game.play_step()
+            if self.game.snake_is_crashed:
+                self._bumps += 1
 
-                score += self.game.score
+            if snake_action == [0, 0, 1]:
+                self._steps += 1
+            else:
+                self._rotations += 1
 
-                if self.game.snake_is_crashed:
-                    bumps += 1
+            if done:
+                elapsed_time = timer.get_elapsed_time()
+                timer.reset()
 
-                if snake_action == [0, 0, 1]:
-                    steps += 1
-                else:
-                    rotations += 1
+                self.snake_agent.n_games += 1
+                self.snake_agent.train_long_memory()
 
-                if done:
-                    elapsed_time = timer.get_elapsed_time()
-                    timer.reset()
+                # Save snake model
+                if self._snake_game_reward >= max_reward:
+                    max_reward = self._snake_game_reward
+                    self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
-                    self.snake_agent.n_games += 1
+                self.scores_to_csv(self.game.score, elapsed_time, self._snake_game_reward, self.snake_agent.epsilon, self._bumps, self._steps, self._rotations)
+                self._clear_epoch_data()
+                timer.start()
 
-                    if snake_game_reward >= max_reward:
-                        max_reward = snake_game_reward
-                        self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
+    def _clear_epoch_data(self):
+        self._snake_game_reward = 0
+        self._bumps = 0
+        self._steps = 0
+        self._rotations = 0
 
-                    self.scores_to_csv(score, elapsed_time, snake_game_reward, self.snake_agent.epsilon, bumps, steps, rotations)
-                    snake_game_reward = 0
-                    bumps = 0
-                    steps = 0
-                    rotations = 0
-                    score = 0
-                    self.game.reset()
-                    timer.start()
+        self.game.reset()
+
+        self._states.clear()
+        self._actions.clear()
+        self._rewards.clear()
 
 
 is_load_weights_snake = True
