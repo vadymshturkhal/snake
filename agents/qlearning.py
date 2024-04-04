@@ -45,7 +45,19 @@ class QLearning:
            self.trainer.train_step(state, action, reward, next_state, done)
 
     def train_short_memory(self, state, action, reward, next_state, done):
-        self.trainer.train_step(state, action, reward, next_state, done)
+        return self.trainer.train_step(state, action, reward, next_state, done)
+
+    # Update the estimates of action values
+    def train_episode(self, states, actions, rewards):
+        episode_loss = [0]
+        for i in range(1, len(states)):
+            prev_state = states[i - 1]
+            prev_action = actions[i - 1]
+            reward = rewards[i - 1]
+            state = states[i]
+            loss = self.trainer.train_step(prev_state, prev_action, reward, state, done=False)
+            episode_loss.append(loss)
+        return episode_loss
 
     def get_action(self, state, is_train=True):
         """
