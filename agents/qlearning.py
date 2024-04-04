@@ -1,10 +1,8 @@
 import torch
-import random
 import numpy as np
-from collections import deque
 from model import Linear_QNet, QTrainer
 
-from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE
+from game_settings import EPSILON_SHIFT, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON
 
@@ -14,7 +12,6 @@ class QLearning:
         self.epochs = epochs
 
         self.gamma = SNAKE_GAMMA
-        self.memory = deque(maxlen=MAX_MEMORY)
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
@@ -32,30 +29,15 @@ class QLearning:
 
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
-    def remember(self, state, action, reward, next_state, done):
-        self.memory.append((state, action, reward, next_state, done)) # popleft if MAX_MEMORY is reached
-
-    def train_long_memory(self):
-        if len(self.memory) < BATCH_SIZE:
-            transitions = self.memory
-        else:
-            transitions = random.sample(self.memory, BATCH_SIZE)
-
-        for state, action, reward, next_state, done in transitions:
-           self.trainer.train_step(state, action, reward, next_state, done)
-
-    def train_short_memory(self, state, action, reward, next_state, done):
-        return self.trainer.train_step(state, action, reward, next_state, done)
-
     # Update the estimates of action values
     def train_episode(self, states, actions, rewards):
         episode_loss = [0]
         for i in range(1, len(states)):
             prev_state = states[i - 1]
             prev_action = actions[i - 1]
-            reward = rewards[i - 1]
+            prev_reward = rewards[i - 1]
             state = states[i]
-            loss = self.trainer.train_step(prev_state, prev_action, reward, state, done=False)
+            loss = self.trainer.train_step(prev_state, prev_action, prev_reward, state, done=False)
             episode_loss.append(loss)
         return episode_loss
 
