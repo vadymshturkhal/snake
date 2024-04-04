@@ -4,6 +4,7 @@ from foods import Foods
 from obstacles import Obstacles
 from snake import Snake
 
+from game_stats import GameStats
 from game_utils import Direction, Point, WHITE, RED, BLACK
 from game_settings import BLOCK_SIZE, MAPS_FOLDER, SCREEN_W, SCREEN_H, OBSTACLES_QUANTITY
 
@@ -24,6 +25,7 @@ class SnakeGameAI:
         self.snake = Snake(head=Point(BLOCK_SIZE, BLOCK_SIZE), game=self, init_direction=Direction.UP)
         self.obstacles = Obstacles(self)
         self.foods = Foods(self, load_from_filename=foods_to_load)
+        self.stats = GameStats(self)
 
         # init display
         if self.is_rendering:
@@ -34,6 +36,9 @@ class SnakeGameAI:
             self.clock = pygame.time.Clock()
 
         self.reset()
+
+    def get_snake_state(self):
+        return self.stats.get_snake_state()
 
     # init game state
     def reset(self):
