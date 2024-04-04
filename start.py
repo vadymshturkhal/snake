@@ -35,18 +35,20 @@ class TrainAgent:
     def train(self, obstacles_to_load=None):
         self.assure_data_csv()
 
-        self.assure_data_csv()
-
-        timer = Timer()
-
-        max_reward = float('-inf')
-
-        timer.start()
-
         if obstacles_to_load is not None:
             self.game.obstacles.load_obstacles_from_file(obstacles_to_load)
 
-        while self.game.counter <= games_to_play:
+        for _ in range(games_to_play):
+            self._train_single_game()
+            self._clear_game_data()
+
+    def _train_single_game(self):
+        timer = Timer()
+        timer.start()
+
+        max_reward = float('-inf')
+
+        while True:
             # Snake Agent
             state_old = self.game.get_snake_state()
             snake_action = self.snake_agent.get_action(state_old)
@@ -57,7 +59,7 @@ class TrainAgent:
             self._snake_game_reward += snake_reward
             self.snake_agent.last_reward = snake_reward
 
-            done = self.game.snake_is_crashed
+            done = FRAME_RESTRICTION - self.game.frame_iteration == 0
             self.game.play_step()
 
             self.snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new, done)
@@ -84,10 +86,10 @@ class TrainAgent:
                     self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
                 self.scores_to_csv(self.game.score, elapsed_time, self._snake_game_reward, self.snake_agent.epsilon, self._bumps, self._steps, self._rotations)
-                self._clear_epoch_data()
                 timer.start()
+                break
 
-    def _clear_epoch_data(self):
+    def _clear_game_data(self):
         self._snake_game_reward = 0
         self._bumps = 0
         self._steps = 0
