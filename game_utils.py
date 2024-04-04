@@ -3,7 +3,7 @@ from enum import Enum
 import time
 import torch
 import numpy as np
-from game_settings import BLOCK_SIZE, DIRECTIONS_QUANTITY, SCREEN_W, SCREEN_H
+from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H
 
 
 Point = namedtuple('Point', 'x, y')
@@ -135,6 +135,30 @@ def check_dangers(game):
             dangers.append(False)
     
     return dangers
+
+def rotate_grid(grid, direction):
+    """
+    Rotate the grid so that it aligns with the snake's current direction.
+
+    Parameters:
+    - grid: The vision grid as a numpy array.
+    - direction: The current direction of the snake.
+
+    Returns:
+    - Rotated grid as a numpy array.
+    """
+    if direction == Direction.UP:
+        # No rotation needed.
+        return grid
+    elif direction == Direction.LEFT:
+        # Rotate -90 degrees.
+        return np.rot90(grid, -1)
+    elif direction == Direction.RIGHT:
+        # Rotate 90 degrees
+        return np.rot90(grid, 1)
+    elif direction == Direction.DOWN:
+        # Rotate 180 degrees.
+        return np.rot90(grid, 2)
 
 class Timer:
     def __init__(self):
