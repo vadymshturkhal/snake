@@ -1,6 +1,6 @@
 from agent_snake import SnakeAgent
 from game import SnakeGameAI
-from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_VISION_RANGE, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
 import time
 from rewards import Rewards
@@ -10,7 +10,7 @@ from game_utils import Timer
 class TrainAgent:
     def __init__(self):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
-        self.snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games, SNAKE_VISION_RANGE])
+        self.snake_agent = SnakeAgent(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
         self.rewards = Rewards(self.game)
 
     def assure_data_csv(self):

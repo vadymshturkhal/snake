@@ -4,14 +4,12 @@ import numpy as np
 from collections import deque
 from model import Linear_QNet, QTrainer
 
-from game_utils import Direction, Point, calculate_distance
 from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
-from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN
-from game_settings import CODE_SNAKE, CODE_OBSTACLES, CODE_FOOD
+from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON
 
 class SnakeAgent:
-    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True, vision_range=1):
+    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True):
         self.epsilon = 1
         self.epochs = epochs
 
