@@ -8,7 +8,7 @@ from game_settings import EPSILON_SHIFT, MAX_MEMORY, BATCH_SIZE, LR, SNAKE_ACTIO
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON
 
-class SnakeAgent:
+class QLearning:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True):
         self.epsilon = 1
         self.epochs = epochs
