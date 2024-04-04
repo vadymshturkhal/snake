@@ -100,9 +100,9 @@ class TrainAgent:
         self._rewards.clear()
 
 
-is_load_weights_snake = True
-is_load_n_games = True
-is_rendering = True
+is_load_weights_snake = False
+is_load_n_games = False
+is_rendering = False
 game_speed = 40
 games_to_play = 120
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
