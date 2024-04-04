@@ -44,12 +44,12 @@ class TrainAgent:
 
         while self.game.counter <= games_to_play:
             # Snake Agent
-            state_old = self.snake_agent.get_state(self.game)
+            state_old = self.game.get_snake_state()
             snake_action = self.snake_agent.get_action(state_old)
             self.game.snake_apply_action(snake_action)
 
             snake_reward = self.rewards.get_snake_reward(action=snake_action)
-            state_new = self.snake_agent.get_state(self.game)
+            state_new = self.game.get_snake_state()
             snake_game_reward += snake_reward
             self.snake_agent.last_reward = snake_reward
 
@@ -94,9 +94,9 @@ class TrainAgent:
                 self.game.reset()
                 timer.start()
 
-is_load_weights_snake = False
-is_load_n_games = False
-is_rendering = False
+is_load_weights_snake = True
+is_load_n_games = True
+is_rendering = True
 game_speed = 40
 games_to_play = 120
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'

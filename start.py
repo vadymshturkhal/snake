@@ -52,7 +52,7 @@ class TrainAgent:
                 last_snake_update = current_time
 
                 # Snake Agent
-                state_old = self.snake_agent.get_state(self.game)
+                state_old = self.game.get_snake_state()
                 snake_action = self.snake_agent.get_action(state_old, is_train=False)
                 self.game.snake_apply_action(snake_action)
 
