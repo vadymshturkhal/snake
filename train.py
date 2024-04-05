@@ -1,3 +1,4 @@
+from agents.double_qlearning import DoubleQLearning
 from agents.qlearning import QLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
@@ -15,6 +16,7 @@ class TrainAgent:
         self._states = []
         self._actions = []
         self._rewards = []
+        self._dones = []
 
         self._snake_game_reward = 0
         self._bumps = 0
@@ -40,7 +42,7 @@ class TrainAgent:
 
         for _ in range(games_to_play):
             self._train_single_game()
-            game_loss = self.snake_agent.train_episode(self._states, self._actions, self._rewards)
+            game_loss = self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
             self._clear_game_data()
 
     def _train_single_game(self):
@@ -64,6 +66,7 @@ class TrainAgent:
             self.snake_agent.last_reward = snake_reward
 
             done = FRAME_RESTRICTION - self.game.frame_iteration == 0
+            # done = self.game.snake_is_crashed
             self.game.play_step()
 
             if self.game.snake_is_crashed:
@@ -75,6 +78,7 @@ class TrainAgent:
                 self._rotations += 1
 
             if done:
+                self._dones.append(1)
                 elapsed_time = timer.get_elapsed_time()
                 timer.reset()
 
@@ -87,6 +91,8 @@ class TrainAgent:
 
                 self.scores_to_csv(self.game.score, elapsed_time, self._snake_game_reward, self.snake_agent.epsilon, self._bumps, self._steps, self._rotations)
                 break
+            else:
+                self._dones.append(0)
 
     def _clear_game_data(self):
         self._snake_game_reward = 0
@@ -99,6 +105,7 @@ class TrainAgent:
         self._states.clear()
         self._actions.clear()
         self._rewards.clear()
+        self._dones.clear()
 
 
 is_load_weights_snake = False

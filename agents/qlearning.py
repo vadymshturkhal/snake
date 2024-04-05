@@ -1,6 +1,7 @@
 import torch
 import numpy as np
-from model import Linear_QNet, QTrainer
+from model import Linear_QNet
+from trainers.qtrainer import QTrainer
 
 from game_settings import EPSILON_SHIFT, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
@@ -30,18 +31,19 @@ class QLearning:
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     # Update the estimates of action values
-    def train_episode(self, states, actions, rewards):
+    def train_episode(self, states: list, actions: list, rewards: list, dones: list) -> list:
         episode_loss = [0]
         for i in range(1, len(states)):
             prev_state = states[i - 1]
             prev_action = actions[i - 1]
             prev_reward = rewards[i - 1]
+            prev_done = dones[i]
             state = states[i]
-            loss = self.trainer.train_step(prev_state, prev_action, prev_reward, state, done=False)
+            loss = self.trainer.train_step(prev_state, prev_action, prev_reward, state, done=prev_done)
             episode_loss.append(loss)
         
         # Terminal state
-        loss = self.trainer.train_step(states[-1], actions[-1], rewards[-1], next_state=0, done=True)
+        loss = self.trainer.train_step(states[-1], actions[-1], rewards[-1], next_state=states[-1], done=dones[-1])
         episode_loss.append(loss)
         return episode_loss
 
