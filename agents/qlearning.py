@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+
 from model import Linear_QNet
 from trainers.qtrainer import QTrainer
 
@@ -29,10 +30,27 @@ class QLearning:
             self.n_games = 0
 
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+    
+    def train_step(self, states: list, actions: list, rewards: list, dones: list) -> float:
+        """If is done, trained twice"""
+        if len(states) < 2:
+            return
+        
+        prev_state = states[-2]
+        prev_action = actions[-2]
+        prev_reward = rewards[-2]
+        prev_done = dones[-2]
+        state = states[-1]
+        done = dones[-1]
+
+        self.trainer.train_step(prev_state, prev_action, prev_reward, next_state=state, done=prev_done)
+
+        if done:
+            self.trainer.train_step(states[-1], actions[-1], rewards[-1], next_state=states[-1], done=dones[-1])
 
     # Update the estimates of action values
     def train_episode(self, states: list, actions: list, rewards: list, dones: list) -> list:
-        episode_loss = [0]
+        episode_loss = []
         for i in range(1, len(states)):
             prev_state = states[i - 1]
             prev_action = actions[i - 1]

@@ -93,6 +93,8 @@ class TrainAgent:
                 break
             else:
                 self._dones.append(0)
+            
+            self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
 
     def _clear_game_data(self):
         self._snake_game_reward = 0
