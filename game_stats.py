@@ -11,7 +11,7 @@ class GameStats:
         self._vision_range = SNAKE_VISION_RANGE
         self._device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-    def get_snake_state(self):
+    def get_snake_state(self) -> np.array:
         head = self.game.snake.head
 
         snake_vision = self.get_vision_based_state()
@@ -63,7 +63,7 @@ class GameStats:
             *snake_vision,
             ])
 
-        state = torch.from_numpy(np.array(state, dtype=float)).to(self._device)
+        # state = torch.from_numpy(np.array(state, dtype=float)).to(self._device)
         return state
 
     def get_vision_based_state(self):

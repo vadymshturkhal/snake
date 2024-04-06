@@ -1,3 +1,4 @@
+from agents.double_qlearning import DoubleQLearning
 from agents.qlearning import QLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
@@ -15,6 +16,7 @@ class TrainAgent:
         self._states = []
         self._actions = []
         self._rewards = []
+        self._dones = []
 
         self._snake_game_reward = 0
         self._bumps = 0
@@ -40,6 +42,7 @@ class TrainAgent:
 
         for _ in range(games_to_play):
             self._train_single_game()
+            game_loss = self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
             self._clear_game_data()
 
     def _train_single_game(self):
@@ -50,20 +53,21 @@ class TrainAgent:
 
         while True:
             # Snake Agent
-            state_old = self.game.get_snake_state()
-            snake_action = self.snake_agent.get_action(state_old)
+            snake_state = self.game.get_snake_state()
+            snake_action = self.snake_agent.get_action(snake_state)
             self.game.snake_apply_action(snake_action)
-
             snake_reward = self.rewards.get_snake_reward(action=snake_action)
-            state_new = self.game.get_snake_state()
+
+            self._states.append(snake_state)
+            self._actions.append(snake_action)
+            self._rewards.append(snake_reward)
+
             self._snake_game_reward += snake_reward
             self.snake_agent.last_reward = snake_reward
 
             done = FRAME_RESTRICTION - self.game.frame_iteration == 0
+            # done = self.game.snake_is_crashed
             self.game.play_step()
-
-            self.snake_agent.train_short_memory(state_old, snake_action, snake_reward, state_new, done)
-            self.snake_agent.remember(state_old, snake_action, snake_reward, state_new, done)
 
             if self.game.snake_is_crashed:
                 self._bumps += 1
@@ -74,11 +78,11 @@ class TrainAgent:
                 self._rotations += 1
 
             if done:
+                self._dones.append(1)
                 elapsed_time = timer.get_elapsed_time()
                 timer.reset()
 
                 self.snake_agent.n_games += 1
-                self.snake_agent.train_long_memory()
 
                 # Save snake model
                 if self._snake_game_reward >= max_reward:
@@ -86,8 +90,9 @@ class TrainAgent:
                     self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
                 self.scores_to_csv(self.game.score, elapsed_time, self._snake_game_reward, self.snake_agent.epsilon, self._bumps, self._steps, self._rotations)
-                timer.start()
                 break
+            else:
+                self._dones.append(0)
 
     def _clear_game_data(self):
         self._snake_game_reward = 0
@@ -100,13 +105,14 @@ class TrainAgent:
         self._states.clear()
         self._actions.clear()
         self._rewards.clear()
+        self._dones.clear()
 
 
 is_load_weights_snake = True
 is_load_n_games = True
 is_rendering = True
-game_speed = 10
-games_to_play = 100
+game_speed = 20
+games_to_play = 400
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_0/foods.csv'
 
