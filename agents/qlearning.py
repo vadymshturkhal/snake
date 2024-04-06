@@ -35,7 +35,7 @@ class QLearning:
         """If is done, trained twice"""
         if len(states) < 2:
             return
-        
+
         prev_state = states[-2]
         prev_action = actions[-2]
         prev_reward = rewards[-2]
