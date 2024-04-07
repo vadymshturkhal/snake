@@ -15,7 +15,7 @@ class DB_Operations():
 
     def add_epoch(self, score, time, reward, epsilon, bumps, steps, rotations, fk_era_id):
         self._conn.cursor().execute(
-            "INSERT INTO era (score, time, reward, epsilon, bumps, steps, rotations, fk_era_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
+            "INSERT INTO epoch (score, time, reward, epsilon, bumps, steps, rotations, fk_era_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", 
             (score, time, reward, epsilon, bumps, steps, rotations, fk_era_id))
         self._conn.commit()
 

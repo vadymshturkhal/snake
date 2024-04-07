@@ -15,7 +15,7 @@ CREATE TABLE era (
 
 """
 CREATE TABLE epoch (
-    data_id SERIAL PRIMARY KEY,
+    epoch_id SERIAL PRIMARY KEY,
     score INT,
     time FLOAT,
     reward FLOAT,
@@ -31,13 +31,14 @@ CREATE TABLE epoch (
 "GRANT ALL PRIVILEGES ON DATABASE snake TO agent;"
 "GRANT ALL PRIVILEGES ON TABLE epoch TO agent;"
 "GRANT ALL PRIVILEGES ON TABLE era TO agent;"
-"GRANT USAGE, SELECT ON SEQUENCE epoch_data_id_seq TO agent;"
+"GRANT USAGE, SELECT ON SEQUENCE epoch_epoch_id_seq TO agent;"
 "GRANT USAGE, SELECT ON SEQUENCE era_fk_era_id_seq TO agent;"
 
 """
 ALTER TABLE epoch ADD CONSTRAINT fk_era_id FOREIGN KEY (fk_era_id) REFERENCES era(fk_era_id) ON DELETE CASCADE;
 """
 
-"ALTER SEQUENCE epochs_fk_epoch_id_seq RESTART WITH 1;"
+"ALTER SEQUENCE era_fk_era_id_seq RESTART WITH 1;"
+"ALTER SEQUENCE epoch_epoch_id_seq RESTART WITH 1;"
 "ALTER TABLE era OWNER TO agent;"
 "ALTER TABLE epoch OWNER TO agent;"
