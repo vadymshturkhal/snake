@@ -40,7 +40,7 @@ class TrainAgent:
             writer.writerow(headers)
 
     def scores_to_csv(self, score, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations, average_loss):
-        data_row = [score, round(game_duration, 3), snake_reward, round(snake_epsilon, 3), bumps, steps, rotations, round(average_loss, 3)]
+        data_row = [score, round(game_duration, 4), snake_reward, round(snake_epsilon, 4), bumps, steps, rotations, round(average_loss, 8)]
         # Open the CSV file in append mode
         with open(SCORE_DATA_FILENAME, mode='a', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
