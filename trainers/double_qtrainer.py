@@ -8,12 +8,11 @@ from game_settings import WEIGHT_DECAY
 
 class DoubleQTrainer:
     def __init__(self, model1, model2, lr, gamma):
-        self.lr = lr
         self.gamma = gamma
         self.model1 = model1
         self.model2 = model2
-        self.optimizer1 = optim.Adam(model1.parameters(), lr=self.lr)
-        self.optimizer2 = optim.Adam(model2.parameters(), lr=self.lr)
+        self.optimizer1 = optim.Adam(model1.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
+        self.optimizer2 = optim.Adam(model2.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
         self.criterion = nn.SmoothL1Loss()
 
     def train_step(self, state, action, reward, next_state, done):
