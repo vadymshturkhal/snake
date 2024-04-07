@@ -32,11 +32,12 @@ class NStepQLearning:
         self.trainer = NStepQTrainer(self.model, lr=LR, gamma=self.gamma, n_steps=n_steps)
     
     def train_n_steps(self, states: list, actions: list, rewards: list, dones: list) -> float:
-        self.trainer.train_n_steps(states, actions, rewards, dones)
+        loss = self.trainer.train_n_steps(states, actions, rewards, dones)
+        return loss
 
     # Update the estimates of action values
     def train_episode(self, states: list, actions: list, rewards: list, dones: list):
-        self.trainer.train_n_steps(states, actions, rewards, dones)
+        pass
 
     def get_action(self, state, is_train=True):
         """
