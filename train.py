@@ -29,7 +29,6 @@ class TrainAgent:
         if is_load_weights_snake:
             return
 
-        # The headers for your CSV file
         headers = ['Score', 'Time', 'Reward', 'Epsilon', 'Bumps', 'Steps', 'Rotations', 'Average loss']
 
         # Open the CSV file in write mode
@@ -40,26 +39,12 @@ class TrainAgent:
             # Write the header
             writer.writerow(headers)
 
-        # with open(SCORE_DATA_FILENAME, 'w') as file:
-            # file.write('Score, Time, Reward, Epsilon, Bumps, Steps, Rotations, Average loss\n')
-
     def scores_to_csv(self, score, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations, average_loss):
-
-        # Open the CSV file in write mode
+        data_row = [score, round(game_duration, 3), snake_reward, round(snake_epsilon, 3), bumps, steps, rotations, round(average_loss, 3)]
+        # Open the CSV file in append mode
         with open(SCORE_DATA_FILENAME, mode='a', newline='', encoding='utf-8') as file:
-            # Create a CSV writer
             writer = csv.writer(file)
-            writer.writerow([score, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations, average_loss])
-
-        # with open(SCORE_DATA_FILENAME, 'a') as file:
-        #     file.write(f""" {str(score)}, 
-        #                     {game_duration:.4f}, 
-        #                     {snake_reward:.4f}, 
-        #                     {snake_epsilon:.4f}, 
-        #                     {bumps}, 
-        #                     {steps}, 
-        #                     {rotations},
-        #                     {average_loss}\n""")
+            writer.writerow(data_row)
 
     def train(self, obstacles_to_load=None):
         self.assure_data_csv()
@@ -68,9 +53,8 @@ class TrainAgent:
             self.game.obstacles.load_obstacles_from_file(obstacles_to_load)
 
         for _ in range(games_to_play):
-            loss = self._train_single_game()
+            self._train_single_game()
             # self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
-
             self._clear_game_data()
 
     def _train_single_game(self):
