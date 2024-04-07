@@ -14,6 +14,7 @@ class NStepQLearning:
         self.epochs = epochs
 
         self.gamma = SNAKE_GAMMA
+        self.n_steps = n_steps
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
@@ -31,13 +32,14 @@ class NStepQLearning:
 
         self.trainer = NStepQTrainer(self.model, lr=LR, gamma=self.gamma, n_steps=n_steps)
     
-    def train_n_steps(self, states: list, actions: list, rewards: list, dones: list) -> float:
-        loss = self.trainer.train_n_steps(states, actions, rewards, dones)
+    def train_n_steps(self, states: list, actions: list, rewards: list, dones: list, last_index=0) -> float:
+        loss = self.trainer.train_n_steps(states, actions, rewards, dones, last_index=last_index)
         return loss
 
     # Update the estimates of action values
     def train_episode(self, states: list, actions: list, rewards: list, dones: list):
-        pass
+        for i in range(self.n_steps, len(states) + 1):
+            self.train_n_steps(states, actions, rewards, dones, last_index=i)
 
     def get_action(self, state, is_train=True):
         """

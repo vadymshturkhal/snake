@@ -45,7 +45,7 @@ class TrainAgent:
         for _ in range(games_to_play):
             loss = self._train_single_game()
             self._losses.append(loss)
-            self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
+            # self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
             self._clear_game_data()
 
     def _train_single_game(self):
@@ -98,7 +98,8 @@ class TrainAgent:
                 self._dones.append(0)
             
             # self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
-            self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
+            loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
+        return loss
 
     def _clear_game_data(self):
         self._snake_game_reward = 0
