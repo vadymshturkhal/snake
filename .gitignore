@@ -1,8 +1,8 @@
 /env
 __pycache*
 TODO*
-ex.py
 snake_agent.log
 features.txt
 another.py
 docs.txt
+ex_*
