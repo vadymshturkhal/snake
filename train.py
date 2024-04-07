@@ -18,6 +18,7 @@ class TrainAgent:
         self._actions = []
         self._rewards = []
         self._dones = []
+        self._losses = []
 
         self._snake_game_reward = 0
         self._bumps = 0
@@ -42,8 +43,9 @@ class TrainAgent:
             self.game.obstacles.load_obstacles_from_file(obstacles_to_load)
 
         for _ in range(games_to_play):
-            self._train_single_game()
-            game_loss = self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
+            loss = self._train_single_game()
+            self._losses.append(loss)
+            self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
             self._clear_game_data()
 
     def _train_single_game(self):
