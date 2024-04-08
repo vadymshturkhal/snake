@@ -1,6 +1,5 @@
 import torch
 import numpy as np
-
 from model import Linear_QNet
 from trainers.n_step_double_qtrainer import NStepDoubleQTrainer
 
@@ -8,13 +7,13 @@ from game_settings import EPSILON_SHIFT, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON
 
+
 class NStepDoubleQLearning:
     def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True, n_steps=2):
         self.epsilon = 1
         self.epochs = epochs
 
         self.gamma = SNAKE_GAMMA
-        self.n_steps = n_steps
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model1 = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
@@ -32,16 +31,15 @@ class NStepDoubleQLearning:
         else:
             self.n_games = 0
 
-        self.trainer = NStepDoubleQTrainer(self.model1, self.model2, lr=LR, gamma=self.gamma)
-    
-    def train_n_steps(self, states: list, actions: list, rewards: list, dones: list, last_index=0) -> float:
-        loss = self.trainer.train_n_steps(states, actions, rewards, dones, last_index=last_index)
-        return loss
+        self.trainer = NStepDoubleQTrainer(self.model1, self.model2, lr=LR, gamma=self.gamma, n_steps=n_steps)
 
-    # Update the estimates of action values
-    def train_episode(self, states: list, actions: list, rewards: list, dones: list):
-        for i in range(self.n_steps, len(states) + 1):
-            self.train_n_steps(states, actions, rewards, dones, last_index=i)
+    @property
+    def model(self):
+        return self.model1
+
+    def train_n_steps(self, states: list, actions: list, rewards: list, dones: list) -> float:
+        loss = self.trainer.train_n_steps(states, actions, rewards, dones)
+        return loss
 
     def get_action(self, state, is_train=True):
         """
@@ -60,21 +58,29 @@ class NStepDoubleQLearning:
             # Distribute a small probability to all actions, keeping the majority for the best action
             probabilities = np.ones(SNAKE_ACTION_LENGTH) * (self.epsilon / SNAKE_ACTION_LENGTH)
 
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-            best_move = torch.argmax(prediction).item()
+            state_tensor = torch.tensor(state, dtype=torch.float)
+            with torch.no_grad():  # No need to track gradients here
+                prediction1 = self.model1(state_tensor)
+                prediction2 = self.model2(state_tensor)
+                average_prediction = (prediction1 + prediction2) / 2
+                action = torch.argmax(average_prediction).item()
 
             # Adjust probability for the best action
-            probabilities[best_move] += (1.0 - self.epsilon)
+            probabilities[action] += (1.0 - self.epsilon)
 
             # Choose action based on modified probabilities
             move = np.random.choice(np.arange(SNAKE_ACTION_LENGTH), p=probabilities)
             final_move[move] = 1
         else:
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
-            move = torch.argmax(prediction).item()
-            final_move[move] = 1
+            state_tensor = torch.tensor(state, dtype=torch.float)
+
+            with torch.no_grad():  # No need to track gradients here
+                prediction1 = self.model1(state_tensor)
+                prediction2 = self.model2(state_tensor)
+                average_prediction = (prediction1 + prediction2) / 2
+                action = torch.argmax(average_prediction).item()
+
+            final_move[action] = 1
 
         self.last_action = final_move
         return final_move
