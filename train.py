@@ -78,8 +78,8 @@ class TrainAgent:
             self._snake_game_reward += snake_reward
             self.snake_agent.last_reward = snake_reward
 
-            done = FRAME_RESTRICTION - self.game.frame_iteration == 0
-            # done = self.game.snake_is_crashed
+            # done = FRAME_RESTRICTION - self.game.frame_iteration == 0
+            done = self.game.snake_is_crashed
             self.game.play_step()
 
             if self.game.snake_is_crashed:
@@ -133,7 +133,7 @@ class TrainAgent:
         self._losses.clear()
 
 
-is_load_weights_snake = False
+is_load_weights_snake = True
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
