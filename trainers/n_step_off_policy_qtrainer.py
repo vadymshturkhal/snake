@@ -71,6 +71,7 @@ class NStepOffPolicyQTrainer:
         if last_index is None:
             last_index = len(states)
         start_index = last_index - self._n_steps
+        last_index -= 1
         ratios = []
 
         with torch.no_grad():
