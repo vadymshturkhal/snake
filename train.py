@@ -3,6 +3,7 @@ from agents.double_qlearning import DoubleQLearning
 from agents.qlearning import QLearning
 from agents.n_step_double_qlearning import NStepDoubleQLearning
 from agents.n_step_qlearning import NStepQLearning
+from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
@@ -13,7 +14,7 @@ from game_utils import Timer
 class TrainAgent:
     def __init__(self):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
-        self.snake_agent = NStepDoubleQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
+        self.snake_agent = NStepOffPolicyQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
         self.rewards = Rewards(self.game)
         self._states = []
         self._actions = []
@@ -78,8 +79,8 @@ class TrainAgent:
             self._snake_game_reward += snake_reward
             self.snake_agent.last_reward = snake_reward
 
-            # done = FRAME_RESTRICTION - self.game.frame_iteration == 0
-            done = self.game.snake_is_crashed
+            done = FRAME_RESTRICTION - self.game.frame_iteration == 0
+            # done = self.game.snake_is_crashed
             self.game.play_step()
 
             if self.game.snake_is_crashed:
@@ -133,7 +134,7 @@ class TrainAgent:
         self._losses.clear()
 
 
-is_load_weights_snake = True
+is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
