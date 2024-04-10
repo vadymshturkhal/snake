@@ -18,7 +18,6 @@ class NStepOffPolicyQSigmaTrainer:
         self._n_steps = n_steps
 
     def train_n_steps(self, states: list, actions: list, rewards: list, dones: int, last_index=0, epsilon=1):
-        """Rewards and dones 1 greater then others"""
         if len(states) < self._n_steps:
             return 0
 
@@ -32,23 +31,19 @@ class NStepOffPolicyQSigmaTrainer:
             last_index = len(states)
         start_index = last_index - self._n_steps
 
-        G = 0
-        for t in reversed(range(start_index + 1, last_index)):
-            if dones[t]:
-                G = rewards[t]
-            else:
-                Q_values = self._model(states[t])
-                pi, b = self._get_pi_and_b(states[t], epsilon)
-                rho = pi / b
-
-                # V = Expected Q value for all actions in the state
-                # V = torch.sum(F.softmax(Q_values, dim=-1) * Q_values)
-                V = torch.dot(F.softmax(Q_values, dim=-1), Q_values)
-
-                # G update
-                sigma = 0 if t % 2 == 0 else 1
-
-                G = rewards[t] + self._gamma * (sigma * rho + (1 - sigma) * pi) * (G - Q_values) + self._gamma * V
+        if dones[-1]:
+            G = rewards[-1]
+        else:
+            Q_values = self._model(states[-1])
+            pi = F.softmax(Q_values, dim=-1)
+            V = torch.sum(pi * Q_values)
+            G = rewards[-1] + self._gamma * V
+        
+        for k in reversed(range(start_index, last_index)):
+            Q_values = self._model(states[k])
+            pi = F.softmax(Q_values, dim=-1)
+            V = torch.sum(pi * Q_values)
+            G = rewards[k] + self._gamma * V + self._gamma * pi * G
 
         # Update from first to last
         q_values = self._model(states[start_index])
