@@ -4,12 +4,12 @@ import numpy as np
 from model import Linear_QNet
 from trainers.n_step_off_policy_qtrainer import NStepOffPolicyQTrainer
 
-from game_settings import LR, SNAKE_ACTION_LENGTH
+from game_settings import LR, SNAKE_ACTION_LENGTH, TRAINER_STEPS
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON
 
 class NStepOffPolicyQLearning:
-    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True, n_steps=2):
+    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True, n_steps=TRAINER_STEPS):
         self.epsilon = 1
         self.epochs = epochs
 
