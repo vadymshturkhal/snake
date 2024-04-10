@@ -1,9 +1,9 @@
 import csv
 from agents.double_qlearning import DoubleQLearning
+from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from agents.qlearning import QLearning
 from agents.n_step_double_qlearning import NStepDoubleQLearning
 from agents.n_step_qlearning import NStepQLearning
-from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
@@ -133,12 +133,15 @@ class TrainAgent:
         self._dones.clear()
         self._losses.clear()
 
+        # self._dones.append(0)
+        # self._rewards.append(0)
+
 
 is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
-games_to_play = 400
+games_to_play = 200
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_0/foods.csv'
 

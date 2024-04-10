@@ -27,10 +27,8 @@ class NStepOffPolicyQTrainer:
         states = torch.tensor(states, dtype=torch.float)
         actions = torch.tensor(actions, dtype=torch.long)
 
-        # Ro
+        # Rho
         ratio = self._importance_sampling_ratio(states, epsilon)
-        # print(self._alpha * ratio)
-        # print()
 
         for param_group in self._optimizer.param_groups:
             param_group['lr'] = self._alpha * ratio
