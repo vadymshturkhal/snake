@@ -32,8 +32,8 @@ class NStepOffPolicyQSigmaTrainer:
             last_index = len(states)
         start_index = last_index - self._n_steps
 
+        G = 0
         for t in reversed(range(start_index + 1, last_index)):
-            G = 0
             if dones[t]:
                 G = rewards[t]
             else:
@@ -42,21 +42,19 @@ class NStepOffPolicyQSigmaTrainer:
                 rho = pi / b
 
                 # V = Expected Q value for all actions in the state
-                V = torch.sum(F.softmax(Q_values, dim=-1) * Q_values)
+                # V = torch.sum(F.softmax(Q_values, dim=-1) * Q_values)
+                V = torch.dot(F.softmax(Q_values, dim=-1), Q_values)
 
                 # G update
                 sigma = 0 if t % 2 == 0 else 1
 
-                # Computing the TD target for the current state and action
-                current_Q = Q_values.gather(0, actions[t])  # Assuming actions[t] is the index of the action taken at time t
-                G = rewards[t] + self._gamma * (sigma * rho + (1 - sigma) * pi) * (G - torch.max(current_Q).detach()) + self._gamma * V
-
+                G = rewards[t] + self._gamma * (sigma * rho + (1 - sigma) * pi) * (G - Q_values) + self._gamma * V
 
         # Update from first to last
         q_values = self._model(states[start_index])
 
         target = q_values.clone()
-        target[torch.argmax(actions[start_index]).item()] = G
+        target[actions[start_index]] = G
     
         self._optimizer.zero_grad()
         loss = self._criterion(target, q_values)
@@ -98,4 +96,4 @@ class NStepOffPolicyQSigmaTrainer:
             pi = probabilities
             b[best_action] += (1 - epsilon)
 
-            return pi[action_index], b[best_action]
+            return pi, b
