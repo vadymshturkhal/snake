@@ -34,7 +34,7 @@ class QLearning:
     def train_step(self, states: list, actions: list, rewards: list, dones: list) -> float:
         """If is done, trained twice"""
         if len(states) < 2:
-            return
+            return 0
 
         prev_state = states[-2]
         prev_action = actions[-2]
@@ -43,15 +43,20 @@ class QLearning:
         state = states[-1]
         done = dones[-1]
 
-        self.trainer.train_step(prev_state, prev_action, prev_reward, next_state=state, done=prev_done)
+        loss = self.trainer.train_step(prev_state, prev_action, prev_reward, next_state=state, done=prev_done)
 
         if done:
-            self.trainer.train_step(states[-1], actions[-1], rewards[-1], next_state=states[-1], done=dones[-1])
+            loss = self.trainer.train_step(states[-1], actions[-1], rewards[-1], next_state=states[-1], done=dones[-1])
+        return loss
 
     # Update the estimates of action values
-    def train_episode(self, states: list, actions: list, rewards: list, dones: list) -> list:
+    def train_episode(self, states: list, actions: list, rewards: list, dones: list, start_index=None, end_index=None) -> list:
+        if start_index is None:
+            start_index = 1
+            end_index = len(states)
+    
         episode_loss = []
-        for i in range(1, len(states)):
+        for i in range(start_index, end_index):
             prev_state = states[i - 1]
             prev_action = actions[i - 1]
             prev_reward = rewards[i - 1]
