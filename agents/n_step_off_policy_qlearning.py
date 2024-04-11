@@ -32,6 +32,10 @@ class NStepOffPolicyQLearning:
 
         self.trainer = NStepOffPolicyQTrainer(self.model, lr=LR, gamma=self.gamma, n_steps=n_steps)
     
+    def train_step(self, states: list, actions: list, rewards: list, dones: list, last_index=0):
+        loss = self.trainer.train_n_steps(states, actions, rewards, dones, last_index=last_index, epsilon=self.epsilon)
+        return loss
+    
     def train_n_steps(self, states: list, actions: list, rewards: list, dones: list, last_index=0) -> float:
         loss = self.trainer.train_n_steps(states, actions, rewards, dones, last_index=last_index, epsilon=self.epsilon)
         return loss

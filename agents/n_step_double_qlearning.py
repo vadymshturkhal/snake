@@ -37,6 +37,10 @@ class NStepDoubleQLearning:
     def model(self):
         return self.model1
 
+    def train_step(self, states: list, actions: list, rewards: list, dones: list) -> float:
+        loss = self.trainer.train_n_steps(states, actions, rewards, dones)
+        return loss
+
     def train_n_steps(self, states: list, actions: list, rewards: list, dones: list) -> float:
         loss = self.trainer.train_n_steps(states, actions, rewards, dones)
         return loss
