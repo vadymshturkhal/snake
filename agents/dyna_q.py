@@ -55,17 +55,16 @@ class DynaQ:
     def _repeat(self, states: list, actions: list, rewards: list, dones: list):
         for _ in range(self._steps):
             random_index = np.random.choice(len(states) - 1)
-            random_state = states[random_index]
-            random_action = actions[random_index]
-            random_reward = rewards[random_index]
             random_done = dones[random_index + 1]
 
             if random_done:
-                next_state = 0
+                self.trainer.train_step(states[-1], actions[-1], rewards[-1], next_state=states[-1], done=dones[-1])
             else:
+                random_state = states[random_index]
+                random_action = actions[random_index]
+                random_reward = rewards[random_index]
                 next_state = states[random_index + 1]
-
-            self.trainer.train_step(random_state, random_action, random_reward, next_state, random_done)
+                self.trainer.train_step(random_state, random_action, random_reward, next_state, random_done)
 
     # Update the estimates of action values
     def train_episode(self, states: list, actions: list, rewards: list, dones: list, start_index=None, end_index=None) -> list:
