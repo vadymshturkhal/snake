@@ -58,7 +58,7 @@ class DynaQ:
             random_state = states[random_index]
             random_action = actions[random_index]
             random_reward = rewards[random_index]
-            random_done = dones[random_index]
+            random_done = dones[random_index + 1]
 
             if random_done:
                 next_state = 0

@@ -1,4 +1,5 @@
 import csv
+from agents.dyna_q import DynaQ
 from agents.double_qlearning import DoubleQLearning
 from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from agents.qlearning import QLearning
@@ -14,7 +15,7 @@ from game_utils import Timer
 class TrainAgent:
     def __init__(self):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
-        self.snake_agent = NStepDoubleQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
+        self.snake_agent = NStepOffPolicyQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
         self.rewards = Rewards(self.game)
         self._states = []
         self._actions = []
@@ -92,8 +93,8 @@ class TrainAgent:
                 self._rotations += 1
 
             self._dones.append(float(done))
-            loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
-            # loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
+            # loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
+            loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
             self._losses.append(loss)
 
             if done:
@@ -132,9 +133,6 @@ class TrainAgent:
         self._rewards.clear()
         self._dones.clear()
         self._losses.clear()
-
-        # self._dones.append(0)
-        # self._rewards.append(0)
 
 
 is_load_weights_snake = False

@@ -1,9 +1,13 @@
+import csv
+from agents.dyna_q import DynaQ
 from agents.double_qlearning import DoubleQLearning
+from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from agents.qlearning import QLearning
+from agents.n_step_double_qlearning import NStepDoubleQLearning
+from agents.n_step_qlearning import NStepQLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
-import time
 from rewards import Rewards
 from game_utils import Timer
 
@@ -11,12 +15,13 @@ from game_utils import Timer
 class TrainAgent:
     def __init__(self):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
-        self.snake_agent = QLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
+        self.snake_agent = NStepOffPolicyQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
         self.rewards = Rewards(self.game)
         self._states = []
         self._actions = []
         self._rewards = []
         self._dones = []
+        self._losses = []
 
         self._snake_game_reward = 0
         self._bumps = 0
@@ -27,12 +32,22 @@ class TrainAgent:
         if is_load_weights_snake:
             return
 
-        with open(SCORE_DATA_FILENAME, 'w') as file:
-            file.write('Score, Time, Reward, Epsilon, Bumps, Steps, Rotations\n')
+        headers = ['Score', 'Time', 'Reward', 'Epsilon', 'Bumps', 'Steps', 'Rotations', 'Average loss']
 
-    def scores_to_csv(self, score, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations):
-        with open(SCORE_DATA_FILENAME, 'a') as file:
-            file.write(f'{str(score)}, {game_duration:.4f}, {snake_reward:.4f}, {snake_epsilon:.4f}, {bumps}, {steps}, {rotations}\n')
+        # Open the CSV file in write mode
+        with open(SCORE_DATA_FILENAME, mode='w', newline='', encoding='utf-8') as file:
+            # Create a CSV writer
+            writer = csv.writer(file)
+
+            # Write the header
+            writer.writerow(headers)
+
+    def scores_to_csv(self, score, game_duration, snake_reward, snake_epsilon, bumps, steps, rotations, average_loss):
+        data_row = [score, round(game_duration, 4), snake_reward, round(snake_epsilon, 4), bumps, steps, rotations, round(average_loss, 8)]
+        # Open the CSV file in append mode
+        with open(SCORE_DATA_FILENAME, mode='a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(data_row)
 
     def train(self, obstacles_to_load=None):
         self.assure_data_csv()
@@ -42,7 +57,7 @@ class TrainAgent:
 
         for _ in range(games_to_play):
             self._train_single_game()
-            game_loss = self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
+            # self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
             self._clear_game_data()
 
     def _train_single_game(self):
@@ -77,6 +92,11 @@ class TrainAgent:
             else:
                 self._rotations += 1
 
+            self._dones.append(float(done))
+            # loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
+            loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
+            self._losses.append(loss)
+
             if done:
                 self._dones.append(1)
                 elapsed_time = timer.get_elapsed_time()
@@ -89,10 +109,16 @@ class TrainAgent:
                     max_reward = self._snake_game_reward
                     self.snake_agent.model.save(epoch=self.snake_agent.n_games, filename=SNAKE_WEIGHTS_FILENAME)
 
-                self.scores_to_csv(self.game.score, elapsed_time, self._snake_game_reward, self.snake_agent.epsilon, self._bumps, self._steps, self._rotations)
+                average_loss = sum(self._losses) / len(self._losses)
+                self.scores_to_csv(self.game.score, 
+                                    elapsed_time, 
+                                    self._snake_game_reward, 
+                                    self.snake_agent.epsilon, 
+                                    self._bumps, 
+                                    self._steps, 
+                                    self._rotations,
+                                    average_loss,)
                 break
-            else:
-                self._dones.append(0)
 
     def _clear_game_data(self):
         self._snake_game_reward = 0
@@ -106,13 +132,14 @@ class TrainAgent:
         self._actions.clear()
         self._rewards.clear()
         self._dones.clear()
+        self._losses.clear()
 
 
 is_load_weights_snake = True
 is_load_n_games = True
 is_rendering = True
-game_speed = 20
-games_to_play = 400
+game_speed = 10
+games_to_play = 200
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_0/foods.csv'
 
