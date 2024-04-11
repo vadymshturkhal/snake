@@ -15,7 +15,7 @@ from game_utils import Timer
 class TrainAgent:
     def __init__(self):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
-        self.snake_agent = NStepDoubleQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
+        self.snake_agent = NStepOffPolicyQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
         self.rewards = Rewards(self.game)
         self._states = []
         self._actions = []
@@ -57,7 +57,7 @@ class TrainAgent:
 
         for _ in range(games_to_play):
             self._train_single_game()
-            # self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
+            self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
             self._clear_game_data()
 
     def _train_single_game(self):

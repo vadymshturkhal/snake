@@ -18,8 +18,13 @@ class NStepOffPolicyQTrainer:
         self._n_steps = n_steps
 
     def train_n_steps(self, states: list, actions: list, rewards: list, dones: int, last_index=0, epsilon=1):
-        if len(states) < self._n_steps:
+        if len(states) < 2:
             return 0
+
+        if len(states) < self._n_steps:
+            current_n_steps = len(states)
+        else:
+            current_n_steps = self._n_steps
 
         if last_index == 0:
             last_index = len(states)
@@ -38,12 +43,12 @@ class NStepOffPolicyQTrainer:
 
         if not dones[last_index - 1]:
             # G + y**n * max(Q(S_tau+n, a_tau+n))
-            rewards_gamma_sum += self._gamma**self._n_steps * torch.max(self._model(states[last_index - 1]).detach())
+            rewards_gamma_sum += self._gamma**current_n_steps * torch.max(self._model(states[last_index - 1]).detach())
 
-        q_values = self._model(states[last_index - self._n_steps])
+        q_values = self._model(states[last_index - current_n_steps])
 
         target = q_values.clone()
-        target[torch.argmax(actions[last_index - self._n_steps]).item()] = rewards_gamma_sum
+        target[torch.argmax(actions[last_index - current_n_steps]).item()] = rewards_gamma_sum
     
         self._optimizer.zero_grad()
         loss = self._criterion(target, q_values)

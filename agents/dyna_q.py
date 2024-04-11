@@ -70,6 +70,7 @@ class DynaQ:
     def train_episode(self, states: list, actions: list, rewards: list, dones: list, start_index=None, end_index=None) -> list:
         if start_index is None:
             start_index = 1
+        if end_index is None:
             end_index = len(states)
     
         episode_loss = []
