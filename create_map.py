@@ -86,5 +86,5 @@ foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 
 snake_agent = QLearning(is_load_weights=is_load_weights, weights_filename=SNAKE_WEIGHTS_FILENAME)
 food_agent = None
-game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=True, foods_to_load=foods_to_load, is_place_food=True)
+game = SnakeGameAI(is_rendering=is_rendering, game_speed=game_speed, is_add_obstacles=True, foods_to_load=foods_to_load, is_place_food=False)
 train(snake_agent, game, SCORE_DATA_FILENAME, games_to_play, food_agent, obstacles_to_load)
