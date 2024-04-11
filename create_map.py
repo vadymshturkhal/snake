@@ -4,17 +4,14 @@ from agents.qlearning import QLearning
 from game import SnakeGameAI
 from game_settings import SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import SNAKE_SPEED, FOOD_SPEED_MULTIPLIER
-import time
 
-from game_utils import Point, Timer
+from game_utils import Point
 
 
 pygame.init()
 
 
 def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=None, obstacles_to_load='new_obstacles.csv', foods_to_load='new_foods.csv'):
-    scores = []
-    mean_scores = []
     total_score = 0
 
     counter = 0
@@ -27,6 +24,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                game.obstacles.save_obstacles(MAPS_FOLDER + obstacles_to_load)
+                game.foods.save_foods()
                 pygame.quit()
                 print('Quit')
                 quit()
@@ -74,11 +73,8 @@ def train(snake_agent, game, score_data_filename, games_to_play=0, food_agent=No
 
             scores.append(score)
             total_score += score
-            mean_score = total_score / snake_agent.n_games
-            mean_scores.append(mean_score)
 
             counter += 1
-
 
 
 is_load_weights = True
