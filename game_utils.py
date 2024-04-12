@@ -6,6 +6,8 @@ import numpy as np
 from game_settings import BLOCK_SIZE, SCREEN_W, SCREEN_H
 
 
+Transition = namedtuple('Transition', ('state', 'action', 'reward', 'next_state', 'done'))
+
 Point = namedtuple('Point', 'x, y')
 DEVICE =  torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
