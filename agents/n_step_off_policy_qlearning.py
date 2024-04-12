@@ -45,7 +45,7 @@ class NStepOffPolicyQLearning:
         for i in range(self.n_steps, len(states) + 1):
             self.train_n_steps(states, actions, rewards, dones, last_index=i)
 
-    def get_action(self, state, is_train=True):
+    def get_action(self, state, is_train=True) -> np.array:
         """
         Return vector [0,0,0] with first two positions represent rotation, third pushes forward.
         Adjusted for epsilon-soft policy.
@@ -78,7 +78,7 @@ class NStepOffPolicyQLearning:
             final_move[move] = 1
 
         self.last_action = final_move
-        return final_move
+        return np.array(final_move)
 
     def _update_epsilon_linear(self):
         """
