@@ -1,5 +1,6 @@
 from functools import reduce
 import operator
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -28,18 +29,26 @@ class NStepOffPolicyQTrainer:
 
         if last_index == 0:
             last_index = len(states)
+        
+        loss = self._train_n_steps(states, actions, rewards, dones, last_index, epsilon, current_n_steps)
+        # Drain other steps
+        if dones[-1]:
+            for step in reversed(range(2, current_n_steps)):
+                loss = self._train_n_steps(states, actions, rewards, dones, last_index, epsilon, step)
+        return loss
 
-        states = torch.tensor(states, dtype=torch.float)
-        actions = torch.tensor(actions, dtype=torch.long)
+    def _train_n_steps(self, states: list, actions: list, rewards: list, dones: int, last_index=0, epsilon=1, current_n_steps=2):
+        states = torch.tensor(np.array(states), dtype=torch.float)
+        actions = torch.tensor(np.array(actions), dtype=torch.long)
 
         # Rho
-        ratio = self._importance_sampling_ratio(states, epsilon)
+        ratio = self._importance_sampling_ratio(states, epsilon, current_n_steps)
 
         for param_group in self._optimizer.param_groups:
             param_group['lr'] = self._alpha * ratio
 
         # G
-        rewards_gamma_sum = self._calculate_rewards(rewards, last_index=last_index)
+        rewards_gamma_sum = self._calculate_rewards(rewards, current_n_steps, last_index=last_index)
 
         if not dones[last_index - 1]:
             # G + y**n * max(Q(S_tau+n, a_tau+n))
@@ -57,10 +66,10 @@ class NStepOffPolicyQTrainer:
         self._optimizer.step()
         return loss.item()
 
-    def _importance_sampling_ratio(self, states, epsilon, last_index=None):
+    def _importance_sampling_ratio(self, states, epsilon, current_n_steps, last_index=None):
         if last_index is None:
             last_index = len(states)
-        start_index = last_index - self._n_steps
+        start_index = last_index - current_n_steps
         last_index -= 1
         ratios = []
 
@@ -82,11 +91,11 @@ class NStepOffPolicyQTrainer:
         ratios_multiplied = reduce(operator.mul, ratios)
         return ratios_multiplied
 
-    def _calculate_rewards(self, rewards, last_index=None):
+    def _calculate_rewards(self, rewards, current_n_steps, last_index=None):
         rewards_gamma_sum = 0
         if last_index is None:
             last_index = len(rewards)
-        start_index = last_index - self._n_steps
+        start_index = last_index - current_n_steps
 
         for i in range(start_index, last_index):
             rewards_gamma_sum += rewards[i] * self._gamma**(i - start_index)

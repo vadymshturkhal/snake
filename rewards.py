@@ -1,4 +1,4 @@
-from game_settings import IS_ADD_OBSTACLES, REWARD_CRAWLING, REWARD_ROTATION
+from game_settings import REWARD_CRAWLING, REWARD_ROTATION
 from game_settings import REWARD_WIN, REWARD_LOOSE
 
 
