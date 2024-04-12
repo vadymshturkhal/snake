@@ -4,7 +4,7 @@ import numpy as np
 from model import Linear_QNet
 from trainers.qtrainer import QTrainer
 
-from game_settings import EPSILON_SHIFT, LR, SNAKE_ACTION_LENGTH, BLOCK_SIZE, TRAINER_STEPS
+from game_settings import LR, SNAKE_ACTION_LENGTH, TRAINER_STEPS
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON
 
@@ -122,7 +122,7 @@ class DynaQ:
             final_move[move] = 1
 
         self.last_action = final_move
-        return final_move
+        return tuple(final_move)
 
     def _update_epsilon_linear(self):
         """

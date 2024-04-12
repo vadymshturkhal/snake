@@ -15,7 +15,7 @@ from game_utils import Timer, Transition
 class TrainAgent:
     def __init__(self):
         self.game = SnakeGameAI(is_rendering, game_speed, IS_ADD_OBSTACLES, foods_to_load, is_place_food=True)
-        self.snake_agent = NStepOffPolicyQLearning(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
+        self.snake_agent = DynaQ(*[is_load_weights_snake, SNAKE_WEIGHTS_FILENAME, games_to_play, is_load_n_games])
         self.rewards = Rewards(self.game)
         self._states = []
         self._actions = []
