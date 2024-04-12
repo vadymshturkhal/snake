@@ -57,19 +57,6 @@ class NStepOffPolicyQTrainer:
         self._optimizer.step()
         return loss.item()
 
-    def train_episode(self):
-        pass
-
-    def _calculate_rewards(self, rewards, last_index=None):
-        rewards_gamma_sum = 0
-        if last_index is None:
-            last_index = len(rewards)
-        start_index = last_index - self._n_steps
-
-        for i in range(start_index, last_index):
-            rewards_gamma_sum += rewards[i] * self._gamma**(i - start_index)
-        return rewards_gamma_sum
-
     def _importance_sampling_ratio(self, states, epsilon, last_index=None):
         if last_index is None:
             last_index = len(states)
@@ -94,3 +81,13 @@ class NStepOffPolicyQTrainer:
         # Using reduce with operator.mul
         ratios_multiplied = reduce(operator.mul, ratios)
         return ratios_multiplied
+
+    def _calculate_rewards(self, rewards, last_index=None):
+        rewards_gamma_sum = 0
+        if last_index is None:
+            last_index = len(rewards)
+        start_index = last_index - self._n_steps
+
+        for i in range(start_index, last_index):
+            rewards_gamma_sum += rewards[i] * self._gamma**(i - start_index)
+        return rewards_gamma_sum
