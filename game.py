@@ -71,11 +71,11 @@ class SnakeGameAI:
         self.snake.head = snake_point
 
     def snake_apply_action(self, action, is_human=False):
-        if action == [1, 0, 0]: 
+        if action == (1, 0, 0): 
             self.snake.rotate_snake('left')
-        elif action == [0, 1, 0]:
+        elif action == (0, 1, 0):
             self.snake.rotate_snake('right')
-        elif action == [0, 0, 1]:
+        elif action == (0, 0, 1):
             self.snake_is_crashed = any([self.snake.move_after_rotation(), self.obstacles.is_point_at_obstacle(self.snake.head)])
             self.snake_steps += 1
         else:

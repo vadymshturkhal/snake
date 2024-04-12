@@ -32,12 +32,12 @@ class NStepOffPolicyQLearning:
 
         self.trainer = NStepOffPolicyQTrainer(self.model, lr=LR, gamma=self.gamma, n_steps=n_steps)
     
-    def train_step(self, states: list, actions: list, rewards: list, dones: list, last_index=0):
-        loss = self.trainer.train_n_steps(states, actions, rewards, dones, last_index=last_index, epsilon=self.epsilon)
+    def train_step(self, transitions,last_index=0):
+        loss = self.trainer.train_n_steps(transitions, last_index=last_index, epsilon=self.epsilon)
         return loss
     
-    def train_n_steps(self, states: list, actions: list, rewards: list, dones: list, last_index=0) -> float:
-        loss = self.trainer.train_n_steps(states, actions, rewards, dones, last_index=last_index, epsilon=self.epsilon)
+    def train_n_steps(self, transitions, last_index=0) -> float:
+        loss = self.trainer.train_n_steps(transitions, last_index=last_index, epsilon=self.epsilon)
         return loss
 
     # Update the estimates of action values
@@ -45,7 +45,7 @@ class NStepOffPolicyQLearning:
         for i in range(self.n_steps, len(states) + 1):
             self.train_n_steps(states, actions, rewards, dones, last_index=i)
 
-    def get_action(self, state, is_train=True) -> np.array:
+    def get_action(self, state, is_train=True) -> tuple:
         """
         Return vector [0,0,0] with first two positions represent rotation, third pushes forward.
         Adjusted for epsilon-soft policy.
@@ -78,7 +78,7 @@ class NStepOffPolicyQLearning:
             final_move[move] = 1
 
         self.last_action = final_move
-        return np.array(final_move)
+        return tuple(final_move)
 
     def _update_epsilon_linear(self):
         """
