@@ -22,7 +22,6 @@ class TrainAgent:
         self._rewards = []
         self._dones = []
         self._losses = []
-        self._transitions = []
 
         self._snake_game_reward = 0
         self._bumps = 0
@@ -96,11 +95,9 @@ class TrainAgent:
             else:
                 self._rotations += 1
 
-            transition = Transition(snake_state, snake_action, snake_reward, next_snake_state, done)
-            self._transitions.append(transition)
 
             # loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
-            loss = self.snake_agent.train_step(self._transitions)
+            loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
             self._losses.append(loss)
 
 
