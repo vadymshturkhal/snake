@@ -7,7 +7,7 @@ from agents.n_step_double_qlearning import NStepDoubleQLearning
 from agents.n_step_qlearning import NStepQLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
-from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
+from game_settings import FRAME_RESTRICTION
 from rewards import Rewards
 from game_utils import Timer, Transition
 
@@ -83,24 +83,26 @@ class TrainAgent:
             self.snake_agent.last_reward = snake_reward
 
             done = FRAME_RESTRICTION - self.game.frame_iteration == 0
+            self._dones.append(float(done))
+
             # done = self.game.snake_is_crashed
             self.game.play_step()
 
             if self.game.snake_is_crashed:
                 self._bumps += 1
 
-            if snake_action == [0, 0, 1]:
+            if snake_action == (0, 0, 1):
                 self._steps += 1
             else:
                 self._rotations += 1
 
-            self._dones.append(float(done))
-            # loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
-            loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
-            self._losses.append(loss)
-
             transition = Transition(snake_state, snake_action, snake_reward, next_snake_state, done)
             self._transitions.append(transition)
+
+            # loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
+            loss = self.snake_agent.train_step(self._transitions)
+            self._losses.append(loss)
+
 
             if done:
                 self._dones.append(1)

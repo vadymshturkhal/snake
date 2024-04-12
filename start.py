@@ -7,9 +7,9 @@ from agents.n_step_double_qlearning import NStepDoubleQLearning
 from agents.n_step_qlearning import NStepQLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
-from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
+from game_settings import FRAME_RESTRICTION
 from rewards import Rewards
-from game_utils import Timer
+from game_utils import Timer, Transition
 
 
 class TrainAgent:
@@ -22,6 +22,7 @@ class TrainAgent:
         self._rewards = []
         self._dones = []
         self._losses = []
+        self._transitions = []
 
         self._snake_game_reward = 0
         self._bumps = 0
@@ -72,6 +73,7 @@ class TrainAgent:
             snake_action = self.snake_agent.get_action(snake_state)
             self.game.snake_apply_action(snake_action)
             snake_reward = self.rewards.get_snake_reward(action=snake_action)
+            next_snake_state = self.game.get_snake_state()
 
             self._states.append(snake_state)
             self._actions.append(snake_action)
@@ -81,21 +83,26 @@ class TrainAgent:
             self.snake_agent.last_reward = snake_reward
 
             done = FRAME_RESTRICTION - self.game.frame_iteration == 0
+            self._dones.append(float(done))
+
             # done = self.game.snake_is_crashed
             self.game.play_step()
 
             if self.game.snake_is_crashed:
                 self._bumps += 1
 
-            if snake_action == [0, 0, 1]:
+            if snake_action == (0, 0, 1):
                 self._steps += 1
             else:
                 self._rotations += 1
 
-            self._dones.append(float(done))
+            transition = Transition(snake_state, snake_action, snake_reward, next_snake_state, done)
+            self._transitions.append(transition)
+
             # loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
-            loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
+            loss = self.snake_agent.train_step(self._transitions)
             self._losses.append(loss)
+
 
             if done:
                 self._dones.append(1)
@@ -139,7 +146,7 @@ is_load_weights_snake = True
 is_load_n_games = True
 is_rendering = True
 game_speed = 40
-games_to_play = 200
+games_to_play = 100
 obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 
