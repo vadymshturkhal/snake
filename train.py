@@ -95,17 +95,10 @@ class TrainAgent:
             else:
                 self._rotations += 1
 
-
-            # loss = self.snake_agent.train_n_steps(self._states, self._actions, self._rewards, self._dones)
             loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
             self._losses.append(loss)
 
             if done:
-                # Terminal state
-                snake_state = self.game.get_snake_state()
-                self._states.append(snake_state)
-
-                self._dones.append(1)
                 elapsed_time = timer.get_elapsed_time()
                 timer.reset()
 
