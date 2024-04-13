@@ -1,5 +1,6 @@
 import csv
 from agents.dyna_q import DynaQ
+from agents.dyna_q_sweeping import DynaQSweeping
 from agents.double_qlearning import DoubleQLearning
 from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from agents.qlearning import QLearning
@@ -71,7 +72,7 @@ class TrainAgent:
             snake_state = self.game.get_snake_state()
             snake_action = self.snake_agent.get_action(snake_state)
             self.game.snake_apply_action(snake_action)
-            snake_reward = self.rewards.get_snake_reward(action=snake_action)
+            snake_reward = self.rewards.get_snake_reward(state=snake_state, action=snake_action)
 
             self._states.append(snake_state)
             self._actions.append(snake_action)
@@ -99,8 +100,11 @@ class TrainAgent:
             loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
             self._losses.append(loss)
 
-
             if done:
+                # Terminal state
+                snake_state = self.game.get_snake_state()
+                self._states.append(snake_state)
+
                 self._dones.append(1)
                 elapsed_time = timer.get_elapsed_time()
                 timer.reset()

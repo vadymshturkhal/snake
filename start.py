@@ -1,5 +1,6 @@
 import csv
 from agents.dyna_q import DynaQ
+from agents.dyna_q_sweeping import DynaQSweeping
 from agents.double_qlearning import DoubleQLearning
 from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from agents.qlearning import QLearning
@@ -9,7 +10,7 @@ from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import FRAME_RESTRICTION
 from rewards import Rewards
-from game_utils import Timer, Transition
+from game_utils import Timer
 
 
 class TrainAgent:
@@ -71,8 +72,7 @@ class TrainAgent:
             snake_state = self.game.get_snake_state()
             snake_action = self.snake_agent.get_action(snake_state)
             self.game.snake_apply_action(snake_action)
-            snake_reward = self.rewards.get_snake_reward(action=snake_action)
-            next_snake_state = self.game.get_snake_state()
+            snake_reward = self.rewards.get_snake_reward(state=snake_state, action=snake_action)
 
             self._states.append(snake_state)
             self._actions.append(snake_action)
@@ -82,9 +82,9 @@ class TrainAgent:
             self.snake_agent.last_reward = snake_reward
 
             done = FRAME_RESTRICTION - self.game.frame_iteration == 0
-            # done = self.game.snake_is_crashed
             self._dones.append(float(done))
 
+            # done = self.game.snake_is_crashed
             self.game.play_step()
 
             if self.game.snake_is_crashed:
@@ -100,8 +100,11 @@ class TrainAgent:
             loss = self.snake_agent.train_step(self._states, self._actions, self._rewards, self._dones)
             self._losses.append(loss)
 
-
             if done:
+                # Terminal state
+                snake_state = self.game.get_snake_state()
+                self._states.append(snake_state)
+
                 self._dones.append(1)
                 elapsed_time = timer.get_elapsed_time()
                 timer.reset()
