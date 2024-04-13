@@ -16,7 +16,7 @@ class Rewards:
             return REWARD_LOOSE
 
         # Penalty
-        if action == [0, 0, 1]:
+        if action == (0, 0, 1):
             snake_reward = REWARD_CRAWLING
         else:
             snake_reward = REWARD_ROTATION
