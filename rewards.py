@@ -27,6 +27,7 @@ class Rewards:
             snake_reward = REWARD_ROTATION
 
         bonus_reward = self._get_bonus(state, action)
+        # bonus_reward = 0
         self._store_transition(state, action)
         return snake_reward + bonus_reward
 

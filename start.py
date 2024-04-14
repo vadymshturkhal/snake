@@ -139,8 +139,8 @@ is_load_n_games = True
 is_rendering = True
 game_speed = 40
 games_to_play = 100
-obstacles_to_load = MAPS_FOLDER + './level_2/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_2/foods.csv'
+obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_0/foods.csv'
 
 if __name__ == '__main__':
     train_agent = TrainAgent()
