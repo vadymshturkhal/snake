@@ -1,6 +1,5 @@
 import csv
 from agents.dyna_q import DynaQ
-from agents.dyna_q_sweeping import DynaQSweeping
 from agents.double_qlearning import DoubleQLearning
 from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
 from agents.qlearning import QLearning
@@ -140,8 +139,8 @@ is_load_n_games = False
 is_rendering = False
 game_speed = 40
 games_to_play = 200
-obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
+obstacles_to_load = MAPS_FOLDER + './level_2/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_2/foods.csv'
 
 if __name__ == '__main__':
     train_agent = TrainAgent()
