@@ -6,7 +6,7 @@ from agents.qlearning import QLearning
 from agents.n_step_double_qlearning import NStepDoubleQLearning
 from agents.n_step_qlearning import NStepQLearning
 from game import SnakeGameAI
-from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
+from game_settings import EPOCHS, IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
 from game_settings import FRAME_RESTRICTION
 from rewards import Rewards
 from game_utils import Timer
@@ -138,7 +138,7 @@ is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
-games_to_play = 400
+games_to_play = EPOCHS
 obstacles_to_load = MAPS_FOLDER + './level_0/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_0/foods.csv'
 
