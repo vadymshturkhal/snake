@@ -139,7 +139,7 @@ is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
-games_to_play = 100
+games_to_play = 200
 obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 

@@ -38,7 +38,6 @@ class DynaQSweeping:
             return 0
 
         loss = self.trainer.train_step(states, actions, rewards, dones, steps=self._steps)
-        self._repeat(states, actions, rewards, dones)
         return loss
 
     def get_action(self, state, is_train=True):
