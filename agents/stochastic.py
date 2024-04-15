@@ -31,14 +31,9 @@ class Stochastic:
 
         self.trainer = StochasticTrainer(self.model, lr=LR, gamma=self.gamma)
     
-    def train_step(self, states: list, actions: list, rewards: list, dones: list, last_index=0):
-        loss = self.trainer.train_step(states, actions, rewards, dones, last_index=last_index, epsilon=self.epsilon)
-        return loss
-
-    # Update the estimates of action values
     def train_episode(self, states: list, actions: list, rewards: list, dones: list):
-        for i in range(self.n_steps, len(states) + 1):
-            self.train_n_steps(states, actions, rewards, dones, last_index=i)
+        loss = self.trainer.train_episode(states, actions, rewards, dones)
+        return loss
 
     def get_action(self, state, is_train=True) -> tuple:
         """

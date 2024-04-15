@@ -35,17 +35,19 @@ class StochasticTrainer:
 
         # Perform a forward pass to get the value estimate
         state_tensor = torch.tensor(states[last_index], dtype=torch.float32)
+        value_estimate = self._model(state_tensor)
 
         # G
         rewards_gamma_sum = self._calculate_rewards(rewards, last_index=last_index)
 
-        self._optimizer.zero_grad()
-        value_estimate = self._model(state_tensor)
-        value_estimate.backward()
+        # Calculate the loss as the squared difference (ensure it is a scalar)
+        loss = (rewards_gamma_sum - value_estimate).pow(2).mean()  # .mean() to ensure the loss is a scalar
 
-        with torch.no_grad():
-            for param in self._model.parameters():
-                param -= self._alpha * (rewards_gamma_sum - value_estimate) * param.grad
+        self._optimizer.zero_grad()
+        loss.backward()
+        self._optimizer.step()
+
+        return loss.item()
 
     def _calculate_rewards(self, rewards, last_index=None):
         rewards_gamma_sum = 0
