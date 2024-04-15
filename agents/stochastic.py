@@ -4,17 +4,16 @@ import numpy as np
 from model import Linear_QNet
 from trainers.stochastic_trainer import StochasticTrainer
 
-from game_settings import LR, SNAKE_ACTION_LENGTH, TRAINER_STEPS
+from game_settings import LR, SNAKE_ACTION_LENGTH
 from game_settings import SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE
 from game_settings import SNAKE_GAMMA, SNAKE_MIN_EPSILON, SNAKE_START_EPSILON
 
 class Stochastic:
-    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True, n_steps=TRAINER_STEPS):
+    def __init__(self, is_load_weights=False, weights_filename=None, epochs=100, is_load_n_games=True):
         self.epsilon = 1
         self.epochs = epochs
 
         self.gamma = SNAKE_GAMMA
-        self.n_steps = n_steps
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
@@ -30,7 +29,7 @@ class Stochastic:
         else:
             self.n_games = 0
 
-        self.trainer = StochasticTrainer(self.model, lr=LR, gamma=self.gamma, n_steps=n_steps)
+        self.trainer = StochasticTrainer(self.model, lr=LR, gamma=self.gamma)
     
     def train_step(self, states: list, actions: list, rewards: list, dones: list, last_index=0):
         loss = self.trainer.train_step(states, actions, rewards, dones, last_index=last_index, epsilon=self.epsilon)
