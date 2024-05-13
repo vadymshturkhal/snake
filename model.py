@@ -16,6 +16,9 @@ class Linear_QNet(nn.Module):
         self.dropout2 = nn.Dropout(DROPOUT_RATE)
         self.linear3 = nn.Linear(hidden2, output_layer)
 
+        if torch.cuda.is_available():
+            self.cuda()
+
     def forward(self, x):
         x = F.relu(self.linear1(x))
         x = self.dropout1(x)

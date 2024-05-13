@@ -62,7 +62,7 @@ class NStepOffPolicyQLearning:
             probabilities = np.ones(SNAKE_ACTION_LENGTH) * (self.epsilon / SNAKE_ACTION_LENGTH)
 
             state0 = torch.tensor(state, dtype=torch.float).to(self._device)
-            prediction = self.model(state0).to(self._device)
+            prediction = self.model(state0)
             best_move = torch.argmax(prediction).item()
 
             # Adjust probability for the best action
@@ -74,7 +74,7 @@ class NStepOffPolicyQLearning:
         else:
 
             state0 = torch.tensor(state, dtype=torch.float).to(self._device)
-            prediction = self.model(state0).to(self._device)
+            prediction = self.model(state0)
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 

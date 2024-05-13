@@ -47,7 +47,7 @@ class NStepOffPolicyQTrainer:
             # G + y**n * max(Q(S_tau+n, a_tau+n))
             rewards_gamma_sum += self._gamma**current_n_steps * torch.max(self._model(states[last_index - 1]).detach().to(self._device))
 
-        q_values = self._model(states[last_index - current_n_steps]).to(self._device)
+        q_values = self._model(states[last_index - current_n_steps])
 
         target = q_values.clone().to(self._device)
         target[torch.argmax(actions[last_index - current_n_steps]).item()] = rewards_gamma_sum
