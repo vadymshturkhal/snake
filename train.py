@@ -89,7 +89,7 @@ class TrainAgent:
             if self.game.snake_is_crashed:
                 self._bumps += 1
 
-            if snake_action == [0, 0, 1]:
+            if list(snake_action) == [0, 0, 1]:
                 self._steps += 1
             else:
                 self._rotations += 1
@@ -144,7 +144,7 @@ is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
-games_to_play = 100
+games_to_play = 200
 obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
 

@@ -16,14 +16,14 @@ class NStepOffPolicyQLearning:
         self.gamma = SNAKE_GAMMA
         self.n_steps = n_steps
 
-        self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+        self._device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
         self.model = Linear_QNet(SNAKE_INPUT_LAYER_SIZE, SNAKE_HIDDEN_LAYER_SIZE1, SNAKE_HIDDEN_LAYER_SIZE2, SNAKE_OUTPUT_LAYER_SIZE)
-        self.model.to(self.device)
+        self.model.to(self._device)
         self.last_action = [0] * SNAKE_ACTION_LENGTH
 
         # Load the weights onto the CPU or GPU
         if is_load_weights:
-            checkpoint = torch.load(weights_filename, map_location=self.device)
+            checkpoint = torch.load(weights_filename, map_location=self._device)
             self.n_games = checkpoint['epoch'] if is_load_n_games else 0
             self.model.load_state_dict(checkpoint['model_state_dict'])
             self.model.eval()
@@ -61,8 +61,8 @@ class NStepOffPolicyQLearning:
             # Distribute a small probability to all actions, keeping the majority for the best action
             probabilities = np.ones(SNAKE_ACTION_LENGTH) * (self.epsilon / SNAKE_ACTION_LENGTH)
 
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
+            state0 = torch.tensor(state, dtype=torch.float).to(self._device)
+            prediction = self.model(state0).to(self._device)
             best_move = torch.argmax(prediction).item()
 
             # Adjust probability for the best action
@@ -72,12 +72,14 @@ class NStepOffPolicyQLearning:
             move = np.random.choice(np.arange(SNAKE_ACTION_LENGTH), p=probabilities)
             final_move[move] = 1
         else:
-            state0 = torch.tensor(state, dtype=torch.float)
-            prediction = self.model(state0)
+
+            state0 = torch.tensor(state, dtype=torch.float).to(self._device)
+            prediction = self.model(state0).to(self._device)
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
         self.last_action = final_move
+        # return torch.from_numpy(np.array(final_move)).to(self._device)
         return np.array(final_move)
 
     def _update_epsilon_linear(self):

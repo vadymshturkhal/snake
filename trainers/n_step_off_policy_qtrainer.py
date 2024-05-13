@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
+import numpy as np
 
 from game_settings import SNAKE_ACTION_LENGTH, WEIGHT_DECAY
 
@@ -16,6 +17,7 @@ class NStepOffPolicyQTrainer:
         self._optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
         self._criterion = nn.SmoothL1Loss()
         self._n_steps = n_steps
+        self._device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     def train_n_steps(self, states: list, actions: list, rewards: list, dones: int, last_index=0, epsilon=1):
         if len(states) < 2:
@@ -29,8 +31,8 @@ class NStepOffPolicyQTrainer:
         if last_index == 0:
             last_index = len(states)
 
-        states = torch.tensor(states, dtype=torch.float)
-        actions = torch.tensor(actions, dtype=torch.long)
+        states = torch.tensor(np.array(states), dtype=torch.float).to(self._device)
+        actions = torch.tensor(np.array(actions), dtype=torch.long).to(self._device)
 
         # Rho
         ratio = self._importance_sampling_ratio(states, epsilon)
@@ -43,15 +45,15 @@ class NStepOffPolicyQTrainer:
 
         if not dones[last_index - 1]:
             # G + y**n * max(Q(S_tau+n, a_tau+n))
-            rewards_gamma_sum += self._gamma**current_n_steps * torch.max(self._model(states[last_index - 1]).detach())
+            rewards_gamma_sum += self._gamma**current_n_steps * torch.max(self._model(states[last_index - 1]).detach().to(self._device))
 
-        q_values = self._model(states[last_index - current_n_steps])
+        q_values = self._model(states[last_index - current_n_steps]).to(self._device)
 
-        target = q_values.clone()
+        target = q_values.clone().to(self._device)
         target[torch.argmax(actions[last_index - current_n_steps]).item()] = rewards_gamma_sum
     
         self._optimizer.zero_grad()
-        loss = self._criterion(target, q_values)
+        loss = self._criterion(target, q_values).to(self._device)
         loss.backward()
 
         self._optimizer.step()
