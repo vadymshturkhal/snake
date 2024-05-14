@@ -143,7 +143,7 @@ class TrainAgent:
 is_load_weights_snake = True
 is_load_n_games = True
 is_rendering = True
-game_speed = 40
+game_speed = 20
 games_to_play = 200
 obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_1/foods.csv'

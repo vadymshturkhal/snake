@@ -7,8 +7,8 @@ SCORE_DATA_FILENAME = './data/latest.csv'
 SNAKE_SPRITE_PATH = './sprites/snake_head.png'
 
 # Screen
-SCREEN_W = 210
-SCREEN_H = 210
+SCREEN_W = 330
+SCREEN_H = 330
 
 # Game
 BLOCK_SIZE = 30
