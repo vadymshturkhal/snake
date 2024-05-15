@@ -81,6 +81,15 @@ class GameStats:
         n = 1 + (m - 1) * 2
         state_grid = np.zeros((m, n))
 
+        state_grid = np.zeros((m, n))
+
+        for vision_level in reversed(range(m)):
+            cells_to_fill = 1 + (abs(vision_level - m) - 1) * 2
+            for level_cell in range(vision_level, vision_level + cells_to_fill):
+                state_grid[vision_level][level_cell] = 1
+
+        print(state_grid)
+
     def _get_area_around(self):
         """
         Generate a vision-based state representation around the snake's head.
