@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from game_settings import BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_VISION_RANGE
+from game_settings import CODE_AVAILABLE_PATH, CODE_OBSTACLES, CODE_FOOD
 import pprint
 
 from game_utils import Direction, Point, calculate_distance, rotate_grid
@@ -16,6 +17,7 @@ class GameStats:
         head = self.game.snake.head
 
         snake_vision = self._get_area_around()
+        self._get_area_forward()
 
         closest_food = self.game.foods.get_closest_food(head)
 
@@ -66,6 +68,18 @@ class GameStats:
 
         # state = torch.from_numpy(np.array(state, dtype=float)).to(self._device)
         return state
+
+    def _get_area_forward(self):
+        """
+            Example vision forward in upper direction:
+                #####
+                 ###
+                  #
+        """
+        m = self._vision_range
+        # I-th member of arithmetic sequence
+        n = 1 + (m - 1) * 2
+        state_grid = np.zeros((m, n))
 
     def _get_area_around(self):
         """
