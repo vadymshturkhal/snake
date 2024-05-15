@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 from game_settings import BLOCK_SIZE, REWARD_CRAWLING, REWARD_LOOSE, REWARD_ROTATION, REWARD_WIN, SNAKE_VISION_RANGE
+import pprint
 
 from game_utils import Direction, Point, calculate_distance, rotate_grid
 
@@ -14,7 +15,7 @@ class GameStats:
     def get_snake_state(self) -> np.array:
         head = self.game.snake.head
 
-        snake_vision = self.get_vision_based_state()
+        snake_vision = self.get_area_around()
 
         closest_food = self.game.foods.get_closest_food(head)
 
@@ -66,7 +67,7 @@ class GameStats:
         # state = torch.from_numpy(np.array(state, dtype=float)).to(self._device)
         return state
 
-    def get_vision_based_state(self):
+    def get_area_around(self):
         """
         Generate a vision-based state representation around the snake's head.
     
@@ -97,6 +98,8 @@ class GameStats:
         # Flatten the grid to create a state vector or use as is for CNN input
         relative_state_vector = relative_state_grid.flatten()
 
+        print(relative_state_grid)
+
         return relative_state_vector
 
     def populate_grid(self, game, state_grid, center_x, center_y, max_vision_range):
@@ -119,14 +122,14 @@ class GameStats:
                     # Check and assign values based on game state, similar to your existing logic
                     if point.x < 0 or point.y < 0 or point.x >= game.width or point.y >= game.height:
                         # Wall
-                        state_grid[grid_x, grid_y] = REWARD_LOOSE
+                        state_grid[grid_x, grid_y] = 1
                     elif point in game.foods:
                          # Food
-                        state_grid[grid_x, grid_y] = REWARD_WIN 
+                        state_grid[grid_x, grid_y] = 2
                     elif game.obstacles.is_point_at_obstacle(point):
                          # Obstacle
-                        state_grid[grid_x, grid_y] = REWARD_LOOSE
+                        state_grid[grid_x, grid_y] = 1
                     else:
-                        state_grid[grid_x, grid_y] = REWARD_CRAWLING
+                        state_grid[grid_x, grid_y] = 0
 
         state_grid[max_vision_range, max_vision_range] = REWARD_ROTATION
