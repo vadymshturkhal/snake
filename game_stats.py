@@ -15,7 +15,7 @@ class GameStats:
     def get_snake_state(self) -> np.array:
         head = self.game.snake.head
 
-        snake_vision = self.get_area_around()
+        snake_vision = self._get_area_around()
 
         closest_food = self.game.foods.get_closest_food(head)
 
@@ -67,7 +67,7 @@ class GameStats:
         # state = torch.from_numpy(np.array(state, dtype=float)).to(self._device)
         return state
 
-    def get_area_around(self):
+    def _get_area_around(self):
         """
         Generate a vision-based state representation around the snake's head.
     
@@ -91,7 +91,7 @@ class GameStats:
 
         # Define the grid's center point (the snake's head position)
         center_x, center_y = self.game.snake.head.x, self.game.snake.head.y
-        self.populate_grid(self.game, state_grid, center_x, center_y, self._vision_range)
+        self._populate_vision_around_grid(self.game, state_grid, center_x, center_y, self._vision_range)
         
         relative_state_grid = rotate_grid(state_grid, self.game.snake.direction)
 
@@ -102,7 +102,7 @@ class GameStats:
 
         return relative_state_vector
 
-    def populate_grid(self, game, state_grid, center_x, center_y, max_vision_range):
+    def _populate_vision_around_grid(self, game, state_grid, center_x, center_y, max_vision_range):
         """
         Populate the vision grid layer by layer, from outermost to innermost.
         """
