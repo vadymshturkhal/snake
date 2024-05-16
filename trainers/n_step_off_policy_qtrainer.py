@@ -1,5 +1,6 @@
 from functools import reduce
 import operator
+import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -59,8 +60,14 @@ class NStepOffPolicyQTrainer:
         self._optimizer.step()
         return loss.item()
 
-    def train_episode(self):
-        pass
+    def train_episode(self, states: list, actions: list, rewards: list, dones: list):
+        for i in range(10):
+            random_state_index = random.randint(0, len(states) - 2)
+            random_state = states[random_state_index]
+            next_state = states[random_state_index + 1]
+            reward = rewards[random_state_index + 1]
+            action = actions[random_state_index]
+            print(random_state_index)
 
     def _calculate_rewards(self, rewards, last_index=None):
         rewards_gamma_sum = 0
