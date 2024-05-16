@@ -58,7 +58,7 @@ class TrainAgent:
 
         for _ in range(games_to_play):
             self._train_single_game()
-            # self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
+            self.snake_agent.train_episode(self._states, self._actions, self._rewards, self._dones)
             self._clear_game_data()
 
     def _train_single_game(self):
@@ -144,9 +144,9 @@ is_load_weights_snake = False
 is_load_n_games = False
 is_rendering = False
 game_speed = 40
-games_to_play = 1200
-obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
-foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
+games_to_play = 300
+obstacles_to_load = MAPS_FOLDER + './level_2/obstacles.csv'
+foods_to_load = MAPS_FOLDER + './level_2/foods.csv'
 
 if __name__ == '__main__':
     train_agent = TrainAgent()
