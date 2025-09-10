@@ -27,6 +27,8 @@ RED = (200,0,0)
 BLUE1 = (0, 0, 255)
 BLUE2 = (0, 100, 255)
 BLACK = (0,0,0)
+DARK_BLUE = (0, 0, 139)
+DEEP_BLUE = (5,1,74)
 
 CLOCK_WISE = [Direction.RIGHT, Direction.DOWN, Direction.LEFT, Direction.UP]
 

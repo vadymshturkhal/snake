@@ -5,7 +5,7 @@ from obstacles import Obstacles
 from snake import Snake
 
 from game_stats import GameStats
-from game_utils import Direction, Point, WHITE, RED, BLACK
+from game_utils import DARK_BLUE, Direction, Point, WHITE, RED, BLACK, DEEP_BLUE
 from game_settings import BLOCK_SIZE, MAPS_FOLDER, SCREEN_W, SCREEN_H, OBSTACLES_QUANTITY
 
 
@@ -109,10 +109,8 @@ class SnakeGameAI:
         else:
             self.is_eaten_food =  False
 
-
-
     def _update_ui(self):
-        self.display.fill(BLACK)
+        self.display.fill(DEEP_BLUE)
 
         # Determine the rotation of the snake sprite
         sprite_rect = self.snake.sprite_rotated.get_rect(center=(self.snake.head.x + BLOCK_SIZE / 2, self.snake.head.y + BLOCK_SIZE / 2))
