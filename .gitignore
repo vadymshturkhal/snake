@@ -5,4 +5,5 @@ snake_agent.log
 features.txt
 another.py
 docs.txt
-ex_*
+ex*
+notes
