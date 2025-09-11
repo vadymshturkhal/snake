@@ -11,7 +11,6 @@ class Snake:
         self.game = game
         self.direction = init_direction
         self.prev_direction = self.direction
-
         # Load the snake head sprite
         self.sprite = pygame.image.load(SNAKE_SPRITE_PATH)
         self.sprite = pygame.transform.scale(self.sprite, (BLOCK_SIZE, BLOCK_SIZE))

@@ -1,13 +1,8 @@
 import csv
-from agents.dyna_q import DynaQ
-from agents.double_qlearning import DoubleQLearning
 from agents.n_step_off_policy_qlearning import NStepOffPolicyQLearning
-from agents.qlearning import QLearning
-from agents.n_step_double_qlearning import NStepDoubleQLearning
-from agents.n_step_qlearning import NStepQLearning
 from game import SnakeGameAI
 from game_settings import IS_ADD_OBSTACLES, MAPS_FOLDER, SNAKE_WEIGHTS_FILENAME, SCORE_DATA_FILENAME
-from game_settings import GAME_SPEED, SNAKE_SPEED, FOOD_SPEED_MULTIPLIER, FRAME_RESTRICTION
+from game_settings import FRAME_RESTRICTION, REWARD_TIMEOUT
 from rewards import Rewards
 from game_utils import Timer, Transition
 
@@ -83,6 +78,7 @@ class TrainAgent:
             self.snake_agent.last_reward = snake_reward
 
             done = FRAME_RESTRICTION - self.game.frame_iteration == 0
+
             # done = self.game.snake_is_crashed
             self.game.play_step()
 
@@ -103,6 +99,9 @@ class TrainAgent:
             self._transitions.append(transition)
 
             if done:
+                snake_reward = REWARD_TIMEOUT
+                self.snake_agent.last_reward += snake_reward
+
                 self._dones.append(1)
                 elapsed_time = timer.get_elapsed_time()
                 timer.reset()
@@ -142,8 +141,8 @@ class TrainAgent:
 
 is_load_weights_snake = True
 is_load_n_games = True
-is_rendering = True
-game_speed = 20
+is_rendering = False
+game_speed = 120
 games_to_play = 200
 obstacles_to_load = MAPS_FOLDER + './level_1/obstacles.csv'
 foods_to_load = MAPS_FOLDER + './level_1/foods.csv'
