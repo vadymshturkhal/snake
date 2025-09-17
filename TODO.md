@@ -7,4 +7,8 @@
 
 
 ## Architecture
-- [ ] change logger to use pandas;
+- [ ] Change logger to use pandas;
+
+
+# Agent
+- [ ] Update agent to stop/continue learning with any epsilon;
