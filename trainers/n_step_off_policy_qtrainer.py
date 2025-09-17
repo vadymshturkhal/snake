@@ -14,7 +14,7 @@ class NStepOffPolicyQTrainer:
         self._alpha = lr
         self._gamma = gamma
         self._model = model
-        self._optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
+        self._optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY, foreach=False)
         self._criterion = nn.SmoothL1Loss()
         self._n_steps = n_steps
         self._device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
