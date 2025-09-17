@@ -4,6 +4,7 @@
 
 ## Gameplay
 - [ ] Add level with random obstacles;
+- [ ] Create walking Food;
 
 
 ## Architecture
